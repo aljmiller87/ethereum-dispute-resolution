@@ -1,7 +1,2 @@
-.next
 node_modules
 .env
-pages
-components
-routes.js
-server.js
