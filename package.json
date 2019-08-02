@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test/Campaign.test.js --timeout 10000",
+    "test": "mocha test/ThreeJudge.test.js --timeout 10000",
+    "test-local": "mocha test/ThreeJudge-local.test.js --timeout 10000",
     "dev": "node server.js"
   },
   "author": "",
@@ -21,8 +22,8 @@
     "react-dom": "^16.8.6",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.87.3",
-    "solc": "0.4.17",
-    "truffle-hdwallet-provider": "^0.0.3",
+    "solc": "0.5.2",
+    "truffle-hdwallet-provider": "0.0.5",
     "web3": "^1.0.0-beta.37"
   }
 }
