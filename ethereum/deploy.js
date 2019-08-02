@@ -5,13 +5,8 @@ const compiledContract = require('./build/ThreeJudge.json');
 const compiledFactory = compiledContract.ContractFactory
 const compiledFactoryABI = compiledFactory.abi;
 const compiledFactoryBytecode = compiledFactory.evm.bytecode.object;
-console.log('compiledFactoryBytecode', compiledFactoryBytecode);
 
 
-/* Two variables:
-    1) account mnemonic
-    2) link to network
-     */
 const provider = new HDWalletProvider(
     `${process.env.SEED_KEY}`,
     'https://rinkeby.infura.io/v3/ad66eb1337e043b2b50abe1323fff5f0'
@@ -35,4 +30,3 @@ const deploy = async () => {
 
 deploy();
 
-// current rinkeby contract address: 0xCB6f4049507C5f211AeBaf8F1314ADAF3397c357
