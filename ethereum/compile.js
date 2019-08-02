@@ -36,14 +36,14 @@ if(compiledContract.errors) {
     compiledContract.errors.forEach(err => console.log('ERROR compiledContract.errors', err.formattedMessage));
 }
 
-// fs.ensureDirSync(buildPath);
-// for (let contract in compiledContract) {
-//   console.log('contract', contract);
-//     fs.outputJSONSync(
-//         path.resolve(buildPath, `${contract}.json`),
-//         compiledContract[contract]
-//     );
-// }
+fs.ensureDirSync(buildPath);
+for (let contract in compiledContract) {
+  console.log('contract', contract);
+    fs.outputJSONSync(
+        path.resolve(buildPath, `${contract}.json`),
+        compiledContract[contract]
+    );
+}
 
 // // Note: This changed slightly since I'm using JSON.parse above.
 // const ThreeJudge = compiledContract.contracts['ThreeJudge'];
@@ -53,4 +53,4 @@ if(compiledContract.errors) {
 // const abi = ThreeJudge.abi;
 // fs.writeFileSync('ThreeJudge.json', JSON.stringify(abi, null, 2));
 
-export default compiledContract;
+// export default compiledContract;
