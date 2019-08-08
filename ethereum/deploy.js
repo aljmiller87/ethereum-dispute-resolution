@@ -22,7 +22,7 @@ const deploy = async () => {
     // deploy code
     const result = await new web3.eth.Contract(compiledFactoryABI)
     .deploy({ data: '0x' + compiledFactoryBytecode })
-    .send({ gas: '1000000', from: accounts[0] });
+    .send({ gas: '3000000', from: accounts[0] });
 
 
     console.log('result address', result.options.address)
@@ -30,3 +30,4 @@ const deploy = async () => {
 
 deploy();
 
+// current Rinkeybe address 0x0198E92F7592B83EDEE5a0597043c907e69B7397

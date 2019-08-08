@@ -1,14 +1,14 @@
 pragma solidity ^0.5.0;
 
 contract ContractFactory {
-    ThreeJudge[] public deployedContracts;
+    address[] public deployedContracts;
 
     function createContract(address payable _buyer, address payable _seller) public {
         ThreeJudge newContract = new ThreeJudge(_buyer, _seller);
-        deployedContracts.push(newContract);
+        deployedContracts.push(address(newContract));
     }
 
-    function getDeployedContracts() public view returns (ThreeJudge[] memory) {
+    function getCampaignsByAddress() public view returns (address[] memory) {
         return deployedContracts;
     }
 }
@@ -32,8 +32,6 @@ contract ThreeJudge {
     uint ballance;
     uint votesForBuyer = 0;
     uint votesForSeller = 0;
-
-    // confirmPayment needs to require correct balance
 
     modifier buyerOnly() {
         require(msg.sender == buyer, "Only buyer is authorized.");
