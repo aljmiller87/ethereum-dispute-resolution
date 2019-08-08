@@ -1,4 +1,6 @@
 const assert = require('assert');
+const chai = require('chai');
+const should = chai.should();
 const ganache = require('ganache-cli');
 const Web3 = require('web3');
 const OPTIONS = {
@@ -30,8 +32,6 @@ beforeEach(async () => {
     .deploy({ data: '0x' + compiledFactoryBytecode })
     .send({ from: accounts[0], gas: '3000000' });
 
-    console.log('factory.methods.createContract', factory.methods.createContract);
-
   await factory.methods.createContract(`${accounts[0]}`, `${accounts[1]}`).send({
     from: accounts[0],
     gas: '3000000'
@@ -44,25 +44,38 @@ beforeEach(async () => {
   );
 });
 
-describe('Contract Bare Functionality', () => {
+describe('Contract functionality without dispute', () => {
   it('deploys a factory and a threeJudge', () => {
-    assert.ok(factory.options.address);
-    assert.ok(threeJudge.options.address);
+    should.exist(factory.options.address);
+    factory.options.address.should.be.a('string');
+    should.exist(threeJudge.options.address);
+    threeJudge.options.address.should.be.a('string');
   });
 
-  // it('marks caller as the campaign manager', async () => {
-  //   const manager = await campaign.methods.manager().call();
-  //   assert.equal(accounts[0], manager);
-  // });
+  it('confirms starting point for threeJudge', async () => {
+    const buyer = await threeJudge.methods.buyer().call();
+    const seller = await threeJudge.methods.seller().call();
+    const initialState = await threeJudge.methods.currentState().call();
+    buyer.should.equal(`${accounts[0]}`);
+    seller.should.equal(`${accounts[1]}`);
+    initialState.should.equal('0');
+  });
 
-  // it('allows people to contribute money and marks them as approvers', async () => {
-  //   await campaign.methods.contribute().send({
-  //     value: '200',
-  //     from: accounts[1]
-  //   });
-  //   const isContributor = await campaign.methods.approvers(accounts[1]).call();
-  //   assert(isContributor);
-  // });
+  it('Confirms first step is buyer submitting payment', async () => {
+    // Confirms only buyer can call functoin
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.confirmPayment().send({
+        value: '1000000',
+        from: accounts[1]
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Only buyer is authorized.");
+
+    // Confirms no active dispute
+  });
 
   // it('requires a minimum contribution', async () => {
   //   try {

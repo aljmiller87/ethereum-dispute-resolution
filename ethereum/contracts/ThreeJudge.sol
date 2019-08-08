@@ -21,17 +21,17 @@ contract ThreeJudge {
     State public currentState;
     DisputeState public currentDisputeState;
 
-    address payable buyer;
-    address payable seller;
-    address payable buyerJudge;
-    address payable sellerJudge;
-    address payable nominatedJudge;
-    address payable finalJudge;
-    mapping(address => bool) hasVoted;
-    mapping(address => bool) hasNominated;
-    uint ballance;
-    uint votesForBuyer = 0;
-    uint votesForSeller = 0;
+    address payable public buyer;
+    address payable public seller;
+    address payable public buyerJudge;
+    address payable public sellerJudge;
+    address payable public nominatedJudge;
+    address payable public finalJudge;
+    mapping(address => bool) public hasVoted;
+    mapping(address => bool) public hasNominated;
+    uint public ballance;
+    uint public votesForBuyer = 0;
+    uint public votesForSeller = 0;
 
     modifier buyerOnly() {
         require(msg.sender == buyer, "Only buyer is authorized.");
