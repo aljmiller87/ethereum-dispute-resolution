@@ -1,26 +1,29 @@
 pragma solidity ^0.5.0;
 
 contract ContractFactory {
-    address[] public deployedContracts;
+    mapping (address=>address[]) deployedContracts;
 
-    function createContract(address payable _buyer, address payable _seller) public {
-        ThreeJudge newContract = new ThreeJudge(_buyer, _seller);
-        deployedContracts.push(address(newContract));
+    function createContract(address payable _seller) public {
+        ThreeJudge newContract = new ThreeJudge(msg.sender, _seller);
+        deployedContracts[msg.sender].push(address(newContract));
+        deployedContracts[_seller].push(address(newContract));
     }
 
-    function getCampaignsByAddress() public view returns (address[] memory) {
-        return deployedContracts;
+    function getdeployedContracts() public view returns (address[] memory) {
+        return deployedContracts[msg.sender];
     }
 }
 
 contract ThreeJudge {
 
-    enum State {AWAITING_PAYMENT, AWAITING_PRODUCT_SENT, AWAITING_DELIVERY, COMPLETE, IN_DISPUTE}
-    enum DisputeState {AWAITING_B_JUDGE, AWAITING_S_JUDGE, AWAITING_NOMINATION, AWAITING_NOMINATION_CONFIRMATION, AWAITING_RESOLUTION, COMPLETE}
+    enum State {AWAITING_PAYMENT, AWAITING_PRODUCT_SENT, AWAITING_DELIVERY, COMPLETE, IN_DISPUTE, CANCELLED}
+    enum DisputeState {AWAITING_S_JUDGE, AWAITING_NOMINATION, AWAITING_NOMINATION_CONFIRMATION, AWAITING_RESOLUTION, COMPLETE}
 
     State public currentState;
     DisputeState public currentDisputeState;
 
+    uint public deadline;
+    address public awaitingParty;
     address payable public buyer;
     address payable public seller;
     address payable public buyerJudge;
@@ -29,9 +32,11 @@ contract ThreeJudge {
     address payable public finalJudge;
     mapping(address => bool) public hasVoted;
     mapping(address => bool) public hasNominated;
-    uint public ballance;
+    uint public balance;
     uint public votesForBuyer = 0;
     uint public votesForSeller = 0;
+
+    // confirmPayment needs to require correct balance
 
     modifier buyerOnly() {
         require(msg.sender == buyer, "Only buyer is authorized.");
@@ -71,18 +76,25 @@ contract ThreeJudge {
     constructor(address payable _buyer, address payable _seller) payable public {
         buyer = _buyer;
         seller = _seller;
-        ballance = 0;
+        balance = 0;
         currentState = State.AWAITING_PAYMENT;
+    }
+
+    function abort() public sellerOnly noActiveDipuste {
+        require(currentState == State.AWAITING_PAYMENT || currentState == State.AWAITING_PRODUCT_SENT, "Cannot abort contract after product is sent.");
+        currentState = State.CANCELLED;
+        if (currentState == State.AWAITING_PRODUCT_SENT) {
+            buyer.transfer(address(this).balance);
+        }
     }
 
     function confirmPayment() public buyerOnly noActiveDipuste inState(State.AWAITING_PAYMENT) payable {
         currentState = State.AWAITING_PRODUCT_SENT;
-        ballance += msg.value;
+        balance += msg.value;
     }
 
-    function confirmProductSent() public sellerOnly noActiveDipuste inState(State.AWAITING_PRODUCT_SENT) payable {
+    function confirmProductSent() public sellerOnly noActiveDipuste inState(State.AWAITING_PRODUCT_SENT) {
         currentState = State.AWAITING_DELIVERY;
-        ballance += msg.value;
     }
 
     function confirmDelivery() public buyerOnly noActiveDipuste inState(State.AWAITING_DELIVERY) {
@@ -90,19 +102,28 @@ contract ThreeJudge {
         currentState = State.COMPLETE;
     }
 
-    function initDispute() public buyerOnly noActiveDipuste {
+    function initDispute(address payable _judge) public buyerOnly noActiveDipuste {
         currentState = State.IN_DISPUTE;
-        currentDisputeState = DisputeState.AWAITING_B_JUDGE;
+        pickJudge(_judge);
+        currentDisputeState = DisputeState.AWAITING_S_JUDGE;
+    }
+
+    function setNewDeadline() private {
+        deadline = now + 3 days;
+    }
+
+    function cancelDeadline() private {
+        deadline = 0;
     }
 
     function pickJudge(address payable _judge) public buyerSellerOnly inState(State.IN_DISPUTE) {
         if (msg.sender == buyer) {
-            require(currentDisputeState == DisputeState.AWAITING_B_JUDGE, "Buyer must select judge first.");
             buyerJudge = _judge;
             hasVoted[buyerJudge] = false;
             hasNominated[buyerJudge] = false;
             currentDisputeState = DisputeState.AWAITING_S_JUDGE;
-
+            setNewDeadline();
+            awaitingParty = seller;
         } else {
             require(currentDisputeState == DisputeState.AWAITING_S_JUDGE, "Seller must select judge.");
             sellerJudge = _judge;
@@ -112,12 +133,18 @@ contract ThreeJudge {
         }
     }
 
-    function nominateFinalJudge(address payable _finalJudge) public inState(State.IN_DISPUTE) inDisputeState(DisputeState.AWAITING_NOMINATION) {
+    function nominateFinalJudge(address payable _nominatedJudge) public inState(State.IN_DISPUTE) inDisputeState(DisputeState.AWAITING_NOMINATION) {
         require(msg.sender == buyerJudge || msg.sender == sellerJudge, "Only judges are authorized to nominate final judge.");
         require(hasNominated[msg.sender] == false, "Your nomination has already been submitted.");
         hasNominated[msg.sender] = true;
-        nominatedJudge = _finalJudge;
+        nominatedJudge = _nominatedJudge;
         currentDisputeState = DisputeState.AWAITING_NOMINATION_CONFIRMATION;
+        setNewDeadline();
+        if (msg.sender == buyerJudge) {
+            awaitingParty = seller;
+        } else {
+            awaitingParty = buyer;
+        }
     }
 
     function confirmFinalJudge(bool _approve) public judgeOnly inState(State.IN_DISPUTE) inDisputeState(DisputeState.AWAITING_NOMINATION_CONFIRMATION) {
@@ -141,6 +168,21 @@ contract ThreeJudge {
             votesForSeller = votesForSeller + 1;
         }
 
+        if (hasVoted[buyerJudge] == true && hasVoted[sellerJudge] == true) {
+            setNewDeadline();
+            awaitingParty = finalJudge;
+        } else {
+            if (msg.sender == buyerJudge) {
+            setNewDeadline();
+            awaitingParty = seller;
+        }
+
+            if (msg.sender == sellerJudge) {
+                setNewDeadline();
+                awaitingParty = buyer;
+            }
+        }
+
         if (votesForBuyer >= 2 || votesForSeller >= 2) {
             payJudges();
             completeArbitration();
@@ -148,8 +190,7 @@ contract ThreeJudge {
     }
 
     function payJudges() private {
-        uint balance = address(this).balance;
-        uint judgeFee = balance / 100;
+        uint judgeFee = address(this).balance / 100;
         buyerJudge.transfer(judgeFee);
         sellerJudge.transfer(judgeFee);
         finalJudge.transfer(judgeFee);
@@ -163,5 +204,47 @@ contract ThreeJudge {
         }
         currentDisputeState = DisputeState.COMPLETE;
         currentState = State.COMPLETE;
+    }
+
+    function getStatus() public view returns (
+        State,
+        DisputeState,
+        address,
+        address,
+        uint
+    ) {
+        return (
+            currentState,
+            currentDisputeState,
+            buyer,
+            seller,
+            balance
+        );
+    }
+
+    function getDisputeStatus() public view returns (
+        address,
+        bool,
+        bool,
+        address,
+        bool,
+        bool,
+        address,
+        address,
+        uint,
+        uint
+    ) {
+        return (
+            buyerJudge,
+            hasNominated[buyerJudge],
+            hasVoted[buyerJudge],
+            sellerJudge,
+            hasNominated[sellerJudge],
+            hasVoted[sellerJudge],
+            nominatedJudge,
+            finalJudge,
+            votesForBuyer,
+            votesForSeller
+        );
     }
 }
