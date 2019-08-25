@@ -22,6 +22,13 @@ contract ThreeJudge {
     State public currentState;
     DisputeState public currentDisputeState;
 
+    struct Testimony {
+        string description;
+        uint timestamp;
+        address witness;
+    }
+
+    Testimony[] public testimony;
     uint public deadline;
     address public awaitingParty;
     address payable public buyer;
@@ -80,15 +87,44 @@ contract ThreeJudge {
         currentState = State.AWAITING_PAYMENT;
     }
 
+    function setNewDeadline() private {
+        deadline = now + 3 days;
+    }
+
+    function cancelDeadline() private {
+        deadline = 0;
+        awaitingParty = address(0);
+    }
+
+    function withdraw() public buyerSellerOnly inState(State.IN_DISPUTE) {
+        require(deadline > 0, "There must be valid deadline that has been violated. No current deadline set.");
+        require(deadline < now, "Deadline has not expired");
+        if(awaitingParty == finalJudge) {
+            finalJudge = address(0);
+            nominatedJudge = address(0);
+            currentDisputeState = DisputeState.AWAITING_NOMINATION;
+        } else {
+            if(awaitingParty == buyer) {
+                seller.transfer(address(this).balance);
+            }
+            if (awaitingParty == seller) {
+                buyer.transfer(address(this).balance);
+            }
+            currentDisputeState = DisputeState.COMPLETE;
+            currentState = State.COMPLETE;
+        }
+    }
+
     function abort() public sellerOnly noActiveDipuste {
         require(currentState == State.AWAITING_PAYMENT || currentState == State.AWAITING_PRODUCT_SENT, "Cannot abort contract after product is sent.");
         currentState = State.CANCELLED;
-        if (currentState == State.AWAITING_PRODUCT_SENT) {
+        if (address(this).balance > 0) {
             buyer.transfer(address(this).balance);
         }
     }
 
     function confirmPayment() public buyerOnly noActiveDipuste inState(State.AWAITING_PAYMENT) payable {
+        require(msg.value > 0, "No funds sent");
         currentState = State.AWAITING_PRODUCT_SENT;
         balance += msg.value;
     }
@@ -103,17 +139,26 @@ contract ThreeJudge {
     }
 
     function initDispute(address payable _judge) public buyerOnly noActiveDipuste {
+        require(address(this).balance > 0, "Buyer can only initiate dispute after funds submitted to contract");
         currentState = State.IN_DISPUTE;
         pickJudge(_judge);
-        currentDisputeState = DisputeState.AWAITING_S_JUDGE;
     }
 
-    function setNewDeadline() private {
-        deadline = now + 3 days;
+    function provideTestimony(string memory _testimony) public buyerSellerOnly inState(State.IN_DISPUTE) {
+        Testimony memory newTesimony = Testimony({
+            description: _testimony,
+            timestamp: now,
+            witness: msg.sender
+        });
+        testimony.push(newTesimony);
     }
 
-    function cancelDeadline() private {
-        deadline = 0;
+    function getTestimonyCount() public view returns(uint) {
+        return testimony.length;
+    }
+
+    function getTestimony(uint index) public view returns(string memory, uint, address) {
+        return (testimony[index].description, testimony[index].timestamp, testimony[index].witness);
     }
 
     function pickJudge(address payable _judge) public buyerSellerOnly inState(State.IN_DISPUTE) {
@@ -130,6 +175,7 @@ contract ThreeJudge {
             hasVoted[sellerJudge] = false;
             hasNominated[sellerJudge] = false;
             currentDisputeState = DisputeState.AWAITING_NOMINATION;
+            cancelDeadline();
         }
     }
 
@@ -173,9 +219,9 @@ contract ThreeJudge {
             awaitingParty = finalJudge;
         } else {
             if (msg.sender == buyerJudge) {
-            setNewDeadline();
-            awaitingParty = seller;
-        }
+                setNewDeadline();
+                awaitingParty = seller;
+            }
 
             if (msg.sender == sellerJudge) {
                 setNewDeadline();
@@ -232,6 +278,7 @@ contract ThreeJudge {
         address,
         address,
         uint,
+        uint,
         uint
     ) {
         return (
@@ -244,7 +291,8 @@ contract ThreeJudge {
             nominatedJudge,
             finalJudge,
             votesForBuyer,
-            votesForSeller
+            votesForSeller,
+            testimony.length
         );
     }
 }
