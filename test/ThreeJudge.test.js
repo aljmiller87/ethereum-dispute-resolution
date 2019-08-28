@@ -342,12 +342,12 @@ describe("Initiating Dispute Functionality", async () => {
     deadline = parseInt(deadline);
     deadline = deadline - now;
     // 259199 seconds =  3 days minus 1 second
-    deadline.should.be.greaterThan(259199);
+    deadline.should.be.greaterThan(259100);
     const awaitingParty = await threeJudge.methods.awaitingParty().call();
     awaitingParty.should.equal(accounts[1]);
   });
 
-  it('Confirms Seller calling initDispute updates state and dispute variables', async () => {
+  it('Confirms Seller calling pickJudge updates state and dispute variables', async () => {
     await threeJudge.methods.confirmPayment().send({
       value: '1000000',
       from: accounts[0]
@@ -374,54 +374,482 @@ describe("Initiating Dispute Functionality", async () => {
   });
 });
 
+describe("Nominating Final Judge Functionality", async () => {
+  it('Confirms judge can only be nominated during active dispute',  async () => {
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+        from: accounts[0],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Sender not authorized");
+  });
 
-  // it('requires a minimum contribution', async () => {
-  //   try {
-  //     await campaign.methods.contribute().send({
-  //       value: '5',
-  //       from: accounts[1]
-  //     });
-  //     assert(false);
-  //   } catch (err) {
-  //     assert(err);
-  //   }
-  // });
+  it('Confirms judge can only be nominated during AWAITING_NOMINATION stage of dispute',  async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+        from: accounts[2],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Sender not authorized");
+  });
 
-  // it('allows a manager to make a payment request', async () => {
-  //   await campaign.methods
-  //     .createRequest('Buy batteries', '100', accounts[1])
-  //     .send({
-  //       from: accounts[0],
-  //       gas: '1000000'
-  //     });
-  //   const request = await campaign.methods.requests(0).call();
+  it('Confirms only judges can nominated final judge',  async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+        from: accounts[0],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Only judges are authorized to nominate final judge");
+  });
 
-  //   assert.equal('Buy batteries', request.description);
-  // });
+  it('Confirms judge cannot nominate twice', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.nominateFinalJudge(accounts[5]).send({
+        from: accounts[2],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Sender not authorized");
+  });
 
-  // it('processes requests', async () => {
-  //   await campaign.methods.contribute().send({
-  //     from: accounts[0],
-  //     value: web3.utils.toWei('10', 'ether')
-  //   });
+  it('Confirms nominating judges updates state variables', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
 
-  //   await campaign.methods
-  //     .createRequest('A', web3.utils.toWei('5', 'ether'), accounts[1])
-  //     .send({ from: accounts[0], gas: '1000000' });
+    //Tracks which judge has nominated
+    const buyerJudgeNominated = await threeJudge.methods.hasNominated(accounts[2]).call();
+    const sellerJudgeNominated = await threeJudge.methods.hasNominated(accounts[3]).call();
+    buyerJudgeNominated.should.equal(true);
+    sellerJudgeNominated.should.equal(false);
 
-  //   await campaign.methods.approveRequest(0).send({
-  //     from: accounts[0],
-  //     gas: '1000000'
-  //   });
+    // Confirms nominated final judge saved
+    const nominatedJudge = await threeJudge.methods.nominatedJudge().call();
+    nominatedJudge.should.equal(accounts[4]);
 
-  //   await campaign.methods.finalizeRequest(0).send({
-  //     from: accounts[0],
-  //     gas: '1000000'
-  //   });
+    // Confirms new dispute status
+    const updatedDisputeState = await threeJudge.methods.currentDisputeState().call();
+    updatedDisputeState.should.equal('2');
 
-  //   let balance = await web3.eth.getBalance(accounts[1]);
-  //   balance = web3.utils.fromWei(balance, 'ether');
-  //   balance = parseFloat(balance);
+    // Confirms updated deadline data
+    let now = parseInt(new Date().getTime() / 1000);
+    let deadline = await threeJudge.methods.deadline().call();
+    deadline = parseInt(deadline);
+    deadline = deadline - now;
+    // 259199 seconds = 3 days minus 1 second
+    deadline.should.be.greaterThan(259100);
+    const awaitingParty = await threeJudge.methods.awaitingParty().call();
+    awaitingParty.should.equal(accounts[1]);
+  });
+});
 
-  //   assert(balance > 104);
-  // });
+describe('Confirms confirmFinalJudge functionality', async () => {
+  it('Confirms function can only be called in AWAITING_NOMINATION_CONFIRMATION status', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    // Calling before correct state will return error
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.confirmFinalJudge(true).send({
+        from: accounts[3],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Sender not authorized");
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+    // Calling after correct state will return error
+    err = "_PRETEST_";
+    try {
+      await threeJudge.methods.confirmFinalJudge(true).send({
+        from: accounts[3],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Sender not authorized");
+  });
+  it('Confirms only judge who has not nominated can approve or reject nomination', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.confirmFinalJudge(true).send({
+        from: accounts[0],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Only judges are authorized");
+    let error = "_PRETEST_";
+    try {
+      await threeJudge.methods.confirmFinalJudge(true).send({
+        from: accounts[2],
+        gas: '1000000'
+      });
+    } catch (e) {
+      error = e;
+    }
+    (error.message).should.contain("The judge who nominated the final judge cannot approve the nominated judge");
+  });
+
+  it('Confirms rejecting nomination updates state variables', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(false).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+
+    // Resets judge nomination status
+    const buyerJudgeNominated = await threeJudge.methods.hasNominated(accounts[2]).call();
+    const sellerJudgeNominated = await threeJudge.methods.hasNominated(accounts[3]).call();
+    buyerJudgeNominated.should.equal(false);
+    sellerJudgeNominated.should.equal(false);
+
+    // Confirms nominated final judge saved
+    const nominatedJudge = await threeJudge.methods.nominatedJudge().call();
+    nominatedJudge.should.contain("0x0000");
+
+    // Confirms new dispute status
+    const updatedDisputeState = await threeJudge.methods.currentDisputeState().call();
+    updatedDisputeState.should.equal('1');
+  });
+
+  it('Confirms approving nomination updates state variables', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+
+    // Confirms final judge saved
+    const nominatedJudge = await threeJudge.methods.nominatedJudge().call();
+    const finalJudge = await threeJudge.methods.finalJudge().call();
+    nominatedJudge.should.equal(finalJudge);
+
+    // Confirms new dispute status
+    const updatedDisputeState = await threeJudge.methods.currentDisputeState().call();
+    updatedDisputeState.should.equal('3');
+  });
+});
+
+describe('Confirms arbitrateDispute Functionality', async () => {
+  it('Confirms arbitrateDispute can only be called in AWAITING_RESOLUTION status', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.arbtrateDispute(true).send({
+        from: accounts[2],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Sender not authorized");
+  });
+
+  it('Confirms arbitrateDispute can only be called by a judge', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.arbtrateDispute(true).send({
+        from: accounts[0],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("Only judges are authorized");
+  });
+  it('Confirms a judge can only call arbitrateDispute once', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+    await threeJudge.methods.arbtrateDispute(true).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    let err = "_PRETEST_";
+    try {
+      await threeJudge.methods.arbtrateDispute(true).send({
+        from: accounts[2],
+        gas: '1000000'
+      });
+    } catch (e) {
+      err = e;
+    }
+    (err.message).should.contain("A judge can only vote once");
+  });
+
+  it('Confirms arbitrateDispute updates state variables', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+    await threeJudge.methods.arbtrateDispute(true).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+
+    // Tracks votes
+    const votesForBuyer = await threeJudge.methods.votesForBuyer().call();
+    votesForBuyer.should.equal('1');
+
+    // Confirms updated deadline data
+    let now = parseInt(new Date().getTime() / 1000);
+    let deadline = await threeJudge.methods.deadline().call();
+    deadline = parseInt(deadline);
+    deadline = deadline - now;
+    // 259100 seconds = 3 days minus 100 second
+    deadline.should.be.greaterThan(259100);
+    const awaitingParty = await threeJudge.methods.awaitingParty().call();
+    awaitingParty.should.equal(accounts[1]);
+  });
+
+  it('Confirms successful arbitration', async () => {
+    await threeJudge.methods.confirmPayment().send({
+      value: '1000000',
+      from: accounts[0]
+    });
+    await threeJudge.methods.initDispute(accounts[2]).send({
+      from: accounts[0],
+      gas: '1000000'
+    });
+    await threeJudge.methods.pickJudge(accounts[3]).send({
+      from: accounts[1],
+      gas: '1000000'
+    });
+    await threeJudge.methods.nominateFinalJudge(accounts[4]).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+    await threeJudge.methods.confirmFinalJudge(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+    await threeJudge.methods.arbtrateDispute(true).send({
+      from: accounts[2],
+      gas: '1000000'
+    });
+
+    // const initialBuyerBalance = await web3.eth.getBalance(accounts[0]);
+    // const initialSellerBalance = await web3.eth.getBalance(accounts[1]);
+    // const initialBuyerJudgeBalance = await web3.eth.getBalance(accounts[2]);
+    // const initialSellerJudgeBalance = await web3.eth.getBalance(accounts[3]);
+    const initialContractBalance = await web3.eth.getBalance(threeJudge.options.address);
+
+    await threeJudge.methods.arbtrateDispute(true).send({
+      from: accounts[4],
+      gas: '1000000'
+    });
+
+    const finalContractBalance = await web3.eth.getBalance(threeJudge.options.address);
+    finalContractBalance.should.be.equal('0');
+
+    // const finalBuyerBalance = await web3.eth.getBalance(accounts[0]);
+    // const finalSellerBalance = await web3.eth.getBalance(accounts[1]);
+    // const finalBuyerJudgeBalance = await web3.eth.getBalance(accounts[2]);
+    // const finalSellerJudgeBalance = await web3.eth.getBalance(accounts[3]);
+
+    // State variables
+    const updatedState = await threeJudge.methods.currentState().call();
+    const updatedDisputeState = await threeJudge.methods.currentDisputeState().call();
+    updatedState.should.equal('3');
+    updatedDisputeState.should.equal('4');
+  });
+});

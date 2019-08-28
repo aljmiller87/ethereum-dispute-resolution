@@ -179,7 +179,7 @@ contract ThreeJudge {
         }
     }
 
-    function nominateFinalJudge(address payable _nominatedJudge) public inState(State.IN_DISPUTE) inDisputeState(DisputeState.AWAITING_NOMINATION) {
+    function nominateFinalJudge(address payable _nominatedJudge) public inDisputeState(DisputeState.AWAITING_NOMINATION) {
         require(msg.sender == buyerJudge || msg.sender == sellerJudge, "Only judges are authorized to nominate final judge.");
         require(hasNominated[msg.sender] == false, "Your nomination has already been submitted.");
         hasNominated[msg.sender] = true;
@@ -193,7 +193,7 @@ contract ThreeJudge {
         }
     }
 
-    function confirmFinalJudge(bool _approve) public judgeOnly inState(State.IN_DISPUTE) inDisputeState(DisputeState.AWAITING_NOMINATION_CONFIRMATION) {
+    function confirmFinalJudge(bool _approve) public judgeOnly inDisputeState(DisputeState.AWAITING_NOMINATION_CONFIRMATION) {
         require(hasNominated[msg.sender] == false, "The judge who nominated the final judge cannot approve the nominated judge.");
         if (_approve == true) {
             finalJudge = nominatedJudge;
@@ -202,6 +202,7 @@ contract ThreeJudge {
             currentDisputeState = DisputeState.AWAITING_NOMINATION;
             hasNominated[buyerJudge] = false;
             hasNominated[sellerJudge] = false;
+            nominatedJudge = address(0);
         }
     }
 
@@ -230,6 +231,8 @@ contract ThreeJudge {
         }
 
         if (votesForBuyer >= 2 || votesForSeller >= 2) {
+            currentDisputeState = DisputeState.COMPLETE;
+            currentState = State.COMPLETE;
             payJudges();
             completeArbitration();
         }
@@ -248,8 +251,6 @@ contract ThreeJudge {
         } else {
             seller.transfer(address(this).balance);
         }
-        currentDisputeState = DisputeState.COMPLETE;
-        currentState = State.COMPLETE;
     }
 
     function getStatus() public view returns (
