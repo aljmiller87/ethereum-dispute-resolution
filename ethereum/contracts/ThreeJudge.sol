@@ -234,7 +234,7 @@ contract ThreeJudge {
             currentDisputeState = DisputeState.COMPLETE;
             currentState = State.COMPLETE;
             payJudges();
-            completeArbitration();
+            // completeArbitration();
         }
     }
 
@@ -243,6 +243,12 @@ contract ThreeJudge {
         buyerJudge.transfer(judgeFee);
         sellerJudge.transfer(judgeFee);
         finalJudge.transfer(judgeFee);
+
+        if (votesForBuyer >= 2) {
+            buyer.transfer(address(this).balance);
+        } else {
+            seller.transfer(address(this).balance);
+        }
     }
 
     function completeArbitration() private {
