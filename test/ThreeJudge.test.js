@@ -803,7 +803,7 @@ describe('Confirms arbitrateDispute Functionality', async () => {
 
   it('Confirms successful arbitration pays judges', async () => {
     await threeJudge.methods.confirmPayment().send({
-      value: '1000000',
+      value: `${web3.utils.toWei('1', 'ether')}`,
       from: accounts[0]
     });
     await threeJudge.methods.initDispute(accounts[2]).send({
@@ -826,6 +826,11 @@ describe('Confirms arbitrateDispute Functionality', async () => {
       from: accounts[2],
       gas: '1000000'
     });
+    await threeJudge.methods.arbtrateDispute(true).send({
+      from: accounts[3],
+      gas: '1000000'
+    });
+
 
     let contractBalance = await web3.eth.getBalance(threeJudge.options.address);
     console.log(contractBalance, ' contractBalance');
@@ -837,8 +842,8 @@ describe('Confirms arbitrateDispute Functionality', async () => {
     let judge3 = await web3.eth.getBalance(accounts[4]);
     judge3 = parseInt(judge3);
 
-    await threeJudge.methods.arbtrateDispute(true).send({
-      from: accounts[3],
+    await threeJudge.methods.distributeFunds().send({
+      from: accounts[0],
       gas: '1000000'
     });
 
@@ -858,9 +863,10 @@ describe('Confirms arbitrateDispute Functionality', async () => {
     console.log(judge3Final, ' judge3Final');
     console.log(judge3, ' judge3');
     console.log(judge3Final - judge3, 'judge3Final - judge3');
-    judge1Final.should.be.equal(judge1 + 10000);
-    judge2Final.should.be.equal(judge2 + 10000);
-    judge3Final.should.be.equal(judge3 + 10000);
+    parseInt(web3.utils.toWei('9.9', 'finney')).should.be.a('number');
+    judge1Final.should.be.greaterThan(judge1 + parseInt(web3.utils.toWei('9.9', 'finney')));
+    judge2Final.should.be.greaterThan(judge2 + parseInt(web3.utils.toWei('9.9', 'finney')));
+    judge3Final.should.be.greaterThan(judge3 + parseInt(web3.utils.toWei('9.9', 'finney')));
 
     const finalContractBalance = await web3.eth.getBalance(threeJudge.options.address);
     finalContractBalance.should.be.equal('0');

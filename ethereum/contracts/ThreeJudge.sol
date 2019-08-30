@@ -96,7 +96,7 @@ contract ThreeJudge {
         awaitingParty = address(0);
     }
 
-    function withdraw() public buyerSellerOnly inState(State.IN_DISPUTE) {
+    function claimFunds() public buyerSellerOnly inState(State.IN_DISPUTE) {
         require(deadline > 0, "There must be valid deadline that has been violated. No current deadline set.");
         require(deadline < now, "Deadline has not expired");
         if(awaitingParty == finalJudge) {
@@ -233,29 +233,19 @@ contract ThreeJudge {
         if (votesForBuyer >= 2 || votesForSeller >= 2) {
             currentDisputeState = DisputeState.COMPLETE;
             currentState = State.COMPLETE;
-            payJudges();
-            // completeArbitration();
         }
     }
 
-    function payJudges() private {
-        uint judgeFee = address(this).balance / 100;
+    function distributeFunds() public payable inDisputeState(DisputeState.COMPLETE) {
+        uint judgeFee = balance / 100;
+        uint settlement = (balance / 100) * 97;
         buyerJudge.transfer(judgeFee);
         sellerJudge.transfer(judgeFee);
         finalJudge.transfer(judgeFee);
-
         if (votesForBuyer >= 2) {
-            buyer.transfer(address(this).balance);
+            buyer.transfer(settlement);
         } else {
-            seller.transfer(address(this).balance);
-        }
-    }
-
-    function completeArbitration() private {
-        if (votesForBuyer >= 2) {
-            buyer.transfer(address(this).balance);
-        } else {
-            seller.transfer(address(this).balance);
+            seller.transfer(settlement);
         }
     }
 
