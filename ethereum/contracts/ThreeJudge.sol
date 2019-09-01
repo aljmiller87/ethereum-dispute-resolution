@@ -71,12 +71,12 @@ contract ThreeJudge {
     }
 
     modifier inState(State expectedState) {
-        require(currentState == expectedState, "Sender not authorized.");
+        require(currentState == expectedState, "Action cannot be called at this state.");
         _;
     }
 
     modifier inDisputeState(DisputeState expectedState) {
-        require(currentDisputeState == expectedState, "Sender not authorized.");
+        require(currentDisputeState == expectedState, "Action cannot be called at this dispute state.");
         _;
     }
 
