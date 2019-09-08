@@ -276,7 +276,9 @@ contract ThreeJudge {
         address,
         uint,
         uint,
-        uint
+        uint,
+        uint,
+        address
     ) {
         return (
             buyerJudge,
@@ -289,7 +291,9 @@ contract ThreeJudge {
             finalJudge,
             votesForBuyer,
             votesForSeller,
-            testimony.length
+            testimony.length,
+            deadline,
+            awaitingParty
         );
     }
 }

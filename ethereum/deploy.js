@@ -8,7 +8,7 @@ const compiledFactoryBytecode = compiledFactory.evm.bytecode.object;
 
 
 const provider = new HDWalletProvider(
-    `${process.env.SEED_KEY}`,
+    'later neck harsh fitness bracket winner expect jacket rule question spread fiction',
     'https://rinkeby.infura.io/v3/ad66eb1337e043b2b50abe1323fff5f0'
 );
 
@@ -21,13 +21,11 @@ const deploy = async () => {
 
     // deploy code
     const result = await new web3.eth.Contract(compiledFactoryABI)
-    .deploy({ data: '0x' + compiledFactoryBytecode })
-    .send({ gas: '3000000', from: accounts[0] });
+        .deploy({ data: '0x' + compiledFactoryBytecode })
+        .send({ gas: '5000000', from: accounts[0] });
 
 
     console.log('result address', result.options.address)
 };
 
 deploy();
-
-// current Rinkeybe address 0x0198E92F7592B83EDEE5a0597043c907e69B7397
