@@ -1,52 +1,59 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Card } from 'semantic-ui-react';
 import factory from '../ethereum/factory';
-// import Layout from '../components/Layout';
+import web3 from '../ethereum/web3';
+import Layout from '../components/Layout';
 import { Link } from '../routes';
 
 
-const CampaignIndex = (props) => {
-    console.log('props', props);
+const CampaignIndex = ({ coinbase, contracts }) => {
+    const [Coinbase, setCoinbase] = useState(coinbase);
+    const [Contracts, setContracts] = useState(contracts);
 
-    // const renderCampaigns = () => {
-    //     const items = props.campaigns.map(address => {
-    //         return {
-    //             header: address,
-    //             description: (
-    //                 <Link route={`/campaigns/${address}`}><a>View Campaign</a></Link>
-    //             ),
-    //             fluid: true
-    //         }
-    //     })
+    useEffect(() => {
+        if (window.ethereum) {
+            window.ethereum.on('accountsChanged', async (accounts) => {
+                const [coinbase] = await web3.eth.getAccounts();
+                const contracts = await factory.methods.getdeployedContracts().call({}, { from: coinbase });
+                setCoinbase(coinbase);
+                setContracts(contracts);
+            })
 
-    //     return <Card.Group items={items} />
-    // }
+            window.ethereum.on('networkChanged', async (netId) => {
+                const [coinbase] = await web3.eth.getAccounts();
+                const contracts = await factory.methods.getdeployedContracts().call({}, { from: coinbase });
+                setCoinbase(coinbase);
+                setContracts(contracts);
+            })
+        }
+    }, []);
     return (
-        // <Layout>
-        <div>
-            <h1>Open Campaigns</h1>
-            <Link route="/campaigns/new">
-                <a>
-                    <Button
-                        content="Create Campaign"
-                        icon="add circle"
-                        primary
-                        floated="right"
-                    />
-                </a>
-            </Link>
+        <Layout>
+            <div>
+                <h1>{coinbase}</h1>
+                <Link route="/campaigns/new">
+                    <a>
+                        <Button
+                            content="Create Campaign"
+                            icon="add circle"
+                            primary
+                            floated="right"
+                        />
+                    </a>
+                </Link>
 
-            {/* {renderCampaigns()} */}
-            <p>test</p>
-        </div>
-        // </Layout>
+                {/* {fetchContracts()} */}
+                <p>test</p>
+            </div>
+        </Layout>
 
     )
 }
 
 CampaignIndex.getInitialProps = async () => {
-    const contracts = await factory.methods.getdeployedContracts().call();
-    return { contracts }
+    const [coinbase] = await web3.eth.getAccounts();
+    const contracts = await factory.methods.getdeployedContracts().call({}, { from: coinbase });
+    return { coinbase, contracts }
 }
 
 export default CampaignIndex;
