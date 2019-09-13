@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, Grid, Button } from 'semantic-ui-react';
 import web3 from '../../ethereum/web3';
 import Layout from '../../components/Layout';
+import Steps from '../../components/Steps';
 import Contract from '../../ethereum/contract';
 import { Link } from '../../routes';
 
@@ -55,6 +56,11 @@ const ContractDetail = props => {
     return (
         <Layout>
             <h3>Contract Details</h3>
+            <Steps
+                state={contractState[currentState]}
+                disputeState={currentDisputeState}
+                {...props}
+            />
             <Grid>
                 <Grid.Row>
                     <Grid.Column width={10}>
