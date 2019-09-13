@@ -30,7 +30,7 @@ beforeEach(async () => {
 
   factory = await new web3.eth.Contract(compiledFactoryABI)
     .deploy({ data: '0x' + compiledFactoryBytecode })
-    .send({ from: accounts[0], gas: '5000000' });
+    .send({ from: accounts[0], gas: '6000000' });
 
   await factory.methods.createContract(`${accounts[1]}`).send({
     from: accounts[0],
@@ -63,9 +63,11 @@ describe('Factory and Contract Initialization', () => {
     const buyer = await threeJudge.methods.buyer().call();
     const seller = await threeJudge.methods.seller().call();
     const initialState = await threeJudge.methods.currentState().call();
+    const initialDisputeState = await threeJudge.methods.currentDisputeState().call();
     buyer.should.equal(`${accounts[0]}`);
     seller.should.equal(`${accounts[1]}`);
     initialState.should.equal('0');
+    initialDisputeState.should.equal('0');
   });
 });
 
@@ -271,7 +273,7 @@ describe("Initiating Dispute Functionality", async () => {
     (err.message).should.contain("Invalid number of parameters");
   });
 
-  it('Confirms only buyer can call initDispute', async () => {
+  it('Confirms buyer can call initDispute', async () => {
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.initDispute(accounts[2]).send({
@@ -326,10 +328,10 @@ describe("Initiating Dispute Functionality", async () => {
       from: accounts[0],
       gas: '1000000'
     });
-    state = await threeJudge.methods.currentState().call();
-    disputeState = await threeJudge.methods.currentDisputeState().call();
+    const state = await threeJudge.methods.currentState().call();
+    const disputeState = await threeJudge.methods.currentDisputeState().call();
     state.should.equal('4');
-    disputeState.should.equal('0');
+    disputeState.should.equal('1');
 
     const buyerJudge = await threeJudge.methods.buyerJudge().call();
     buyerJudge.should.equal(accounts[2]);
@@ -1137,7 +1139,7 @@ describe('Confirms Deadline and claimFunds functionality', async () => {
 });
 
 describe('Confirms getStatus function', async () => {
-  it('Confirms getStatus function', async () => {
+  it('Confirms getDisputeStatus function', async () => {
     await threeJudge.methods.confirmPayment().send({
       value: `${web3.utils.toWei('1', 'ether')}`,
       from: accounts[0]
