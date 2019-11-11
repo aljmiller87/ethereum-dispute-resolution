@@ -62,7 +62,7 @@ export default function Header(props) {
     [classes.fixed]: fixed
   });
   const brandComponent = (
-    <Link href="/components" as="/components">
+    <Link href="/" as="/">
       <Button className={classes.title}>{brand}</Button>
     </Link>
   );
@@ -76,8 +76,8 @@ export default function Header(props) {
               {leftLinks}
             </Hidden>
           ) : (
-            brandComponent
-          )}
+              brandComponent
+            )}
         </div>
         <Hidden smDown implementation="css">
           {rightLinks}
