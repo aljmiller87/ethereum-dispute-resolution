@@ -47,19 +47,6 @@ const container = {
   }
 };
 
-const section = theme => ({
-  padding: '30px 0',
-  [theme.breakpoints.up("sm")]: {
-    padding: '40px 0',
-  },
-  [theme.breakpoints.up("md")]: {
-    padding: '60px 0',
-  },
-  [theme.breakpoints.up("lg")]: {
-    padding: '80px 0',
-  },
-});
-
 
 const boxShadow = {
   boxShadow:
@@ -199,7 +186,6 @@ export {
   transition,
   container,
   conatinerFluid,
-  section,
   boxShadow,
   card,
   defaultFont,

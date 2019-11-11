@@ -8,33 +8,32 @@ import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 import { Box, Grid, Paper, Typography } from "@material-ui/core";
 // core components
-import { container, section } from "assets/jss/nextjs-material-kit.js";
+import { container } from "assets/jss/nextjs-material-kit.js";
 import Header from "components/Header/Header.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Footer from "components/Footer/Footer.js";
-import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import ImageCard from "components/ImageCard/index.js";
-import Button from "components/CustomButtons/Button.js";
 import Parallax from "components/Parallax/Parallax.js";
 
 // sections for this page
-import SectionBasics from "pages-sections/Components-Sections/SectionBasics.js";
-import SectionNavbars from "pages-sections/Components-Sections/SectionNavbars.js";
-import SectionTabs from "pages-sections/Components-Sections/SectionTabs.js";
-import SectionPills from "pages-sections/Components-Sections/SectionPills.js";
-import SectionNotifications from "pages-sections/Components-Sections/SectionNotifications.js";
-import SectionTypography from "pages-sections/Components-Sections/SectionTypography.js";
-import SectionJavascript from "pages-sections/Components-Sections/SectionJavascript.js";
-import SectionCarousel from "pages-sections/Components-Sections/SectionCarousel.js";
-import SectionCompletedExamples from "pages-sections/Components-Sections/SectionCompletedExamples.js";
-import SectionLogin from "pages-sections/Components-Sections/SectionLogin.js";
-import SectionExamples from "pages-sections/Components-Sections/SectionExamples.js";
+import SectionAbout from 'pages-sections/Components-Sections/SectionAbout.js';
+// import SectionBasics from "pages-sections/Components-Sections/SectionBasics.js";
+// import SectionNavbars from "pages-sections/Components-Sections/SectionNavbars.js";
+// import SectionTabs from "pages-sections/Components-Sections/SectionTabs.js";
+// import SectionPills from "pages-sections/Components-Sections/SectionPills.js";
+// import SectionNotifications from "pages-sections/Components-Sections/SectionNotifications.js";
+// import SectionTypography from "pages-sections/Components-Sections/SectionTypography.js";
+// import SectionJavascript from "pages-sections/Components-Sections/SectionJavascript.js";
+// import SectionCarousel from "pages-sections/Components-Sections/SectionCarousel.js";
+// import SectionCompletedExamples from "pages-sections/Components-Sections/SectionCompletedExamples.js";
+// import SectionLogin from "pages-sections/Components-Sections/SectionLogin.js";
+// import SectionExamples from "pages-sections/Components-Sections/SectionExamples.js";
 
 import Router from "next/router";
 
 import styles from "assets/jss/nextjs-material-kit/pages/components.js";
 import SectionGetStarted from "pages-sections/Components-Sections/SectionGetStarted.js";
+import Section from 'components/Section';
 
 
 const useStyles = makeStyles(styles);
@@ -68,43 +67,9 @@ const HomePage = () => {
           </Grid>
         </div>
       </Parallax>
-      <Box section>
-        <div className={classes.container}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} sm={6}>
-              <ImageCard
-                image={require('assets/img/homepage/blockchain.jpg')}
-                subCopy="subCopy"
-                title="Title"
-                copy="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s..."
-                buttonText="why blockchain?"
-                buttonIcon="blockchain"
-              />
-            </Grid>
-            <Grid item xs={12} sm={6}>
-              <ImageCard
-                image={require('assets/img/homepage/handshake.jpg')}
-                subCopy="subCopy"
-                title="Title"
-                copy="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s..."
-                buttonIcon="notes"
-                buttonText="How it works?"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <ImageCard
-                image={require('assets/img/homepage/code.jpg')}
-                subCopy="subCopy"
-                title="Title"
-                copy="Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s..."
-                buttonText="See demo"
-                buttonIcon="build"
-              />
-            </Grid>
-          </Grid>
-        </div>
-      </Box>
+      <SectionAbout />
       <SectionGetStarted />
+      <Footer />
     </div>
   );
 }

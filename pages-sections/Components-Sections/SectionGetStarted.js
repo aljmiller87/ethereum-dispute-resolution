@@ -6,6 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
+import Section from 'components/Section';
 // core components
 import styles from "assets/jss/sections/SectionGetStarted.js";
 import { Typography } from "@material-ui/core";
@@ -15,7 +16,7 @@ const useStyles = makeStyles(styles);
 export default function SectionGetStarted() {
   const classes = useStyles();
   return (
-    <div className={classes.section}>
+    <Section className={classes.section} theme="dark">
       <div className={classes.container}>
         <GridContainer className={classes.textCenter} justify="center">
           <GridItem xs={12} sm={12} md={8}>
@@ -32,7 +33,7 @@ export default function SectionGetStarted() {
             <Button
               color="primary"
               size="md"
-              href="/"
+              href="/create"
               target="_blank"
             >
               Create Your Contract
@@ -40,6 +41,6 @@ export default function SectionGetStarted() {
           </GridItem>
         </GridContainer>
       </div>
-    </div>
+    </Section>
   );
 }

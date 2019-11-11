@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from "next/link";
 import { Paper, Fab } from '@material-ui/core';
 import { makeStyles } from "@material-ui/core/styles";
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
@@ -25,13 +26,17 @@ const index = (props) => {
     return (
         <Paper className={classes.imageCard}>
             <div className={classes.content}>
-                <Typography variant="subtitle2" component="span">{props.subCopy}</Typography>
+                <Typography variant="body2" component="span">{props.subCopy}</Typography>
                 <Typography variant="h4" component="h2">{props.title}</Typography>
                 <Typography variant="body1" >{props.copy}</Typography>
-                <Fab variant="extended" aria-label="like" className={classes.btn}>
-                    <IconButton variant={props.buttonIcon} />
-                    {props.buttonText}
-                </Fab>
+                <Link href={props.buttonLink}>
+                    <a>
+                        <Fab variant="extended" aria-label="like" className={classes.btn}>
+                            <IconButton variant={props.buttonIcon} />
+                            {props.buttonText}
+                        </Fab>
+                    </a>
+                </Link>
             </div>
         </Paper>
     )

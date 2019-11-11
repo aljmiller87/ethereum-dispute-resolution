@@ -1,9 +1,9 @@
 import { container } from "assets/jss/nextjs-material-kit.js";
 
 const getStartedStyles = {
-    section: {
-        padding: "70px 0"
-    },
+    // section: {
+    //     padding: "70px 0"
+    // },
     container,
     textCenter: {
         textAlign: "center"
