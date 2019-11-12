@@ -1,4 +1,4 @@
-const sectionStyles = theme => (console.log(theme), {
+const sectionStyles = theme => ({
     section: props => ({
         padding: '30px 0',
         [theme.breakpoints.up("sm")]: {

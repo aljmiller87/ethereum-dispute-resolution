@@ -7,7 +7,6 @@ const useStyles = makeStyles(styles);
 const Section = (props) => {
 
     const classes = useStyles(props);
-    console.log('classes', classes);
     return (
         <section theme={props.theme} className={classes.section}>
             {props.children}

@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useEffect } from "react";
 import 'isomorphic-fetch';
+
+import factory from '../ethereum/factory';
+import web3 from '../ethereum/web3';
+
+
 // nodejs library that concatenates classes
 import classNames from "classnames";
+import Router from "next/router";
 // react components for routing our app without refresh
 import Link from "next/link";
 // @material-ui/core components
@@ -30,8 +36,6 @@ import SectionAbout from 'pages-sections/Components-Sections/SectionAbout.js';
 // import SectionLogin from "pages-sections/Components-Sections/SectionLogin.js";
 // import SectionExamples from "pages-sections/Components-Sections/SectionExamples.js";
 
-import Router from "next/router";
-
 import styles from "assets/jss/nextjs-material-kit/pages/components.js";
 import SectionGetStarted from "pages-sections/Components-Sections/SectionGetStarted.js";
 import Section from 'components/Section';
@@ -43,6 +47,13 @@ const useStyles = makeStyles(styles);
 const HomePage = (props) => {
   console.log('page props', props);
   const classes = useStyles();
+
+  useEffect(() => {
+    if (window && window.ethereum && !props.coinbase) {
+      console.log('want to refresh here');
+      Router.push("/");
+    }
+  }, [])
   return (
     <div>
       <Header
@@ -79,14 +90,12 @@ const HomePage = (props) => {
 // export default HomePage
 
 HomePage.getInitialProps = async function () {
-  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
-  const data = await res.json();
-
-  console.log(`Show data fetched. Count: ${data.length}`);
-
-  return {
-    shows: data.map(entry => entry.show)
-  };
+  const accounts = await web3.eth.getAccounts();
+  console.log('all accounts', accounts);
+  const [coinbase] = await web3.eth.getAccounts();
+  const contracts = await factory.methods.getdeployedContracts().call({}, { from: coinbase });
+  console.log('coinbase', coinbase);
+  return { data: { coinbase, contracts } }
 };
 
 export default HomePage;

@@ -37,7 +37,7 @@ export default function SectionGetStarted() {
               target="_blank"
             >
               Create Your Contract
-                        </Button>
+            </Button>
           </GridItem>
         </GridContainer>
       </div>
