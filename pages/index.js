@@ -1,4 +1,5 @@
 import React from "react";
+import 'isomorphic-fetch';
 // nodejs library that concatenates classes
 import classNames from "classnames";
 // react components for routing our app without refresh
@@ -39,7 +40,8 @@ import Section from 'components/Section';
 const useStyles = makeStyles(styles);
 
 
-const HomePage = () => {
+const HomePage = (props) => {
+  console.log('page props', props);
   const classes = useStyles();
   return (
     <div>
@@ -74,4 +76,17 @@ const HomePage = () => {
   );
 }
 
-export default HomePage
+// export default HomePage
+
+HomePage.getInitialProps = async function () {
+  const res = await fetch('https://api.tvmaze.com/search/shows?q=batman');
+  const data = await res.json();
+
+  console.log(`Show data fetched. Count: ${data.length}`);
+
+  return {
+    shows: data.map(entry => entry.show)
+  };
+};
+
+export default HomePage;

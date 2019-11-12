@@ -32,7 +32,7 @@ export default function SectionGetStarted() {
           <GridItem xs={12} sm={8} md={6}>
             <Button
               color="primary"
-              size="md"
+              size="lg"
               href="/create"
               target="_blank"
             >
