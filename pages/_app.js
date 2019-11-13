@@ -22,6 +22,7 @@ import Head from "next/head";
 import Router from "next/router";
 
 import PageChange from "components/PageChange/PageChange.js";
+// import { AccountsProvider } from '../utilities/ethereumAccountDetect';
 
 import "assets/scss/nextjs-material-kit.scss?v=1.0.0";
 
@@ -80,7 +81,9 @@ export default class MyApp extends App {
         <Head>
           <title>Arbitration Distributed</title>
         </Head>
+        {/* <AccountsProvider> */}
         <Component {...pageProps} />
+        {/* </AccountsProvider> */}
       </React.Fragment>
     );
   }

@@ -1,8 +1,12 @@
 import React, { useEffect } from "react";
 import 'isomorphic-fetch';
 
+// Ethereum
 import factory from '../ethereum/factory';
 import web3 from '../ethereum/web3';
+
+// Utilities
+import ethereumAccountDetect from '../utilities/ethereumAccountDetect';
 
 
 // nodejs library that concatenates classes
@@ -15,7 +19,6 @@ import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 import { Box, Grid, Paper, Typography } from "@material-ui/core";
 // core components
-import { container } from "assets/jss/nextjs-material-kit.js";
 import Header from "components/Header/Header.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Footer from "components/Footer/Footer.js";
@@ -45,20 +48,19 @@ const useStyles = makeStyles(styles);
 
 
 const HomePage = (props) => {
-  console.log('page props', props);
+  console.log('page props', props.data.coinbase);
   const classes = useStyles();
+  // console.log(Router.router.route);
 
   useEffect(() => {
-    if (window && window.ethereum && !props.coinbase) {
-      console.log('want to refresh here');
-      Router.push("/");
-    }
+    // const coinbase = props.data.coinbase ? props.data.coinbase : false;
+    ethereumAccountDetect(props.data.coinbase);
   }, [])
   return (
     <div>
       <Header
         brand="Arbitration Distributed"
-        rightLinks={<HeaderLinks />}
+        rightLinks={<HeaderLinks coinbase={props.data.coinbase ? props.data.coinbase : null} />}
         fixed
         color="transparent"
         changeColorOnScroll={{
@@ -69,14 +71,14 @@ const HomePage = (props) => {
       <Parallax image={require("assets/img/nextjs_header.jpg")}>
         <div className={classes.container}>
           <Grid container>
-            <GridItem>
+            <Grid item>
               <div className={classes.brand}>
                 <h1 className={classes.title}>Arbitration Distributed</h1>
                 <h3 className={classes.subtitle}>
                   Transact with confidence and trust.
                 </h3>
               </div>
-            </GridItem>
+            </Grid>
           </Grid>
         </div>
       </Parallax>
@@ -86,8 +88,6 @@ const HomePage = (props) => {
     </div>
   );
 }
-
-// export default HomePage
 
 HomePage.getInitialProps = async function () {
   const accounts = await web3.eth.getAccounts();

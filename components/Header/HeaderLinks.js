@@ -50,21 +50,37 @@ export default function HeaderLinks(props) {
         />
       </ListItem>
       <ListItem className={classes.listItem}>
-        <Button
-          href="https://www.creative-tim.com/product/nextjs-material-kit?ref=njsmk-navbar"
-          color="transparent"
-          target="_blank"
-          className={classes.navLink}
+        <Tooltip
+          id="download"
+          title="Click to view source code"
+          placement={"top"}
+          classes={{ tooltip: classes.tooltip }}
         >
-          <CloudDownload className={classes.icons} /> Download
+          <Button
+            href="https://www.creative-tim.com/product/nextjs-material-kit?ref=njsmk-navbar"
+            color="transparent"
+            target="_blank"
+            className={classes.navLink}
+          >
+            <CloudDownload className={classes.icons} /> Open Source
         </Button>
+        </Tooltip>
       </ListItem>
-      <ListItem className={classes.listItem}>
-        {/*<Tooltip title="Delete">
-          <IconButton aria-label="Delete">
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>*/}
+      {props.coinbase && <ListItem className={classes.listItem}>
+        <Link href="/[account]" as={`/${props.coinbase}`}>
+          <a>
+            <Button
+              color="transparent"
+              target="_blank"
+              className={classes.navLink}
+            >
+              <Apps className={classes.icons} /> Dashboard
+        </Button>
+          </a>
+        </Link>
+      </ListItem>
+      }
+      {/* <ListItem className={classes.listItem}>
         <Tooltip
           id="instagram-twitter"
           title="Follow us on twitter"
@@ -114,7 +130,7 @@ export default function HeaderLinks(props) {
             <i className={classes.socialIcons + " fab fa-instagram"} />
           </Button>
         </Tooltip>
-      </ListItem>
+      </ListItem> */}
     </List>
   );
 }
