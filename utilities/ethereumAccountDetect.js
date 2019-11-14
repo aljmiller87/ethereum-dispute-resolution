@@ -13,10 +13,10 @@ import Router from 'next/router';
 //     const [AccountsData, setAccountsData] = useState({});
 
 //     // useEffect(() => {
-//     //     fetchSurveyData()
-//     //         .then(setOrganicSurveyData)
+//     //     fetchAccountData()
+//     //         .then(setAccountsData)
 //     //         .catch((err) => {
-//     //             debugLog('error', 'useNotifications.fetchNotifications() - Error fetching notifications.', err);
+//     //             console.log(err)
 //     //         });
 //     // }, []);
 

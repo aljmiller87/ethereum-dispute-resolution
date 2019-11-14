@@ -146,7 +146,7 @@ contract ThreeJudge {
     }
 
     function pickJudge(address payable _judge) public buyerSellerOnly inState(State.IN_DISPUTE) {
-        require(currentDisputeState == DisputeState.AWAITING_JUDGE_SELECTION, "Cannot select Judges at this time must select judge.");
+        require(currentDisputeState == DisputeState.AWAITING_JUDGE_SELECTION, "Cannot select Judges at this time.");
         if (msg.sender == buyer) {
             require(buyerJudge == address(0), "Judge has already been selected.");
             buyerJudge = _judge;
