@@ -1,6 +1,36 @@
-const EscrowSteps = ['AWAITING_PAYMENT', 'AWAITING_PRODUCT_SENT', 'AWAITING_DELIVERY', 'COMPLETE', 'IN_DISPUTE', 'CANCELLED'];
+export const EscrowSteps = [{
+    state: 'AWAITING_PAYMENT',
+    name: 'Awaiting Payment',
+    description: 'Waiting for buyer to submit ether to contract.'
+},
+{
+    state: 'AWAITING_PRODUCT_SENT',
+    name: 'Awaiting Product Sent',
+    description: 'Waiting for seller to confirm product has been sent to buyer'
+},
+{
+    state: 'AWAITING_DELIVERY',
+    name: 'Awaiting Delivery',
+    description: 'Waiting for Buyer to confirm product has been received.'
+},
+{
+    state: 'COMPLETE',
+    name: 'Complete',
+    description: 'Contract has been completed and is now closed.'
+},
+{
+    state: 'IN_DISPUTE',
+    name: 'In Dispute',
+    description: 'Contract is in dispute. Dispute actions must be followed.'
+},
+{
+    state: 'CANCELLED',
+    name: 'Cancelled',
+    description: 'Contract has been cancelled and is now closed'
+}
+];
 
-const EscrowActions = {
+export const EscrowActions = {
     AWAITING_PAYMENT: {
         abort: {
             requiredUsers: ['buyer', 'seller'],
@@ -33,9 +63,9 @@ const EscrowActions = {
     }
 }
 
-const DisputeSteps = ['NO_DISPUTE', 'AWAITING_JUDGE_SELECTION', 'AWAITING_NOMINATION', 'AWAITING_NOMINATION_CONFIRMATION', 'AWAITING_RESOLUTION', 'COMPLETE'];
+export const DisputeSteps = ['NO_DISPUTE', 'AWAITING_JUDGE_SELECTION', 'AWAITING_NOMINATION', 'AWAITING_NOMINATION_CONFIRMATION', 'AWAITING_RESOLUTION', 'COMPLETE'];
 
-const DisputeActions = {
+export const DisputeActions = {
     AWAITING_JUDGE_SELECTION: {
         pickJudge: {
             requiredUsers: ['buyer', 'seller'],
@@ -79,3 +109,5 @@ const DisputeActions = {
         }
     }
 }
+
+export default { EscrowSteps, EscrowActions, DisputeSteps, DisputeActions }

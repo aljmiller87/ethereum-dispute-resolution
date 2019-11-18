@@ -7,13 +7,21 @@ const createDemoStyle = {
         position: "relative",
         paddingTop: "20vh",
         color: "#FFFFFF",
+        height: "100vh",
         paddingBottom: "200px"
     },
     demoStep: props => ({
+        height: "100%",
+        left: "0",
         opacity: props.active ? "1" : "0",
+        paddingTop: "20vh",
+        position: "absolute",
+        top: "0",
         transform: props.active ? "translate3d(0, 0, 0)" : "translate3d(0, 60px, 0)",
-        transition: "opacity 0.2s ease-in-out transform 0.2s ease-in-out",
+        transition: "opacity 0.2s ease-in-out, transform 0.2s ease-in-out",
         transitionDelay: props.active ? "0.5s" : "0s",
+        width: "100%",
+        zIndex: props.active ? "4" : "3"
     }),
     pageHeader: {
         minHeight: "100vh",

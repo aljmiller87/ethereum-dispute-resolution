@@ -17,6 +17,7 @@ import Footer from "components/Footer/Footer.js";
 
 // Section
 import CreateDemoContract from 'pages-sections/LandingPage-Sections/CreateDemoSection';
+import ActiveDemoContract from 'pages-sections/LandingPage-Sections/ActiveDemoSection';
 
 // Styles
 import styles from 'assets/jss/sections/CreateDemoSection';
@@ -29,12 +30,18 @@ const demoSteps = ['CREATE_CONTRACT', 'ACTIVE_CONTRACT', 'COMPLETE_CONTRACT'];
 
 const Demo = (props) => {
   const [demoStep, setDemoStep] = useState(-1);
+  const [contractValue, setContractValue] = useState(0);
   const classes = useStyles();
   const { ...rest } = props;
 
   const nextDemoStep = () => {
     console.log('nextDemoStep called')
     setDemoStep(prev => prev + 1);
+  }
+
+  const createContract = (value) => {
+    setContractValue(value);
+    nextDemoStep();
   }
 
   useEffect(() => {
@@ -60,10 +67,16 @@ const Demo = (props) => {
           backgroundPosition: "top center"
         }}
       >
-        <CreateDemoContract
-          active={demoSteps[demoStep] === 'CREATE_CONTRACT'}
-          callback={nextDemoStep}
-        />
+        <div className={classes.container}>
+          <CreateDemoContract
+            active={demoSteps[demoStep] === 'CREATE_CONTRACT'}
+            callback={createContract}
+          />
+          <ActiveDemoContract
+            active={demoSteps[demoStep] === 'ACTIVE_CONTRACT'}
+            callback={nextDemoStep}
+          />
+        </div>
         <Footer whiteFont />
       </div>
     </div>

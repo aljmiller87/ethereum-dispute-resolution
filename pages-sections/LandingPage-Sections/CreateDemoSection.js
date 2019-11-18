@@ -5,7 +5,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 // @material-ui/icons
-import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import People from "@material-ui/icons/People";
 
 // Kit Components
@@ -20,6 +19,7 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 
 // Styles
 import styles from "assets/jss/sections/CreateDemoSection";
+
 const useStyles = makeStyles(styles);
 
 const CreateDemoSection = ({ active, callback }) => {
@@ -28,25 +28,24 @@ const CreateDemoSection = ({ active, callback }) => {
 
     const isFormValidated = () => {
         const etherInput = document.getElementById('ether');
-        let etherValue;
-        if (!etherInput) {
-            return
+        let etherValue = etherInput.value;
+        console.log('etherValue', etherValue);
+        if (!etherValue) {
+            return false;
         }
-        etherValue = etherInput.value;
-        console.log('etherValue', !!etherValue);
-        // if (!etherRef.current || !etherRef.current.value)
+        return etherValue;
     }
     const handleSubmitForm = () => {
-        isFormValidated();
-        // if (isFormValidated) {
-        //     callback();
-        // }
+        const contractValue = isFormValidated();
+        if (contractValue) {
+            callback(contractValue);
+        }
     }
     return (
-        <div className={classes.container}>
+        <div className={classes.demoStep} active={active}>
             <GridContainer justify="center">
                 <GridItem xs={12} sm={6} md={4}>
-                    <Card className={classes.demoStep} active={active} >
+                    <Card>
                         <form className={classes.form}>
                             <CardHeader color="primary" className={classes.cardHeader}>
                                 <h4>Contract Walk Through</h4>
@@ -103,7 +102,9 @@ const CreateDemoSection = ({ active, callback }) => {
                                         type: "number",
                                         endAdornment: (
                                             <InputAdornment position="end">
-                                                <AttachMoneyIcon className={classes.inputIconsColor} />
+                                                {/* <SvgIcon className={classes.inputIconsColor}> */}
+                                                <Icon className="fab fa-ethereum" />
+                                                {/* </SvgIcon> */}
                                             </InputAdornment>
                                         ),
                                         autoComplete: "off"
