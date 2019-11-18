@@ -29,7 +29,6 @@ const CreateDemoSection = ({ active, callback }) => {
     const isFormValidated = () => {
         const etherInput = document.getElementById('ether');
         let etherValue = etherInput.value;
-        console.log('etherValue', etherValue);
         if (!etherValue) {
             return false;
         }

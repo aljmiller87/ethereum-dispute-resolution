@@ -9,6 +9,7 @@ import Icon from "@material-ui/core/Icon";
 import People from "@material-ui/icons/People";
 
 // Kit Components
+import ContractActions from 'pages-sections/LandingPage-Sections/ContractActions.js';
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
 import Button from "components/CustomButtons/Button.js";
@@ -28,9 +29,9 @@ import { EscrowSteps, EscrowActions, DisputeSteps, DisputeActions } from 'compon
 const useStyles = makeStyles(styles);
 
 const ActiveDemoSection = ({ active, callback }) => {
-  console.log('EscrowSteps', EscrowSteps);
   const classes = useStyles({ active });
-  const [escrowStep, setEscrowStep] = useState('hello');
+  const [escrowStep, setEscrowStep] = useState(0);
+  const [disputeStep, setDisputeStep] = useState(0);
 
 
 
@@ -38,21 +39,28 @@ const ActiveDemoSection = ({ active, callback }) => {
     <div className={classes.demoStep} active={active}>
       <GridContainer justify="center">
         <GridItem xs={12}>
-          <StatusTracker steps={EscrowSteps} />
+          <StatusTracker steps={EscrowSteps} activeStep={escrowStep} />
         </GridItem>
         <GridItem xs={12} sm={6} md={4}>
           <Card>
             <form className={classes.form}>
               <CardHeader color="primary" className={classes.cardHeader}>
-                <h4>{escrowStep}</h4>
+                <h4>{EscrowSteps[escrowStep].name}</h4>
                 <div className={classes.socialLine}>
-                  <p>This is a simulation of the escrow and dispute resolution feature of Arbitration Distributed's contracts</p>
+                  <p>{EscrowSteps[escrowStep].description}</p>
                 </div>
               </CardHeader>
               <p className={classes.divider}>Card divider</p>
               <CardBody>
-                Card body
-                            </CardBody>
+                <ContractActions
+                  activeEscrowStep={escrowStep}
+                  activeDisputeStep={disputeStep}
+                  {...EscrowSteps}
+                  {...EscrowActions}
+                  {...DisputeSteps}
+                  {...DisputeActions}
+                />
+              </CardBody>
               <CardFooter className={classes.cardFooter}>
                 <Button
                   simple

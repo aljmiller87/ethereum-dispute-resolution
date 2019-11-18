@@ -5,6 +5,9 @@ import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 
+// Contract Config
+import { EscrowSteps, EscrowActions, DisputeSteps, DisputeActions } from 'components/config/contract.js';
+
 // Styles
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -19,7 +22,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const getSteps = () => {
-  return ['Select master blaster campaign settings', 'Create an ad group', 'Create an ad'];
+  return EscrowSteps.map((step) => step.name);
 }
 
 const getStepContent = (stepIndex) => {
@@ -39,7 +42,7 @@ const StatusTracker = () => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
 
-  const steps = ['Select master blaster campaign settings', 'Create an ad group', 'Create an ad'];
+  const steps = EscrowSteps.map((step, index) => step.name).slice(0, 4);
 
   const handleNext = () => {
     setActiveStep(prevActiveStep => prevActiveStep + 1);
@@ -62,7 +65,7 @@ const StatusTracker = () => {
           </Step>
         ))}
       </Stepper>
-      <div>
+      {/* <div>
         {activeStep === steps.length ? (
           <div>
             <Typography className={classes.instructions}>All steps completed</Typography>
@@ -85,7 +88,7 @@ const StatusTracker = () => {
               </div>
             </div>
           )}
-      </div>
+      </div> */}
     </div>
   );
 }
