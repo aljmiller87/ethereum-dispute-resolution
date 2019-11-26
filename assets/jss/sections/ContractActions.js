@@ -1,5 +1,7 @@
 const contractActionStyle = {
-    heading: {
-
+    form: {
+        margin: "0"
     }
 }
+
+export default contractActionStyle;

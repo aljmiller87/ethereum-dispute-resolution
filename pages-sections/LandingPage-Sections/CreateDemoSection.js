@@ -43,7 +43,7 @@ const CreateDemoSection = ({ active, callback }) => {
     return (
         <div className={classes.demoStep} active={active}>
             <GridContainer justify="center">
-                <GridItem xs={12} sm={6} md={4}>
+                <GridItem xs={12} sm={6}>
                     <Card>
                         <form className={classes.form}>
                             <CardHeader color="primary" className={classes.cardHeader}>

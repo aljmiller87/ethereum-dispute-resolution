@@ -9,71 +9,60 @@ import Icon from "@material-ui/core/Icon";
 import People from "@material-ui/icons/People";
 
 // Kit Components
-import ContractActions from 'pages-sections/LandingPage-Sections/ContractActions.js';
+import ContractActions from 'pages-sections/LandingPage-Sections/ContractActions';
 import GridContainer from "components/Grid/GridContainer.js";
 import GridItem from "components/Grid/GridItem.js";
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CardFooter from "components/Card/CardFooter.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
 import StatusTracker from 'pages-sections/LandingPage-Sections/StatusTracker.js';
 
 // Styles
 import styles from "assets/jss/sections/CreateDemoSection";
 
 // Contract Config
-import { EscrowSteps, EscrowActions, DisputeSteps, DisputeActions } from 'components/config/contract.js';
+import { EscrowState, EscrowSteps, DisputeState, DisputeSteps } from 'components/config/contract.js';
 
 const useStyles = makeStyles(styles);
 
 const ActiveDemoSection = ({ active, callback }) => {
   const classes = useStyles({ active });
-  const [escrowStep, setEscrowStep] = useState(0);
+  const [escrowState, setEscrowState] = useState(0);
   const [disputeStep, setDisputeStep] = useState(0);
 
+  const escrowStep = EscrowSteps[EscrowState[escrowState]];
 
+  const findNextState = (action) => {
+    return escrowStep.actions[action].nextState;
+  }
+
+  const dispatchAction = (action, user) => {
+    if (action === "reset") {
+      setEscrowState(0);
+      return;
+    }
+    const nextState = findNextState(action);
+    const nextStateIndex = EscrowState.findIndex((state) => state === nextState);
+    setEscrowState(nextStateIndex);
+  }
 
   return (
     <div className={classes.demoStep} active={active}>
       <GridContainer justify="center">
         <GridItem xs={12}>
-          <StatusTracker steps={EscrowSteps} activeStep={escrowStep} />
-        </GridItem>
-        <GridItem xs={12} sm={6} md={4}>
-          <Card>
-            <form className={classes.form}>
-              <CardHeader color="primary" className={classes.cardHeader}>
-                <h4>{EscrowSteps[escrowStep].name}</h4>
-                <div className={classes.socialLine}>
-                  <p>{EscrowSteps[escrowStep].description}</p>
-                </div>
-              </CardHeader>
-              <p className={classes.divider}>Card divider</p>
-              <CardBody>
-                <ContractActions
-                  activeEscrowStep={escrowStep}
-                  activeDisputeStep={disputeStep}
-                  {...EscrowSteps}
-                  {...EscrowActions}
-                  {...DisputeSteps}
-                  {...DisputeActions}
-                />
-              </CardBody>
-              <CardFooter className={classes.cardFooter}>
-                <Button
-                  simple
-                  color="primary"
-                  size="lg"
-                  onClick={() => console.log('hello')}>
-                  Get started
-                                </Button>
-              </CardFooter>
-            </form>
-          </Card>
+          <StatusTracker ActiveStep={escrowState} />
         </GridItem>
       </GridContainer>
+
+
+      <ContractActions
+        activeEscrowState={escrowState}
+        activeDisputeStep={disputeStep}
+        {...EscrowState}
+        {...EscrowSteps}
+        {...DisputeState}
+        {...DisputeSteps}
+        dispatchAction={dispatchAction}
+      />
+
+
     </div >
   )
 }

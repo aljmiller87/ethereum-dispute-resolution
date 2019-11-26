@@ -48,9 +48,7 @@ const useStyles = makeStyles(styles);
 
 
 const HomePage = (props) => {
-  console.log('page props', props.data.coinbase);
   const classes = useStyles();
-  // console.log(Router.router.route);
 
   useEffect(() => {
     // const coinbase = props.data.coinbase ? props.data.coinbase : false;

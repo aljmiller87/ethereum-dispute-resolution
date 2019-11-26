@@ -1,71 +1,75 @@
-export const EscrowSteps = [{
-    state: 'AWAITING_PAYMENT',
-    name: 'Awaiting Payment',
-    description: 'Waiting for buyer to submit ether to contract.'
-},
-{
-    state: 'AWAITING_PRODUCT_SENT',
-    name: 'Awaiting Product Sent',
-    description: 'Waiting for seller to confirm product has been sent to buyer'
-},
-{
-    state: 'AWAITING_DELIVERY',
-    name: 'Awaiting Delivery',
-    description: 'Waiting for Buyer to confirm product has been received.'
-},
-{
-    state: 'COMPLETE',
-    name: 'Complete',
-    description: 'Contract has been completed and is now closed.'
-},
-{
-    state: 'IN_DISPUTE',
-    name: 'In Dispute',
-    description: 'Contract is in dispute. Dispute actions must be followed.'
-},
-{
-    state: 'CANCELLED',
-    name: 'Cancelled',
-    description: 'Contract has been cancelled and is now closed'
-}
+export const EscrowState = [
+    'AWAITING_PAYMENT',
+    'AWAITING_PRODUCT_SENT',
+    'AWAITING_DELIVERY',
+    'COMPLETE',
+    'IN_DISPUTE',
+    'CANCELLED'
 ];
 
-export const EscrowActions = {
+export const EscrowSteps = {
     AWAITING_PAYMENT: {
-        abort: {
-            requiredUsers: ['buyer', 'seller'],
-            nextState: 'CANCELLED'
+        actions: {
+            abort: {
+                requiredUsers: ['buyer', 'seller'],
+                nextState: 'CANCELLED'
+            },
+            confirmPayment: {
+                requiredUsers: ['buyer'],
+                nextState: 'AWAITING_PRODUCT_SENT'
+            }
         },
-        confirmPayment: {
-            requiredUsers: ['buyer'],
-            nextState: 'AWAITING_PRODUCT_SENT'
-        }
+        name: 'Awaiting Payment',
+        description: 'Waiting for buyer to submit ether to contract.'
     },
     AWAITING_PRODUCT_SENT: {
-        confirmProductSent: {
-            requiredUsers: ['seller'],
-            nextState: 'AWAITING_DELIVERY'
+        actions: {
+            confirmProductSent: {
+                requiredUsers: ['seller'],
+                nextState: 'AWAITING_DELIVERY'
+            },
+            initDispute: {
+                requiredUsers: ['buyer', 'seller'],
+                nextState: 'IN_DISPUTE'
+            }
         },
-        initDispute: {
-            requiredUsers: ['buyer', 'seller'],
-            nextState: 'IN_DISPUTE'
-        }
+        name: 'Awaiting Product Sent',
+        description: 'Waiting for seller to confirm product has been sent to buyer'
     },
     AWAITING_DELIVERY: {
-        confirmDelivery: {
-            requiredUsers: ['buyer'],
-            nextState: 'COMPLETE'
+        actions: {
+            confirmDelivery: {
+                requiredUsers: ['buyer'],
+                nextState: 'COMPLETE'
+            },
+            initDispute: {
+                requiredUsers: ['buyer', 'seller'],
+                nextState: 'IN_DISPUTE'
+            }
         },
-        initDispute: {
-            requiredUsers: ['buyer', 'seller'],
-            nextState: 'IN_DISPUTE'
-        }
+        name: 'Awaiting Delivery',
+        description: 'Waiting for Buyer to confirm product has been received.'
+    },
+    COMPLETE: {
+        actions: {},
+        name: 'Complete',
+        description: 'Contract has been completed and is now closed.'
+    },
+    IN_DISPUTE: {
+        actions: {},
+        name: 'In Dispute',
+        description: 'Contract is in dispute. Dispute actions must be followed.'
+    },
+    CANCELLED: {
+        actions: {},
+        name: 'Cancelled',
+        description: 'Contract has been cancelled and is now closed'
     }
 }
 
-export const DisputeSteps = ['NO_DISPUTE', 'AWAITING_JUDGE_SELECTION', 'AWAITING_NOMINATION', 'AWAITING_NOMINATION_CONFIRMATION', 'AWAITING_RESOLUTION', 'COMPLETE'];
+export const DisputeState = ['NO_DISPUTE', 'AWAITING_JUDGE_SELECTION', 'AWAITING_NOMINATION', 'AWAITING_NOMINATION_CONFIRMATION', 'AWAITING_RESOLUTION', 'COMPLETE'];
 
-export const DisputeActions = {
+export const DisputeSteps = {
     AWAITING_JUDGE_SELECTION: {
         pickJudge: {
             requiredUsers: ['buyer', 'seller'],
@@ -110,4 +114,4 @@ export const DisputeActions = {
     }
 }
 
-export default { EscrowSteps, EscrowActions, DisputeSteps, DisputeActions }
+export default { EscrowState, EscrowSteps, DisputeState, DisputeSteps }
