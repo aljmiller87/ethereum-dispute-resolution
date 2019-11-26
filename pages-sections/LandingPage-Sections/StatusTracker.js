@@ -24,16 +24,27 @@ const useStyles = makeStyles(theme => ({
 
 const StatusTracker = ({ ActiveStep }) => {
   const classes = useStyles();
-  const [activeStep, setActiveStep] = useState(ActiveStep);
+  const [activeStep, setActiveStep] = useState(0);
+  console.log('ActiveStep', ActiveStep);
+  console.log('activeStep: ', activeStep);
 
-  // const steps = EscrowState.map((step, index) => EscrowSteps.step.name).slice(0, 4);
-  const steps = EscrowState.map((state, index) => {
+  let steps = EscrowState.map((state, index) => {
     const step = { ...EscrowSteps[state] };
     return step;
   });
-  console.log('steps', steps);
+
+  if (ActiveStep <= 3) {
+    steps = steps.slice(0, 4);
+  }
+
+  if (ActiveStep === 4) {
+    steps.splice(3, 1);
+    steps.splice(4, 1);
+    console.log('steps', steps);
+  }
 
   useEffect(() => {
+    console.log('Status tracker useEffect run', ActiveStep);
     setActiveStep(ActiveStep);
   }, [ActiveStep])
 
@@ -41,11 +52,23 @@ const StatusTracker = ({ ActiveStep }) => {
   return (
     <div>
       <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map(label => (
-          <Step key={EscrowState[activeStep]}>
-            <StepLabel>{label.name}</StepLabel>
-          </Step>
-        ))}
+        {steps.map((label, index) => {
+          const labelProps = {};
+          // if (activeStep === index) {
+          //   labelProps.active = true;
+          // }
+          // if (activeStep > index) {
+          //   labelProps.completed = true;
+          // }
+          if (activeStep === 4 && index === 3) {
+            labelProps.error = true;
+          }
+          return (
+            <Step key={EscrowState[index]}>
+              <StepLabel {...labelProps}>{label.name}</StepLabel>
+            </Step>
+          );
+        })}
       </Stepper>
     </div>
   );

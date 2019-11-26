@@ -1,5 +1,7 @@
-import React, { useEffect } from "react";
-import { useRouter } from 'next/router';
+import React, { useEffect, useRef } from "react";
+import classNames from "classnames";
+import Avatars from '@dicebear/avatars';
+import sprites from '@dicebear/avatars-identicon-sprites';
 
 // Ethereum
 import factory from '../ethereum/factory';
@@ -8,8 +10,6 @@ import web3 from '../ethereum/web3';
 // Utilities
 import ethereumAccountDetect from '../utilities/ethereumAccountDetect';
 
-// nodejs library that concatenates classes
-import classNames from "classnames";
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 // core components
@@ -21,25 +21,30 @@ import GridItem from "components/Grid/GridItem.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
 
-import profile from "assets/img/faces/christian.jpg";
-
-
 import styles from "assets/jss/nextjs-material-kit/pages/profilePage.js";
 
 const useStyles = makeStyles(styles);
 
 const ProfilePage = (props) => {
+    const profileRef = useRef();
+    let options = {};
+    let avatars = new Avatars(sprites(options));
+    let svg = avatars.create(props.data.coinbase);
     console.log('profile page props', props);
     const classes = useStyles();
     const { ...rest } = props;
     const imageClasses = classNames(
         classes.imgRaised,
         classes.imgRoundedCircle,
-        classes.imgFluid
+        classes.imgFluid,
+        classes.profileImg
     );
 
     useEffect(() => {
         // const coinbase = props.data.coinbase ? props.data.coinbase : false;
+        if (profileRef.current) {
+            profileRef.current.innerHTML = svg;
+        }
         ethereumAccountDetect(props.data.coinbase);
     }, [])
 
@@ -64,33 +69,13 @@ const ProfilePage = (props) => {
                         <GridContainer justify="center">
                             <GridItem xs={12} sm={12} md={6}>
                                 <div className={classes.profile}>
-                                    <div>
-                                        <img src={profile} alt="..." className={imageClasses} />
-                                    </div>
+                                    <div ref={profileRef} className={imageClasses}></div>
                                     <div className={classes.name}>
-                                        <h3 className={classes.title}>Christian Louboutin</h3>
-                                        <h6>DESIGNER</h6>
-                                        <Button justIcon link className={classes.margin5}>
-                                            <i className={"fab fa-twitter"} />
-                                        </Button>
-                                        <Button justIcon link className={classes.margin5}>
-                                            <i className={"fab fa-instagram"} />
-                                        </Button>
-                                        <Button justIcon link className={classes.margin5}>
-                                            <i className={"fab fa-facebook"} />
-                                        </Button>
+                                        <h3 className={classes.title}>{props.data.coinbase}</h3>
                                     </div>
                                 </div>
                             </GridItem>
                         </GridContainer>
-                        <div className={classes.description}>
-                            <p>
-                                An artist of considerable range, Chet Faker — the name taken by
-                                Melbourne-raised, Brooklyn-based Nick Murphy — writes, performs
-                                and records all of his own music, giving it a warm, intimate
-                feel with a solid groove structure.{" "}
-                            </p>
-                        </div>
                     </div>
                 </div>
             </div>

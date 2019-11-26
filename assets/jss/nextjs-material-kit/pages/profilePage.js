@@ -13,6 +13,17 @@ const profilePageStyle = {
       transform: "translate3d(0, -50%, 0)"
     }
   },
+  profileImg: {
+    background: "#fff",
+    height: "160px",
+    margin: "0 auto",
+    padding: "30px",
+    transform: "translate3d(0, -50%, 0)",
+    width: "160px",
+    "& svg": {
+      width: "100%"
+    }
+  },
   description: {
     margin: "1.071rem auto 0",
     maxWidth: "600px",
@@ -40,7 +51,8 @@ const profilePageStyle = {
     position: "relative",
     marginTop: "30px",
     minHeight: "32px",
-    textDecoration: "none"
+    textDecoration: "none",
+    wordBreak: "break-all",
   },
   socials: {
     marginTop: "0",

@@ -29,7 +29,7 @@ const AwaitingDelivery = ({ classes, dispatchAction }) => {
             <p>Buyer confirms that products and/or services have been provided by seller.</p>
             <Button
               simple
-              color="danger"
+              color="primary"
               size="lg"
               block={true}
               onClick={() => dispatchAction('confirmDelivery', 'buyer')}>
@@ -52,7 +52,7 @@ const AwaitingDelivery = ({ classes, dispatchAction }) => {
       </GridItem>
       <GridItem xs={12} sm={6} md={4}>
         <Card>
-          <CardHeader color="primary" className={classes.cardHeader}>
+          <CardHeader color="info" className={classes.cardHeader}>
             <h4>Seller Actions</h4>
             <div className={classes.socialLine}>
               <p>Actions only Seller can perform</p>

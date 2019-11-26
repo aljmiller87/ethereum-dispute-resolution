@@ -68,7 +68,7 @@ const AwaitingPayment = ({ classes, dispatchAction }) => {
       </GridItem>
       <GridItem xs={12} sm={6} md={4}>
         <Card>
-          <CardHeader color="primary" className={classes.cardHeader}>
+          <CardHeader color="info" className={classes.cardHeader}>
             <h4>Seller Actions</h4>
             <div className={classes.socialLine}>
               <p>Actions only Seller can perform</p>

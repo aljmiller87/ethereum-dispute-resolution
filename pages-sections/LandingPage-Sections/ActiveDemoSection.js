@@ -26,6 +26,7 @@ const ActiveDemoSection = ({ active, callback }) => {
   const classes = useStyles({ active });
   const [escrowState, setEscrowState] = useState(0);
   const [disputeStep, setDisputeStep] = useState(0);
+  console.log('ActiveDemoSection escrowState int', escrowState)
 
   const escrowStep = EscrowSteps[EscrowState[escrowState]];
 
