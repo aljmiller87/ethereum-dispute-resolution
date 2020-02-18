@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React from "react";
+import React, { useContext } from "react";
 import Link from "next/link";
 
 // @material-ui/core components
@@ -19,9 +19,14 @@ import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/nextjs-material-kit/components/headerLinksStyle.js";
 
+// Context
+import { useEthereumContext } from "../../context/ethereum";
+
 const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
+  const contextData = useEthereumContext();
+  console.log("contextData", contextData);
   const classes = useStyles();
   return (
     <List className={classes.list}>
@@ -63,23 +68,24 @@ export default function HeaderLinks(props) {
             className={classes.navLink}
           >
             <CloudDownload className={classes.icons} /> Open Source
-        </Button>
+          </Button>
         </Tooltip>
       </ListItem>
-      {props.coinbase && <ListItem className={classes.listItem}>
-        <Link href="/[account]" as={`/${props.coinbase}`}>
-          <a>
-            <Button
-              color="transparent"
-              target="_blank"
-              className={classes.navLink}
-            >
-              <Apps className={classes.icons} /> Dashboard
-        </Button>
-          </a>
-        </Link>
-      </ListItem>
-      }
+      {contextData.accounts[0] && (
+        <ListItem className={classes.listItem}>
+          <Link href="/[account]" as={`/${contextData.accounts[0]}`}>
+            <a>
+              <Button
+                color="transparent"
+                target="_blank"
+                className={classes.navLink}
+              >
+                <Apps className={classes.icons} /> Dashboard
+              </Button>
+            </a>
+          </Link>
+        </ListItem>
+      )}
       {/* <ListItem className={classes.listItem}>
         <Tooltip
           id="instagram-twitter"

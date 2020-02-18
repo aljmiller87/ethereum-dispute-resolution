@@ -1,13 +1,12 @@
-import React, { useEffect } from "react";
-import 'isomorphic-fetch';
+import React from "react";
+import "isomorphic-fetch";
 
 // Ethereum
-import factory from '../ethereum/factory';
-import web3 from '../ethereum/web3';
+import factory from "../ethereum/factory";
+import web3 from "../ethereum/web3";
 
 // Utilities
-import ethereumAccountDetect from '../utilities/ethereumAccountDetect';
-
+import ethereumAccountDetect from "../utilities/ethereumAccountDetect";
 
 // nodejs library that concatenates classes
 import classNames from "classnames";
@@ -26,7 +25,7 @@ import GridItem from "components/Grid/GridItem.js";
 import Parallax from "components/Parallax/Parallax.js";
 
 // sections for this page
-import SectionAbout from 'pages-sections/Components-Sections/SectionAbout.js';
+import SectionAbout from "pages-sections/Components-Sections/SectionAbout.js";
 // import SectionBasics from "pages-sections/Components-Sections/SectionBasics.js";
 // import SectionNavbars from "pages-sections/Components-Sections/SectionNavbars.js";
 // import SectionTabs from "pages-sections/Components-Sections/SectionTabs.js";
@@ -41,24 +40,18 @@ import SectionAbout from 'pages-sections/Components-Sections/SectionAbout.js';
 
 import styles from "assets/jss/nextjs-material-kit/pages/components.js";
 import SectionGetStarted from "pages-sections/Components-Sections/SectionGetStarted.js";
-import Section from 'components/Section';
-
+import Section from "components/Section";
 
 const useStyles = makeStyles(styles);
 
-
-const HomePage = (props) => {
+const HomePage = props => {
   const classes = useStyles();
 
-  useEffect(() => {
-    // const coinbase = props.data.coinbase ? props.data.coinbase : false;
-    ethereumAccountDetect(props.data.coinbase);
-  }, [])
   return (
     <div>
       <Header
         brand="Arbitration Distributed"
-        rightLinks={<HeaderLinks coinbase={props.data.coinbase ? props.data.coinbase : null} />}
+        rightLinks={<HeaderLinks />}
         fixed
         color="transparent"
         changeColorOnScroll={{
@@ -85,15 +78,8 @@ const HomePage = (props) => {
       <Footer />
     </div>
   );
-}
-
-HomePage.getInitialProps = async function () {
-  const accounts = await web3.eth.getAccounts();
-  console.log('all accounts', accounts);
-  const [coinbase] = await web3.eth.getAccounts();
-  const contracts = await factory.methods.getdeployedContracts().call({}, { from: coinbase });
-  console.log('coinbase', coinbase);
-  return { data: { coinbase, contracts } }
 };
+
+HomePage.getInitialProps = function() {};
 
 export default HomePage;
