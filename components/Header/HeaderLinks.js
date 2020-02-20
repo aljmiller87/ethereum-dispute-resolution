@@ -1,5 +1,5 @@
 /*eslint-disable*/
-import React, { useContext } from "react";
+import React from "react";
 import Link from "next/link";
 
 // @material-ui/core components
@@ -71,9 +71,9 @@ export default function HeaderLinks(props) {
           </Button>
         </Tooltip>
       </ListItem>
-      {contextData.accounts[0] && (
+      {contextData.account && (
         <ListItem className={classes.listItem}>
-          <Link href="/[account]" as={`/${contextData.accounts[0]}`}>
+          <Link href="/[account]" as={`/${contextData.account}`}>
             <a>
               <Button
                 color="transparent"
@@ -86,57 +86,6 @@ export default function HeaderLinks(props) {
           </Link>
         </ListItem>
       )}
-      {/* <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-twitter"
-          title="Follow us on twitter"
-          placement={"top"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            href="https://twitter.com/CreativeTim?ref=creativetim"
-            target="_blank"
-            color="transparent"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + " fab fa-twitter"} />
-          </Button>
-        </Tooltip>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-facebook"
-          title="Follow us on facebook"
-          placement={"top"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.facebook.com/CreativeTim?ref=creativetim"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + " fab fa-facebook"} />
-          </Button>
-        </Tooltip>
-      </ListItem>
-      <ListItem className={classes.listItem}>
-        <Tooltip
-          id="instagram-tooltip"
-          title="Follow us on instagram"
-          placement={"top"}
-          classes={{ tooltip: classes.tooltip }}
-        >
-          <Button
-            color="transparent"
-            href="https://www.instagram.com/CreativeTimOfficial?ref=creativetim"
-            target="_blank"
-            className={classes.navLink}
-          >
-            <i className={classes.socialIcons + " fab fa-instagram"} />
-          </Button>
-        </Tooltip>
-      </ListItem> */}
     </List>
   );
 }
