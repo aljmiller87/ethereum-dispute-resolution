@@ -11,10 +11,12 @@ const Provider = props => {
   const [network, setNetwork] = useState(null);
   const [isEthereumConnected, setIsEthereumConnected] = useState(false);
 
+  console.log("account in context provider", account);
+
   const setEthereumEventListeners = () => {
     ethereum.on("accountsChanged", function(accounts) {
       console.log("accounts", accounts);
-      setAccount(accounts[0]);
+      setAccount(accounts[0].toLowerCase());
     });
     ethereum.on("networkChanged", function(accounts) {
       setNetwork(accounts);
@@ -22,11 +24,11 @@ const Provider = props => {
   };
 
   const loadAccountInfo = async () => {
-    const [coinbase] = await web3.eth.getAccounts();
+    let [coinbase] = await web3.eth.getAccounts();
     const contracts = await factory.methods
       .getdeployedContracts()
       .call({}, { from: coinbase });
-    console.log("coinbase", coinbase);
+    coinbase = coinbase.toLowerCase();
     setAccount(coinbase);
     setContracts(contracts);
   };

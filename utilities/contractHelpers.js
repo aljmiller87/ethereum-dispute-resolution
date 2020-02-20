@@ -14,8 +14,8 @@ export const formatEscrowStatus = summary => {
   const details = {
     escrowState: EscrowState[Number(summary["0"])],
     disputeState: DisputeState[Number(summary["1"])],
-    buyer: summary["2"],
-    seller: summary["3"],
+    buyer: summary["2"].toLowerCase(),
+    seller: summary["3"].toLowerCase(),
     balance: summary["4"]
   };
 

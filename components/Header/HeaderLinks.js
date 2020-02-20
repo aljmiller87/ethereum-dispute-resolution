@@ -26,7 +26,6 @@ const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
   const contextData = useEthereumContext();
-  console.log("contextData", contextData);
   const classes = useStyles();
   return (
     <List className={classes.list}>
