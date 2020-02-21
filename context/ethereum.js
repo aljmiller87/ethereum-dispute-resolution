@@ -28,7 +28,7 @@ const Provider = props => {
     const contracts = await factory.methods
       .getdeployedContracts()
       .call({}, { from: coinbase });
-    coinbase = coinbase.toLowerCase();
+    coinbase = coinbase ? coinbase.toLowerCase() : null;
     setAccount(coinbase);
     setContracts(contracts);
   };

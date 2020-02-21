@@ -13,7 +13,7 @@ import styles from "assets/jss/nextjs-material-kit/components/customInputStyle.j
 
 const useStyles = makeStyles(styles);
 
-export default function CustomInput(props) {
+const CustomInput = React.forwardRef((props, ref) => {
   const classes = useStyles();
   const {
     formControlProps,
@@ -72,11 +72,12 @@ export default function CustomInput(props) {
           underline: underlineClasses
         }}
         id={id}
+        ref={ref}
         {...inputProps}
       />
     </FormControl>
   );
-}
+});
 
 CustomInput.propTypes = {
   labelText: PropTypes.node,
@@ -89,3 +90,5 @@ CustomInput.propTypes = {
   success: PropTypes.bool,
   white: PropTypes.bool
 };
+
+export default CustomInput;

@@ -41,15 +41,15 @@ const ActionCards = {
   confirmPayment: ConfirmPayment
 };
 
-const ActionCard = ({ action }) => {
+const ActionCard = ({ action, callback }) => {
   if (!action || !Object.keys(action).length > 0) {
     return null;
   }
   const Component = ActionCards[action.slug];
-  return <Component action={action} />;
+  return <Component action={action} onSuccess={callback} />;
 };
 
-const ContractActions = ({ details, account }) => {
+const ContractActions = ({ details, account, onSuccessfulCall }) => {
   const { buyer, seller, balance, escrowState, disputeState } = details;
   const [userAlias, setUserAlias] = useState("");
   const isDispute = details.escrowState === "IN_DISPUTE";
@@ -82,7 +82,7 @@ const ContractActions = ({ details, account }) => {
       console.log("actionConfigObject", actionConfigObject);
       return (
         <GridItem xs={12} sm={12} md={6} lg={4} key={action}>
-          <ActionCard action={actionConfigObject} />
+          <ActionCard action={actionConfigObject} callback={onSuccessfulCall} />
         </GridItem>
       );
     });
