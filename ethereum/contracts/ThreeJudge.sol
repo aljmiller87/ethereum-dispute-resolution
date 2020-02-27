@@ -11,6 +11,7 @@ contract ContractFactory {
 
     function createContract(address payable _actor, bool _isCreatorTheBuyer)
         public
+        payable
     {
         ThreeJudge newContract = _isCreatorTheBuyer
             ? new ThreeJudge(msg.sender, _actor)

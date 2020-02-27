@@ -6,7 +6,7 @@ const compiledFactoryABI = compiledFactory.abi;
 
 const instance = new web3.eth.Contract(
   compiledFactoryABI,
-  "0x02Ab0D877be754997765daCc6F4Ab3066D10873d"
+  "0x76e22296238654F3C55e28850EE5f01cfb703A29"
 );
 
 export default instance;
