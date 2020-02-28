@@ -23,6 +23,7 @@ const ListItemLink = props => {
 };
 
 const ContractList = ({ contracts }) => {
+  console.log("contracts prop render", contracts);
   const classes = useStyles();
   return (
     <Card>

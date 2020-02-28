@@ -50,23 +50,23 @@ const ContractListItem = ({ contract }) => {
   const classes = useStyles();
 
   const checkIfActionRequired = () => {
-    console.log("coinbase in CLI", coinbase);
-    console.log("details.buyer", details.buyer);
+    // console.log("coinbase in CLI", coinbase);
+    // console.log("details.buyer", details.buyer);
     const isBuyer = details.buyer === coinbase;
 
     if (isDispute) {
       Object.keys(DisputeSteps[details.disputeState].action).forEach(key => {
-        console.log("key", key);
-        console.log(
-          DisputeSteps[details.disputeState].actions[key].requiredUsers
-        );
+        // console.log("key", key);
+        // console.log(
+        //   DisputeSteps[details.disputeState].actions[key].requiredUsers
+        // );
       });
     } else {
       Object.keys(EscrowSteps[details.escrowState].actions).forEach(key => {
-        console.log("key", key);
-        console.log(
-          EscrowSteps[details.escrowState].actions[key].requiredUsers
-        );
+        // console.log("key", key);
+        // console.log(
+        //   EscrowSteps[details.escrowState].actions[key].requiredUsers
+        // );
       });
     }
   };

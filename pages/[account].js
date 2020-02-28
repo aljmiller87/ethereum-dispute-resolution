@@ -32,6 +32,9 @@ import ContractList from "pages-sections/Dashboard-Sections/ContractList";
 import styles from "assets/jss/nextjs-material-kit/pages/profilePage.js";
 const useStyles = makeStyles(styles);
 
+// Context
+import { useEthereumContext } from "../context/ethereum";
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
@@ -41,7 +44,6 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
   let options = {};
   let avatars = new Avatars(sprites(options));
   let svg = avatars.create(coinbase);
-  console.log("profile page props", coinbase, contracts);
   const classes = useStyles();
   const imageClasses = classNames(
     classes.imgRaised,
@@ -50,14 +52,28 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
     classes.profileImg
   );
 
+  const {
+    account: contextAccount,
+    contracts: contextContracts
+  } = useEthereumContext();
+  console.log("contextData", contextAccount, contextContracts);
   const [isModalOpen, setModalOpen] = useState(false);
+  const [contractsList, setContractsList] = useState(contracts);
+
+  const closeModal = () => {
+    console.log("closeModal called");
+    setModalOpen(false);
+  };
 
   useEffect(() => {
     if (profileRef.current) {
       profileRef.current.innerHTML = svg;
     }
-    ethereumAccountDetect(coinbase);
-  }, []);
+  }, [contextAccount]);
+
+  useEffect(() => {
+    setContractsList(contextContracts);
+  }, [contextAccount, contextContracts]);
 
   return (
     <div>
@@ -89,13 +105,12 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
                 </div>
               </GridItem>
             </GridContainer>
-            {contracts.length}
           </div>
         </div>
       </div>
       {contracts.length > 0 && (
         <ListSection>
-          <ContractList contracts={contracts} />
+          <ContractList contracts={contractsList} />
         </ListSection>
       )}
       <Dialog
@@ -110,7 +125,10 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
         aria-labelledby="modal-slide-title"
         aria-describedby="modal-slide-description"
       >
-        <CreateContract coinbase={coinbase} />
+        <CreateContract
+          coinbase={coinbase}
+          closeModal={() => setModalOpen(false)}
+        />
       </Dialog>
       <Footer />
     </div>
@@ -143,6 +161,7 @@ ProfilePage.getInitialProps = async function(props) {
   const contracts = await factory.methods
     .getdeployedContracts()
     .call({}, { from: coinbase });
+  console.log("contracts in [account] getInitialProps", contracts);
   return { data: { coinbase, contracts } };
 };
 

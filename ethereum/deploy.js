@@ -24,7 +24,7 @@ const deploy = async () => {
     .send({ gas: "6000000", from: accounts[0] });
 
   console.log("result address", result.options.address);
-  // 0x3373B2aA12Ccd0994097a95513FD9f9a5248e1Ba
+  // 0x60b719BB8aEE374D76a9db3c638Ee42489c373Ac
 };
 
 deploy();

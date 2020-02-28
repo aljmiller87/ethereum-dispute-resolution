@@ -51,8 +51,7 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const ContractNew = ({ coinbase, ...rest }) => {
-  console.log("coinbase", coinbase);
+const ContractNew = ({ coinbase, closeModal, ...rest }) => {
   const contextData = useEthereumContext();
   const formRef = useRef();
   const [isRoleChosen, setIsRoleChosen] = useState(false);
@@ -65,16 +64,10 @@ const ContractNew = ({ coinbase, ...rest }) => {
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
 
-  console.log("isBuyer", isBuyer);
-  console.log("buyerAddress", buyerAddress);
-  console.log("sellerAddress", sellerAddress);
-  console.log("contractValue", contractValue);
-
   const setOtherValue = e => {
     if (!e.target || !e.target.value || !isRoleChosen) {
       return null;
     }
-    console.log("e.target.value", e.target.value);
     if (isBuyer) {
       setBuyerAddress(coinbase);
       setSellerAddress(e.target.value);
@@ -88,7 +81,6 @@ const ContractNew = ({ coinbase, ...rest }) => {
     if (!e.target || !e.target.value) {
       return null;
     }
-    console.log("e.target.value", e.target.value);
     setContractValue(e.target.value);
   };
 
@@ -111,36 +103,35 @@ const ContractNew = ({ coinbase, ...rest }) => {
 
   const handleClick = async e => {
     e.preventDefault();
-    console.log("coinbase", coinbase);
-    console.log("buyerAddress", buyerAddress);
-    console.log("sellerAddress", sellerAddress);
-    console.log(
-      "contract Value",
-      web3.utils.toWei(`${contractValue}`, "ether")
-    );
     setErrorMessage("");
     setLoading(!isLoading);
     try {
       const accounts = await web3.eth.getAccounts();
       await factory.methods
-        .createContract(`${buyerAddress}`, `${sellerAddress}`)
+        .createContract(
+          `${isBuyer ? sellerAddress : buyerAddress}`,
+          `${isBuyer}`
+        )
         .send({
-          from: coinbase,
+          from: buyerAddress,
           gas: "5000000",
           value: web3.utils.toWei(`${contractValue}`, "ether")
         }) // Wait for transaction to confirm
-        .on("confirmation", (confirmationNumber, receipt) => {
+        .on("confirmation", async (confirmationNumber, receipt) => {
           // If first confirmation...
-          if (confirmationNumber === 1)
+          console.log("confirmationNumber", confirmationNumber);
+          if (confirmationNumber === 1) {
             console.log("contract created", receipt);
-          contextData.loadAccountInfo();
+            await contextData.loadAccountInfo();
+            setLoading(false);
+            closeModal();
+          }
         });
     } catch (err) {
       alert(err.message);
       setErrorMessage(err.message);
       setLoading(false);
     }
-    setLoading(false);
   };
 
   const handleBackdropClick = () => null;
@@ -160,7 +151,6 @@ const ContractNew = ({ coinbase, ...rest }) => {
 
   return (
     <Card>
-      <CircularProgress />
       <form ref={formRef} className={classes.form}>
         <CardHeader color="primary" className={classes.cardHeader}>
           <h2>Contract Creation</h2>
@@ -241,7 +231,9 @@ const ContractNew = ({ coinbase, ...rest }) => {
           )}
         </CardBody>
         <CardFooter className={classes.cardFooter}>
-          <Button onClick={handleClick}>Get started</Button>
+          <Button onClick={handleClick} disabled={isLoading}>
+            Get started
+          </Button>
           <Button onClick={resetForm}>Reset</Button>
         </CardFooter>
       </form>
