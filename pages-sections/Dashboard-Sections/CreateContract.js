@@ -20,10 +20,8 @@ import CardFooter from "components/Card/CardFooter.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
 
 // @material-ui
-import Backdrop from "@material-ui/core/Backdrop";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Close from "@material-ui/icons/Close";
 import Icon from "@material-ui/core/Icon";
 import Modal from "@material-ui/core/Modal";
 import People from "@material-ui/icons/People";

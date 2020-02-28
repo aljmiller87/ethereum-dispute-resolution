@@ -201,10 +201,10 @@ contract ThreeJudge {
         require(
             currentState == State.AWAITING_PRODUCT_SENT ||
                 currentState == State.AWAITING_DELIVERY,
-            "Cannot initiate dispute due to one of the following: 1) Contract can still be aborted without dispute. 2) There is currently an open dispute. 3) Contract is either complete or cancelled"
+            "Cannot initiate dispute because contract must either be in Awaiting Product Sent or Awaiting Delivery states."
         );
         currentState = State.IN_DISPUTE;
-        currentDisputeState == DisputeState.AWAITING_JUDGE_SELECTION;
+        currentDisputeState = DisputeState.AWAITING_JUDGE_SELECTION;
     }
 
     function pickJudge(address payable _judge)
@@ -233,7 +233,7 @@ contract ThreeJudge {
             sellerJudge = _judge;
             hasVoted[sellerJudge] = false;
             hasNominated[sellerJudge] = false;
-            awaitingParty = seller;
+            awaitingParty = buyer;
         }
 
         if (buyerJudge != address(0) && sellerJudge != address(0)) {
