@@ -8,9 +8,6 @@ import sprites from "@dicebear/avatars-identicon-sprites";
 import factory from "../ethereum/factory";
 import web3 from "../ethereum/web3";
 
-// Utilities
-import ethereumAccountDetect from "../utilities/ethereumAccountDetect";
-
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
@@ -56,24 +53,26 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
     account: contextAccount,
     contracts: contextContracts
   } = useEthereumContext();
-  console.log("contextData", contextAccount, contextContracts);
+  console.log(
+    "contextData on Account Page: ",
+    contextAccount,
+    contextContracts
+  );
   const [isModalOpen, setModalOpen] = useState(false);
+  const [contextCoinbase, setContextCoinbase] = useState(coinbase);
   const [contractsList, setContractsList] = useState(contracts);
-
-  const closeModal = () => {
-    console.log("closeModal called");
-    setModalOpen(false);
-  };
 
   useEffect(() => {
     if (profileRef.current) {
-      profileRef.current.innerHTML = svg;
+      let newSvg = avatars.create(contextAccount);
+      profileRef.current.innerHTML = newSvg;
+      setContextCoinbase(contextAccount);
     }
   }, [contextAccount]);
 
   useEffect(() => {
     setContractsList(contextContracts);
-  }, [contextAccount, contextContracts]);
+  }, [contextContracts.length]);
 
   return (
     <div>
@@ -97,7 +96,7 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
                 <div className={classes.profile}>
                   <div ref={profileRef} className={imageClasses}></div>
                   <div className={classes.name}>
-                    <h3 className={classes.title}>{coinbase}</h3>
+                    <h3 className={classes.title}>{contextAccount}</h3>
                     <button onClick={() => setModalOpen(true)}>
                       Create Contract
                     </button>
@@ -108,7 +107,7 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
           </div>
         </div>
       </div>
-      {contracts.length > 0 && (
+      {(contracts.length > 0 || contractsList > 0) && (
         <ListSection>
           <ContractList contracts={contractsList} />
         </ListSection>

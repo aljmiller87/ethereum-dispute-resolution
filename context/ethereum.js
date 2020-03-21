@@ -13,6 +13,7 @@ const Provider = props => {
 
   const setEthereumEventListeners = () => {
     ethereum.on("accountsChanged", function(accounts) {
+      console.log("account changed!");
       setAccount(accounts[0].toLowerCase());
     });
     ethereum.on("networkChanged", function(accounts) {
@@ -22,13 +23,15 @@ const Provider = props => {
 
   const loadAccountInfo = async () => {
     console.log("loadAccountInfo called");
+    console.log("contracts before new fetch", contracts);
     let [coinbase] = await web3.eth.getAccounts();
-    const contracts = await factory.methods
+    const fetchedContracts = await factory.methods
       .getdeployedContracts()
       .call({}, { from: coinbase });
     coinbase = coinbase ? coinbase.toLowerCase() : null;
+    console.log("contracts AFTER new fetch", fetchedContracts);
     setAccount(coinbase);
-    setContracts(contracts);
+    setContracts(fetchedContracts);
   };
 
   useEffect(() => {
