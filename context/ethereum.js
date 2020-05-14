@@ -5,18 +5,18 @@ import "isomorphic-fetch";
 
 let Context = createContext();
 
-const Provider = props => {
+const ContextProvider = (props) => {
   const [account, setAccount] = useState([]);
   const [contracts, setContracts] = useState([]);
   const [network, setNetwork] = useState(null);
   const [isEthereumConnected, setIsEthereumConnected] = useState(false);
 
   const setEthereumEventListeners = () => {
-    ethereum.on("accountsChanged", function(accounts) {
+    ethereum.on("accountsChanged", function (accounts) {
       console.log("account changed!");
       setAccount(accounts[0].toLowerCase());
     });
-    ethereum.on("networkChanged", function(accounts) {
+    ethereum.on("networkChanged", function (accounts) {
       setNetwork(accounts);
     });
   };
@@ -50,7 +50,7 @@ const Provider = props => {
         contracts,
         network,
         isEthereumConnected,
-        loadAccountInfo
+        loadAccountInfo,
       }}
     >
       {props.children}
@@ -72,4 +72,4 @@ export const useEthereumContext = () => {
   return context;
 };
 
-export { Provider, Consumer, Context };
+export { ContextProvider, Consumer, Context };

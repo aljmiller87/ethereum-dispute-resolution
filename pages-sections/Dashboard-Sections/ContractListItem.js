@@ -11,7 +11,7 @@ import {
   EscrowState,
   EscrowSteps,
   DisputeState,
-  DisputeSteps
+  DisputeSteps,
 } from "../../components/config/contract";
 
 // Utilities
@@ -27,7 +27,7 @@ import {
   Divider,
   ListItem,
   ListItemIcon,
-  ListItemText
+  ListItemText,
 } from "@material-ui/core";
 import InboxIcon from "@material-ui/icons/Inbox";
 import AssignmentLateIcon from "@material-ui/icons/AssignmentLate";
@@ -55,14 +55,14 @@ const ContractListItem = ({ contract }) => {
     const isBuyer = details.buyer === coinbase;
 
     if (isDispute) {
-      Object.keys(DisputeSteps[details.disputeState].action).forEach(key => {
+      Object.keys(DisputeSteps[details.disputeState].action).forEach((key) => {
         // console.log("key", key);
         // console.log(
         //   DisputeSteps[details.disputeState].actions[key].requiredUsers
         // );
       });
     } else {
-      Object.keys(EscrowSteps[details.escrowState].actions).forEach(key => {
+      Object.keys(EscrowSteps[details.escrowState].actions).forEach((key) => {
         // console.log("key", key);
         // console.log(
         //   EscrowSteps[details.escrowState].actions[key].requiredUsers

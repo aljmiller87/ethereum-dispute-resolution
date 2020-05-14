@@ -20,13 +20,16 @@ import ReactDOM from "react-dom";
 import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
+import { Provider } from "react-redux";
+import { createWrapper } from "next-redux-wrapper";
+import { wrapper } from "../redux/store";
 
 import PageChange from "components/PageChange/PageChange.js";
-import { Provider } from "../context/ethereum";
+import { ContextProvider } from "../context/ethereum";
 
 import "assets/scss/nextjs-material-kit.scss?v=1.0.0";
 
-Router.events.on("routeChangeStart", url => {
+Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);
   document.body.classList.add("body-page-transition");
   ReactDOM.render(
@@ -43,7 +46,7 @@ Router.events.on("routeChangeError", () => {
   document.body.classList.remove("body-page-transition");
 });
 
-export default class MyApp extends App {
+class MyApp extends App {
   componentDidMount() {
     let comment = document.createComment(`
 
@@ -65,11 +68,9 @@ export default class MyApp extends App {
     document.insertBefore(comment, document.documentElement);
   }
   static async getInitialProps({ Component, router, ctx }) {
-    let pageProps = {};
-
-    if (Component.getInitialProps) {
-      pageProps = await Component.getInitialProps(ctx);
-    }
+    const pageProps = Component.getInitialProps
+      ? await Component.getInitialProps(ctx)
+      : {};
 
     return { pageProps };
   }
@@ -81,10 +82,13 @@ export default class MyApp extends App {
         <Head>
           <title>Arbitration Distributed</title>
         </Head>
-        <Provider>
+        <ContextProvider>
           <Component {...pageProps} />
-        </Provider>
+        </ContextProvider>
       </React.Fragment>
     );
   }
 }
+
+//withRedux wrapper that passes the store to the App Component
+export default wrapper.withRedux(MyApp);
