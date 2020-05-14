@@ -1,12 +1,27 @@
 pragma solidity ^0.5.0;
 
+
 contract ContractFactory {
     mapping(address => address[]) deployedContracts;
+    mapping(address => bool) verifiedContracts;
+
+    event ContractRoleCreated(
+        uint256 indexed date,
+        address indexed user,
+        address indexed relatedContract
+    );
+
+    function isValidContract(address _contract) private view returns (bool) {
+        return verifiedContracts[_contract] == true;
+    }
 
     function addContractToUserList(address payable _actor, address _contract)
         public
     {
-        deployedContracts[_actor].push(_contract);
+        if (isValidContract(_contract)) {
+            deployedContracts[_actor].push(_contract);
+            emit ContractRoleCreated(now, _actor, _contract);
+        }
     }
 
     function createContract(address payable _actor, bool _isCreatorTheBuyer)
@@ -16,16 +31,16 @@ contract ContractFactory {
         ThreeJudge newContract = _isCreatorTheBuyer
             ? new ThreeJudge(msg.sender, _actor)
             : new ThreeJudge(_actor, msg.sender);
+        verifiedContracts[address(newContract)] = true;
         addContractToUserList(msg.sender, address(newContract));
         addContractToUserList(_actor, address(newContract));
-        // deployedContracts[msg.sender].push(address(newContract));
-        // deployedContracts[_actor].push(address(newContract));
     }
 
     function getdeployedContracts() public view returns (address[] memory) {
         return deployedContracts[msg.sender];
     }
 }
+
 
 contract ThreeJudge {
     enum State {
@@ -48,13 +63,19 @@ contract ThreeJudge {
     State public currentState;
     DisputeState public currentDisputeState;
 
-    struct Testimony {
-        string description;
-        uint256 timestamp;
-        address witness;
-    }
+    event TestimonyEvent(
+        uint256 indexed timestamp,
+        address indexed witness,
+        string description
+    );
 
-    Testimony[] public testimony;
+    event StatusEvent(
+        uint256 indexed timestamp,
+        address triggeredByUser,
+        State currentState,
+        DisputeState currentDisputeState
+    );
+
     uint256 public deadline;
     address public awaitingParty;
     address payable public buyer;
@@ -152,6 +173,7 @@ contract ThreeJudge {
             currentDisputeState = DisputeState.COMPLETE;
             currentState = State.COMPLETE;
         }
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function abort() public buyerSellerOnly {
@@ -170,6 +192,7 @@ contract ThreeJudge {
         if (address(this).balance > 0) {
             buyer.transfer(address(this).balance);
         }
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function confirmPayment()
@@ -181,11 +204,13 @@ contract ThreeJudge {
         require(msg.value > 0, "No funds sent");
         currentState = State.AWAITING_PRODUCT_SENT;
         balance += msg.value;
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function confirmProductSent() public inState(State.AWAITING_PRODUCT_SENT) {
         require(msg.sender == seller, "Only seller is authorized.");
         currentState = State.AWAITING_DELIVERY;
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function confirmDelivery()
@@ -195,6 +220,7 @@ contract ThreeJudge {
     {
         seller.transfer(address(this).balance);
         currentState = State.COMPLETE;
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function initDispute() public buyerSellerOnly {
@@ -205,6 +231,7 @@ contract ThreeJudge {
         );
         currentState = State.IN_DISPUTE;
         currentDisputeState = DisputeState.AWAITING_JUDGE_SELECTION;
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function pickJudge(address payable _judge)
@@ -242,6 +269,7 @@ contract ThreeJudge {
         } else {
             setNewDeadline();
         }
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function nominateFinalJudge(address payable _nominatedJudge)
@@ -265,6 +293,7 @@ contract ThreeJudge {
         } else {
             awaitingParty = buyer;
         }
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function confirmFinalJudge(bool _approve)
@@ -285,6 +314,7 @@ contract ThreeJudge {
             hasNominated[sellerJudge] = false;
             nominatedJudge = address(0);
         }
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function provideTestimony(string memory _testimony)
@@ -292,28 +322,7 @@ contract ThreeJudge {
         buyerSellerOnly
         inState(State.IN_DISPUTE)
     {
-        Testimony memory newTesimony = Testimony({
-            description: _testimony,
-            timestamp: now,
-            witness: msg.sender
-        });
-        testimony.push(newTesimony);
-    }
-
-    function getTestimonyCount() public view returns (uint256) {
-        return testimony.length;
-    }
-
-    function getTestimony(uint256 index)
-        public
-        view
-        returns (string memory, uint256, address)
-    {
-        return (
-            testimony[index].description,
-            testimony[index].timestamp,
-            testimony[index].witness
-        );
+        emit TestimonyEvent(now, msg.sender, _testimony);
     }
 
     function arbtrateDispute(bool _forBuyer)
@@ -348,6 +357,7 @@ contract ThreeJudge {
             currentDisputeState = DisputeState.COMPLETE;
             currentState = State.COMPLETE;
         }
+        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
     function distributeFunds()
@@ -390,7 +400,6 @@ contract ThreeJudge {
             uint256,
             uint256,
             uint256,
-            uint256,
             address
         )
     {
@@ -405,7 +414,6 @@ contract ThreeJudge {
             finalJudge,
             votesForBuyer,
             votesForSeller,
-            testimony.length,
             deadline,
             awaitingParty
         );
