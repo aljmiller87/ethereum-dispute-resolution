@@ -17,7 +17,6 @@ export const setContracts = (contracts) => ({
 });
 
 export const asyncLoadAccountInfo = () => {
-  console.log("asyncLoadAccountInfo called");
   return async (dispatch) => {
     try {
       const [coinbase] = await web3.eth.getAccounts();
@@ -35,15 +34,3 @@ export const asyncLoadAccountInfo = () => {
     return "done";
   };
 };
-// return function (dispatch) {
-//  const fetchAccountInfo = async () => {
-
-//  }
-//   let accounts = await web3.eth.getAccounts();
-//   dispatch(setAccounts(accounts));
-// const fetchedContracts = await factory.methods
-//   .getdeployedContracts()
-//   .call({}, { from: accounts[0] });
-//   // coinbase = coinbase ? coinbase.toLowerCase() : null;
-//   dispatch(setContracts(fetchedContracts));
-// };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import Link from "next/link";
 import styled from "styled-components";
 
@@ -16,9 +17,6 @@ import {
 
 // Utilities
 import { formatEscrowStatus } from "../../utilities/contractHelpers";
-
-// Context
-import { useEthereumContext } from "../../context/ethereum";
 
 // Material Core Components
 import {
@@ -38,7 +36,7 @@ import styles from "assets/jss/nextjs-material-kit/pages/profilePage.js";
 const useStyles = makeStyles(styles);
 
 const ContractListItem = ({ contract }) => {
-  const { coinbase } = useEthereumContext();
+  const accountReducer = useSelector((state) => state.accountReducer);
   const [isLoading, setIsLoading] = useState(true);
   const [details, setDetails] = useState();
   const [isComplete, setIsComplete] = useState(false);
@@ -50,9 +48,7 @@ const ContractListItem = ({ contract }) => {
   const classes = useStyles();
 
   const checkIfActionRequired = () => {
-    // console.log("coinbase in CLI", coinbase);
-    // console.log("details.buyer", details.buyer);
-    const isBuyer = details.buyer === coinbase;
+    // const isBuyer = details.buyer === accountReducer.account;
 
     if (isDispute) {
       Object.keys(DisputeSteps[details.disputeState].action).forEach((key) => {
@@ -73,6 +69,7 @@ const ContractListItem = ({ contract }) => {
 
   const fetchDetails = async () => {
     const summary = await campaign.methods.getStatus().call();
+    console.log("summary", summary);
     const formattedSummary = formatEscrowStatus(summary);
     setDetails(formattedSummary);
     setIsLoading(false);
@@ -101,8 +98,9 @@ const ContractListItem = ({ contract }) => {
     <div>
       <div className={classes.container}>
         <ListItem button disable={isLoading}>
-          {isLoading && <CircularProgress size={14} />}
-          {!isLoading && (
+          {isLoading ? (
+            <CircularProgress size={14} />
+          ) : (
             <Link href="/contract/[contract]" as={`/contract/${contract}`}>
               <StyledLink>
                 <ListItemIcon>

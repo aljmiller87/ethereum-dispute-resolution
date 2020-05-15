@@ -12,7 +12,6 @@ import rootReducer from "../reducers/rootReducer";
 const routerMiddleware = createRouterMiddleware();
 
 const makeStore = (initialState = {}, options) => {
-  console.log("dev version of configure store");
   if (options && options.asPath) {
     initialState.router = initialRouterState(options.asPath);
   }

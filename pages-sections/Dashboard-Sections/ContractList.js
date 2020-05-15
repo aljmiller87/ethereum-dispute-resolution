@@ -11,19 +11,18 @@ import Card from "../../components/Card/Card";
 import CardBody from "../../components/Card/CardBody";
 import CardHeader from "../../components/Card/CardHeader";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
-    backgroundColor: theme.palette.background.paper
-  }
+    backgroundColor: theme.palette.background.paper,
+  },
 }));
 
-const ListItemLink = props => {
+const ListItemLink = (props) => {
   return <ListItem button component="a" {...props} />;
 };
 
 const ContractList = ({ contracts }) => {
-  console.log("contracts prop render", contracts);
   const classes = useStyles();
   return (
     <Card>
@@ -32,7 +31,7 @@ const ContractList = ({ contracts }) => {
       </CardHeader>
       <CardBody>
         <List component="nav" aria-label="main mailbox folders">
-          {contracts.map(contract => (
+          {contracts.map((contract) => (
             <ContractListItem key={contract} contract={contract} />
           ))}
         </List>

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import styled from "styled-components";
 import classNames from "classnames";
 import Avatars from "@dicebear/avatars";
@@ -6,14 +7,14 @@ import sprites from "@dicebear/avatars-identicon-sprites";
 
 // Ethereum
 import factory from "../ethereum/factory";
-import web3 from "../ethereum/web3";
+// import web3 from "../ethereum/web3";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
 
-// core components
+// kit core components
 import Header from "components/Header/Header.js";
 import Footer from "components/Footer/Footer.js";
 import GridContainer from "components/Grid/GridContainer.js";
@@ -29,15 +30,16 @@ import ContractList from "pages-sections/Dashboard-Sections/ContractList";
 import styles from "assets/jss/nextjs-material-kit/pages/profilePage.js";
 const useStyles = makeStyles(styles);
 
-// Context
-import { useEthereumContext } from "../context/ethereum";
-
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
 const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
   const profileRef = useRef();
+  const accountReducer = useSelector((state) => state.accountReducer);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+
   let options = {};
   let avatars = new Avatars(sprites(options));
   let svg = avatars.create(coinbase);
@@ -49,30 +51,24 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
     classes.profileImg
   );
 
-  const {
-    account: contextAccount,
-    contracts: contextContracts
-  } = useEthereumContext();
-  console.log(
-    "contextData on Account Page: ",
-    contextAccount,
-    contextContracts
-  );
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [contextCoinbase, setContextCoinbase] = useState(coinbase);
-  const [contractsList, setContractsList] = useState(contracts);
+  useEffect(() => {
+    if (!accountReducer || !accountReducer.account) {
+      return;
+    }
+    if (accountReducer.account.toLowerCase() === coinbase && !isUserLoggedIn) {
+      setIsUserLoggedIn(true);
+    }
+
+    if (accountReducer.account.toLowerCase() !== coinbase && isUserLoggedIn) {
+      setIsUserLoggedIn(false);
+    }
+  }, [accountReducer.account]);
 
   useEffect(() => {
     if (profileRef.current) {
-      let newSvg = avatars.create(contextAccount);
-      profileRef.current.innerHTML = newSvg;
-      setContextCoinbase(contextAccount);
+      profileRef.current.innerHTML = svg;
     }
-  }, [contextAccount]);
-
-  useEffect(() => {
-    setContractsList(contextContracts);
-  }, [contextContracts.length]);
+  }, [profileRef.current]);
 
   return (
     <div>
@@ -83,7 +79,7 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
         fixed
         changeColorOnScroll={{
           height: 200,
-          color: "white"
+          color: "white",
         }}
         {...rest}
       />
@@ -96,10 +92,12 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
                 <div className={classes.profile}>
                   <div ref={profileRef} className={imageClasses}></div>
                   <div className={classes.name}>
-                    <h3 className={classes.title}>{contextAccount}</h3>
-                    <button onClick={() => setModalOpen(true)}>
-                      Create Contract
-                    </button>
+                    <h3 className={classes.title}>{coinbase}</h3>
+                    {isUserLoggedIn && (
+                      <button onClick={() => setModalOpen(true)}>
+                        Create Contract
+                      </button>
+                    )}
                   </div>
                 </div>
               </GridItem>
@@ -107,15 +105,17 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
           </div>
         </div>
       </div>
-      {(contracts.length > 0 || contractsList > 0) && (
+      {contracts.length > 0 && (
         <ListSection>
-          <ContractList contracts={contractsList} />
+          <ContractList
+            contracts={isUserLoggedIn ? accountReducer.contracts : contracts}
+          />
         </ListSection>
       )}
       <Dialog
         classes={{
           root: classes.center,
-          paper: classes.modal
+          paper: classes.modal,
         }}
         open={isModalOpen}
         TransitionComponent={Transition}
@@ -124,10 +124,12 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
         aria-labelledby="modal-slide-title"
         aria-describedby="modal-slide-description"
       >
-        <CreateContract
-          coinbase={coinbase}
-          closeModal={() => setModalOpen(false)}
-        />
+        {isUserLoggedIn && accountReducer.account && (
+          <CreateContract
+            coinbase={accountReducer.account}
+            closeModal={() => setModalOpen(false)}
+          />
+        )}
       </Dialog>
       <Footer />
     </div>
@@ -155,7 +157,7 @@ const ListSection = styled.section`
   }
 `;
 
-ProfilePage.getInitialProps = async function(props) {
+ProfilePage.getInitialProps = async function (props) {
   const coinbase = props.query.account;
   const contracts = await factory.methods
     .getdeployedContracts()

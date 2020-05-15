@@ -6,12 +6,14 @@ import {
 } from "connected-next-router";
 import networkReducer from "./networkReducer";
 import accountReducer from "./accountReducer";
-import contractReducer from "./contractReducer";
+import contractDetailReducer from "./contractDetailReducer";
+import apiCallsInProgress from "./apiStatusReducer";
 
 const rootReducer = combineReducers({
   accountReducer,
   networkReducer,
-  contractReducer,
+  contractDetailReducer,
+  apiCallsInProgress,
   router: routerReducer,
 });
 

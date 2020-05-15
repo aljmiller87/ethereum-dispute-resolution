@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 // Ethereum
 import web3 from "../../ethereum/web3";
 import ThreeJudge from "../../ethereum/threejudge";
@@ -31,18 +32,16 @@ import ContractDetails from "pages-sections/Contract-Sections/ContractDetails";
 import StatusTracker from "pages-sections/Contract-Sections/StatusTracker";
 import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 
-// Context
-import { useEthereumContext } from "../../context/ethereum";
-
 // Utilities
 import { formatEscrowStatus } from "../../utilities/contractHelpers";
 
 const useStyles = makeStyles(styles);
 
-const Contract = props => {
+const Contract = (props) => {
   const { contractAddress, details, contract, ...rest } = props;
   const [contractDetails, setContractDetails] = useState(details);
-  const { network, account } = useEthereumContext();
+  const { network } = useSelector((state) => state.networkReducer);
+  const { account } = useSelector((state) => state.accountReducer);
   const networkURL =
     network === "1"
       ? "https://etherscan.io/address/"
@@ -65,7 +64,7 @@ const Contract = props => {
         color="transparent"
         changeColorOnScroll={{
           height: 100,
-          color: "white"
+          color: "white",
         }}
       />
       <Parallax filter responsive image={require("assets/img/landing-bg.jpg")}>
@@ -96,6 +95,7 @@ const Contract = props => {
           <ContractActions
             details={contractDetails}
             account={account}
+            contractAddress={contractAddress}
             onSuccessfulCall={fetchLatestContractDetails}
           />
           <ProductSection />
@@ -107,7 +107,7 @@ const Contract = props => {
     </div>
   );
 };
-Contract.getInitialProps = async props => {
+Contract.getInitialProps = async (props) => {
   const address = props.query.contract;
   const contract = ThreeJudge(address);
   const summary = await contract.methods.getStatus().call();

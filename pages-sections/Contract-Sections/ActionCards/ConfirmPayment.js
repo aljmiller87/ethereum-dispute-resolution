@@ -17,7 +17,7 @@ import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader";
 import CustomInput from "components/CustomInput/CustomInput.js";
 
-const ConfirmPayment = ({ action, onSuccess }) => {
+const ConfirmPayment = ({ action, onSuccess, contractAddress }) => {
   const etherInputRef = useRef();
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,7 @@ const ConfirmPayment = ({ action, onSuccess }) => {
     return parseFloat(etherValue);
   };
 
-  const toWei = value => {
+  const toWei = (value) => {
     return web3.utils.toWei(value, "ether");
   };
 
@@ -46,11 +46,13 @@ const ConfirmPayment = ({ action, onSuccess }) => {
       try {
         const wei = web3.utils.toWei(`${contractValue}`, "ether");
         const [coinbase] = await web3.eth.getAccounts();
-        await threeJudge.methods
+        console.log("contractAddress", contractAddress);
+        const contractInstance = threeJudge(contractAddress);
+        await contractInstance.methods
           .confirmPayment()
           .send({
             value: `${wei}`,
-            from: coinbase
+            from: coinbase,
           }) // Wait for transaction to confirm
           .on("confirmation", (confirmationNumber, receipt) => {
             // If first confirmation...
@@ -82,7 +84,7 @@ const ConfirmPayment = ({ action, onSuccess }) => {
               labelText="Contract Value (in Ether)"
               id="ether"
               formControlProps={{
-                fullWidth: true
+                fullWidth: true,
               }}
               inputProps={{
                 required: true,
@@ -92,7 +94,7 @@ const ConfirmPayment = ({ action, onSuccess }) => {
                     <Icon className="fab fa-ethereum" />
                   </InputAdornment>
                 ),
-                autoComplete: "off"
+                autoComplete: "off",
               }}
             />
           </CardBody>

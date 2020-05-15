@@ -33,23 +33,23 @@ import {
   EscrowState,
   EscrowSteps,
   DisputeState,
-  DisputeSteps
+  DisputeSteps,
 } from "components/config/contract.js";
 
 const ActionCards = {
   abort: Abort,
-  confirmPayment: ConfirmPayment
+  confirmPayment: ConfirmPayment,
 };
 
-const ActionCard = ({ action, callback }) => {
+const ActionCard = ({ action, callback, ...rest }) => {
   if (!action || !Object.keys(action).length > 0) {
     return null;
   }
   const Component = ActionCards[action.slug];
-  return <Component action={action} onSuccess={callback} />;
+  return <Component action={action} onSuccess={callback} {...rest} />;
 };
 
-const ContractActions = ({ details, account, onSuccessfulCall }) => {
+const ContractActions = ({ details, account, onSuccessfulCall, ...rest }) => {
   const { buyer, seller, balance, escrowState, disputeState } = details;
   const [userAlias, setUserAlias] = useState("");
   const isDispute = details.escrowState === "IN_DISPUTE";
@@ -66,23 +66,27 @@ const ContractActions = ({ details, account, onSuccessfulCall }) => {
   };
 
   const findStatusIndex = (array, status) => {
-    const index = array.findIndex(state => state === status);
+    const index = array.findIndex((state) => state === status);
     return index >= 0 ? true : false;
   };
 
   const renderAvailableActions = () => {
     const AvailableActions = Object.keys(StepsConfig[CurrentStep].actions);
-    const userActions = AvailableActions.filter(action => {
+    const userActions = AvailableActions.filter((action) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
       return findStatusIndex(actionConfigObject.requiredUsers, userAlias);
     });
     console.log("userActions", userActions);
-    return userActions.map(action => {
+    return userActions.map((action) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
       console.log("actionConfigObject", actionConfigObject);
       return (
         <GridItem xs={12} sm={12} md={6} lg={4} key={action}>
-          <ActionCard action={actionConfigObject} callback={onSuccessfulCall} />
+          <ActionCard
+            action={actionConfigObject}
+            callback={onSuccessfulCall}
+            {...rest}
+          />
         </GridItem>
       );
     });

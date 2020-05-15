@@ -11,12 +11,9 @@ const EthereumConnectionDetect = (props) => {
   const setEthereumEventListeners = () => {
     setIsEventListenerSet(true);
     ethereum.on("accountsChanged", function (accounts) {
-      console.log("account changed!", accounts);
       dispatch(accountActions.asyncLoadAccountInfo());
     });
     ethereum.on("networkChanged", function (accounts) {
-      console.log("network changed to: ", ethereum.networkVersion);
-      console.log("accounts also changed!", accounts);
       dispatch(networkActions.setNetwork(ethereum.networkVersion));
       dispatch(accountActions.asyncLoadAccountInfo());
     });

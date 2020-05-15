@@ -1,10 +1,6 @@
 import { HYDRATE } from "next-redux-wrapper";
 
-const initialState = {
-  contract: {},
-};
-
-const contractReducer = (state = initialState, action) => {
+const contractDetailReducer = (state = {}, action) => {
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -14,4 +10,4 @@ const contractReducer = (state = initialState, action) => {
   }
 };
 
-export default contractReducer;
+export default contractDetailReducer;

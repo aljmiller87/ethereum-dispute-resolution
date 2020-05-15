@@ -1,6 +1,7 @@
 /*eslint-disable*/
 import React from "react";
 import Link from "next/link";
+import { useSelector } from "react-redux";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -19,13 +20,10 @@ import Button from "components/CustomButtons/Button.js";
 
 import styles from "assets/jss/nextjs-material-kit/components/headerLinksStyle.js";
 
-// Context
-import { useEthereumContext } from "../../context/ethereum";
-
 const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
-  const contextData = useEthereumContext();
+  const accountReducer = useSelector((state) => state.accountReducer);
   const classes = useStyles();
   return (
     <List className={classes.list}>
@@ -36,7 +34,7 @@ export default function HeaderLinks(props) {
           buttonText="Components"
           buttonProps={{
             className: classes.navLink,
-            color: "transparent"
+            color: "transparent",
           }}
           buttonIcon={Apps}
           dropdownList={[
@@ -49,7 +47,7 @@ export default function HeaderLinks(props) {
               className={classes.dropdownLink}
             >
               Documentation
-            </a>
+            </a>,
           ]}
         />
       </ListItem>
@@ -70,9 +68,9 @@ export default function HeaderLinks(props) {
           </Button>
         </Tooltip>
       </ListItem>
-      {contextData.account && (
+      {accountReducer.account && (
         <ListItem className={classes.listItem}>
-          <Link href="/[account]" as={`/${contextData.account}`}>
+          <Link href="/[account]" as={`/${accountReducer.account}`}>
             <a>
               <Button
                 color="transparent"

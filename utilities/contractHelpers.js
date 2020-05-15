@@ -3,10 +3,10 @@ import {
   EscrowState,
   EscrowSteps,
   DisputeState,
-  DisputeSteps
+  DisputeSteps,
 } from "../components/config/contract";
 
-export const formatEscrowStatus = summary => {
+export const formatEscrowStatus = (summary) => {
   if (!summary || !Object.keys(summary.length > 0)) {
     return { error: "Error fetching data" };
   }
@@ -16,8 +16,16 @@ export const formatEscrowStatus = summary => {
     disputeState: DisputeState[Number(summary["1"])],
     buyer: summary["2"].toLowerCase(),
     seller: summary["3"].toLowerCase(),
-    balance: summary["4"]
+    balance: summary["4"],
   };
 
   return details;
+};
+
+export const getEscrowStatus = (state) => {
+  if (!state) {
+    return null;
+  }
+  let stateAsInt = typeof state === "string" ? Number(state) : state;
+  const escrowState = EscrowState[stateAsInt];
 };

@@ -1,17 +1,23 @@
 import React, { useState, useRef } from "react";
+import { useDispatch } from "react-redux";
 
-// Context
-import { useEthereumContext } from "../../context/ethereum";
+// Actions
+import * as accountActions from "../../redux/actions/accountActions";
 
 // Material components
 import InputLabel from "@material-ui/core/InputLabel";
 import FormHelperText from "@material-ui/core/FormHelperText";
 import FormControl from "@material-ui/core/FormControl";
 import NativeSelect from "@material-ui/core/NativeSelect";
-
-// core components
 import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
+import CircularProgress from "@material-ui/core/CircularProgress";
+import InputAdornment from "@material-ui/core/InputAdornment";
+import Icon from "@material-ui/core/Icon";
+import Modal from "@material-ui/core/Modal";
+import People from "@material-ui/icons/People";
+
+// Kit core components
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
@@ -19,25 +25,18 @@ import CardFooter from "components/Card/CardFooter.js";
 
 import CustomInput from "components/CustomInput/CustomInput.js";
 
-// @material-ui
-import CircularProgress from "@material-ui/core/CircularProgress";
-import InputAdornment from "@material-ui/core/InputAdornment";
-import Icon from "@material-ui/core/Icon";
-import Modal from "@material-ui/core/Modal";
-import People from "@material-ui/icons/People";
-
 // Ethereum
 import factory from "../../ethereum/factory";
 import web3 from "../../ethereum/web3";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   margin: {
-    margin: theme.spacing(1)
+    margin: theme.spacing(1),
   },
   modal: {
     alignItems: "center",
     display: "flex",
-    justifyContent: "center"
+    justifyContent: "center",
   },
   formControl: {
     margin: "1rem 0",
@@ -45,14 +44,14 @@ const useStyles = makeStyles(theme => ({
     "& select": {
       "&:disabled": {
         cursor: "not-allowed",
-        pointerEvents: "all"
-      }
-    }
-  }
+        pointerEvents: "all",
+      },
+    },
+  },
 }));
 
 const ContractNew = ({ coinbase, closeModal, ...rest }) => {
-  const contextData = useEthereumContext();
+  const dispatch = useDispatch();
   const formRef = useRef();
   const [isRoleChosen, setIsRoleChosen] = useState(false);
   const [isBuyer, setIsBuyer] = useState();
@@ -64,7 +63,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
 
-  const setOtherValue = e => {
+  const setOtherValue = (e) => {
     if (!e.target || !e.target.value || !isRoleChosen) {
       return null;
     }
@@ -77,7 +76,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
     }
   };
 
-  const setEtherValue = e => {
+  const setEtherValue = (e) => {
     if (!e.target || !e.target.value) {
       return null;
     }
@@ -91,7 +90,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
     }
   };
 
-  const handleBuyerSellerSelect = event => {
+  const handleBuyerSellerSelect = (event) => {
     const target = event.target;
     if (target.value === "none") {
       setIsRoleChosen(false);
@@ -101,12 +100,11 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
     setIsRoleChosen(true);
   };
 
-  const handleClick = async e => {
+  const handleClick = async (e) => {
     e.preventDefault();
     setErrorMessage("");
     setLoading(!isLoading);
     try {
-      const accounts = await web3.eth.getAccounts();
       await factory.methods
         .createContract(
           `${isBuyer ? sellerAddress : buyerAddress}`,
@@ -115,14 +113,14 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
         .send({
           from: buyerAddress,
           gas: "5000000",
-          value: web3.utils.toWei(`${contractValue}`, "ether")
+          value: web3.utils.toWei(`${contractValue}`, "ether"),
         }) // Wait for transaction to confirm
         .on("confirmation", async (confirmationNumber, receipt) => {
           // If first confirmation...
           console.log("confirmationNumber", confirmationNumber);
           if (confirmationNumber === 1) {
             console.log("contract created", receipt);
-            await contextData.loadAccountInfo();
+            dispatch(accountActions.asyncLoadAccountInfo());
             setLoading(false);
             closeModal();
           }
@@ -171,7 +169,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
               onChange={handleBuyerSellerSelect}
               inputProps={{
                 name: "Buyer/Seller",
-                id: "buyer-seller-placeholder"
+                id: "buyer-seller-placeholder",
               }}
             >
               <option value="none">Choose Role</option>
@@ -192,7 +190,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
               id="address"
               value={isBuyer ? sellerAddress : buyerAddress}
               formControlProps={{
-                fullWidth: true
+                fullWidth: true,
               }}
               inputProps={{
                 onChange: setOtherValue,
@@ -204,7 +202,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
                   <InputAdornment position="end">
                     <People className={classes.inputIconsColor} />
                   </InputAdornment>
-                )
+                ),
               }}
             />
           )}
@@ -214,7 +212,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
               id="ether"
               value={contractValue}
               formControlProps={{
-                fullWidth: true
+                fullWidth: true,
               }}
               inputProps={{
                 onChange: setEtherValue,
@@ -225,7 +223,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
                     <Icon className="fab fa-ethereum" />
                   </InputAdornment>
                 ),
-                autoComplete: "off"
+                autoComplete: "off",
               }}
             />
           )}

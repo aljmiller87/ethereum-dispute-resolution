@@ -47,9 +47,9 @@ contract ThreeJudge {
         AWAITING_PAYMENT,
         AWAITING_PRODUCT_SENT,
         AWAITING_DELIVERY,
-        COMPLETE,
         IN_DISPUTE,
-        CANCELLED
+        CANCELLED,
+        COMPLETE
     }
     enum DisputeState {
         NO_DISPUTE,
