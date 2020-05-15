@@ -22,9 +22,11 @@ import Head from "next/head";
 import Router from "next/router";
 import { Provider } from "react-redux";
 import { createWrapper } from "next-redux-wrapper";
+import { ConnectedRouter } from "connected-next-router";
 import wrapper from "../redux/store/configureStore";
 
 import PageChange from "components/PageChange/PageChange.js";
+import EthereumConnectionDetect from "../components/EthereumConnectionDetect";
 import { ContextProvider } from "../context/ethereum";
 
 import "assets/scss/nextjs-material-kit.scss?v=1.0.0";
@@ -82,9 +84,13 @@ class MyApp extends App {
         <Head>
           <title>Arbitration Distributed</title>
         </Head>
-        <ContextProvider>
-          <Component {...pageProps} />
-        </ContextProvider>
+        <ConnectedRouter>
+          <EthereumConnectionDetect>
+            <ContextProvider>
+              <Component {...pageProps} />
+            </ContextProvider>
+          </EthereumConnectionDetect>
+        </ConnectedRouter>
       </React.Fragment>
     );
   }

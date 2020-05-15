@@ -1,20 +1,22 @@
-import { createStore, applyMiddleware, compose } from "redux";
-// import thunk from "redux-thunk";
-// import { routerMiddleware } from "connected-react-router";
-// import { createBrowserHistory } from "history";
+import { createStore, applyMiddleware } from "redux";
+import thunk from "redux-thunk";
+import {
+  createRouterMiddleware,
+  initialRouterState,
+} from "connected-next-router";
 import { createWrapper } from "next-redux-wrapper";
 import rootReducer from "../reducers/rootReducer";
 
-// export const history = createBrowserHistory();
+const routerMiddleware = createRouterMiddleware();
 
-const makeStore = (context) => {
-  console.log("dev version of configure store");
+const makeStore = (initialState = {}, options) => {
+  if (options && options.asPath) {
+    initialState.router = initialRouterState(options.asPath);
+  }
   const store = createStore(
     rootReducer,
-    applyMiddleware()
-    // thunk
-    // routerMiddleware(history),
-    // reduxImmutableStateInvariant()
+    initialState,
+    applyMiddleware(routerMiddleware, thunk)
   );
   return store;
 };

@@ -14,10 +14,10 @@ const ContextProvider = (props) => {
   const setEthereumEventListeners = () => {
     ethereum.on("accountsChanged", function (accounts) {
       console.log("account changed!");
-      setAccount(accounts[0].toLowerCase());
+      accounts ? setAccount(accounts[0].toLowerCase()) : setAccounts([]);
     });
     ethereum.on("networkChanged", function (accounts) {
-      setNetwork(accounts);
+      accounts ? setAccount(accounts[0].toLowerCase()) : setAccounts([]);
     });
   };
 
