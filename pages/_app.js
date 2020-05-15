@@ -22,7 +22,7 @@ import Head from "next/head";
 import Router from "next/router";
 import { Provider } from "react-redux";
 import { createWrapper } from "next-redux-wrapper";
-import { wrapper } from "../redux/store";
+import wrapper from "../redux/store/configureStore";
 
 import PageChange from "components/PageChange/PageChange.js";
 import { ContextProvider } from "../context/ethereum";

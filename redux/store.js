@@ -34,4 +34,6 @@ const makeStore = (context) => {
   return store;
 };
 
-export const wrapper = createWrapper(makeStore, { debug: true });
+const wrapper = createWrapper(makeStore, { debug: true });
+
+export default wrapper;
