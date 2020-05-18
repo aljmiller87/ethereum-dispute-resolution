@@ -1,6 +1,6 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // Actions
 import * as ContractActions from "../../../redux/actions/blockchainStatusActions";
@@ -23,10 +23,6 @@ import CustomInput from "components/CustomInput/CustomInput.js";
 
 const ConfirmPayment = ({ action, contractAddress }) => {
   const dispatch = useDispatch();
-  const currentBlockChainWriteCalls = useSelector(
-    (state) => state.blockchainCallsReducer.blockchainWriteCalls
-  );
-
   const etherInputRef = useRef();
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,12 +48,7 @@ const ConfirmPayment = ({ action, contractAddress }) => {
     const contractValue = isFormValidated();
     if (contractValue) {
       try {
-        dispatch(
-          ContractActions.beginBlockchainWriteCall(
-            currentBlockChainWriteCalls,
-            contractAddress
-          )
-        );
+        dispatch(ContractActions.beginBlockchainWriteCall(contractAddress));
         const wei = web3.utils.toWei(`${contractValue}`, "ether");
         const [coinbase] = await web3.eth.getAccounts();
         const contractInstance = threeJudge(contractAddress);
@@ -78,12 +69,7 @@ const ConfirmPayment = ({ action, contractAddress }) => {
         setErrorMessage(err.message);
       } finally {
         console.log("finally");
-        dispatch(
-          ContractActions.endBlockchainWriteCall(
-            currentBlockChainWriteCalls,
-            contractAddress
-          )
-        );
+        dispatch(ContractActions.endBlockchainWriteCall(contractAddress));
       }
     }
   };

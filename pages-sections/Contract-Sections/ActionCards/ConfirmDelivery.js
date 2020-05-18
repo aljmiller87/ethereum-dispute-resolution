@@ -24,12 +24,7 @@ const ConfirmDelivery = ({ action, contractAddress }) => {
 
   const handleConfirmDelivery = async () => {
     try {
-      dispatch(
-        ContractActions.beginBlockchainWriteCall(
-          currentBlockChainWriteCalls,
-          contractAddress
-        )
-      );
+      dispatch(ContractActions.beginBlockchainWriteCall(contractAddress));
       const [coinbase] = await web3.eth.getAccounts();
       const contractInstance = threeJudge(contractAddress);
       await contractInstance.methods
@@ -44,18 +39,6 @@ const ConfirmDelivery = ({ action, contractAddress }) => {
             const index = currentBlockChainWriteCalls.findIndex(
               (address) => address === contract
             );
-            console.log(
-              "index in confirm product sent",
-              index,
-              currentBlockChainWriteCalls
-            );
-
-            dispatch(
-              ContractActions.endBlockchainWriteCall(
-                currentBlockChainWriteCalls,
-                contractAddress
-              )
-            );
           }
         });
     } catch (err) {
@@ -63,18 +46,8 @@ const ConfirmDelivery = ({ action, contractAddress }) => {
       const index = currentBlockChainWriteCalls.findIndex(
         (address) => address === contract
       );
-      console.log(
-        "index in confirm product sent error",
-        index,
-        currentBlockChainWriteCalls
-      );
-
-      dispatch(
-        ContractActions.endBlockchainWriteCall(
-          currentBlockChainWriteCalls,
-          contractAddress
-        )
-      );
+    } finally {
+      dispatch(ContractActions.endBlockchainWriteCall(contractAddress));
     }
   };
   return (

@@ -8,25 +8,19 @@ export function endBlockchainReadCall() {
   return { type: "END_BLOCKCHAIN_READ_CALL" };
 }
 
-export function beginBlockchainWriteCall(currentCalls, contract) {
-  console.log(currentCalls, contract);
+export function beginBlockchainWriteCall(contract) {
   if (!contract) {
     return { type: "beginBlockchainWriteCall_Failed" };
   }
 
-  const updatedCallList = [...currentCalls, contract];
-
-  return { type: "UPDATE_BLOCKCHAIN_WRITE_CALL", payload: updatedCallList };
+  return { type: "BEGIN_BLOCKCHAIN_WRITE_CALL", payload: contract };
 }
 
-export function endBlockchainWriteCall(currentCalls, contract) {
-  const updatedCallList = [...currentCalls];
-  const indexFound = contractHasActiveBlockchainWrite(
-    updatedCallList,
-    contract
-  );
-  updatedCallList.splice(indexFound, 1);
-  return { type: "UPDATE_BLOCKCHAIN_WRITE_CALL", payload: updatedCallList };
+export function endBlockchainWriteCall(contract) {
+  if (!contract) {
+    return { type: "endBlockchainWriteCall_Failed" };
+  }
+  return { type: "END_BLOCKCHAIN_WRITE_CALL", payload: contract };
 }
 
 export function blockchainCallError() {

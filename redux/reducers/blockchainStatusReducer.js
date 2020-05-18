@@ -21,11 +21,22 @@ const blockchainStatusReducer = (state = initialState, action) => {
         blockchainReadCalls: state.blockchainReadCalls - 1,
       };
     }
-    case "UPDATE_BLOCKCHAIN_WRITE_CALL": {
+    case "BEGIN_BLOCKCHAIN_WRITE_CALL": {
       console.log("BEGIN_BLOCKCHAIN_WRITE_CALL in reducer", action.payload);
       return {
         ...state,
-        blockchainWriteCalls: action.payload,
+        blockchainWriteCalls: [...state.blockchainWriteCalls, action.payload],
+      };
+    }
+    case "END_BLOCKCHAIN_WRITE_CALL": {
+      const updatedCallList = [...state.blockchainWriteCalls];
+      const foundIndex = updatedCallList.findIndex(
+        (address) => address === action.payload
+      );
+      updatedCallList.splice(foundIndex, 1);
+      return {
+        ...state,
+        blockchainWriteCalls: updatedCallList,
       };
     }
     default:

@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 // Actions
 import * as ContractActions from "../../../redux/actions/blockchainStatusActions";
@@ -17,19 +17,10 @@ import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader";
 
 const ConfirmProductSent = ({ action, contractAddress }) => {
-  console.log("ContractActions", ContractActions);
   const dispatch = useDispatch();
-  const currentBlockChainWriteCalls = useSelector(
-    (state) => state.blockchainCallsReducer.blockchainWriteCalls
-  );
   const handleConfirmProductSent = async () => {
     try {
-      dispatch(
-        ContractActions.beginBlockchainWriteCall(
-          currentBlockChainWriteCalls,
-          contractAddress
-        )
-      );
+      dispatch(ContractActions.beginBlockchainWriteCall(contractAddress));
       const [coinbase] = await web3.eth.getAccounts();
       const contractInstance = threeJudge(contractAddress);
       await contractInstance.methods
@@ -47,12 +38,7 @@ const ConfirmProductSent = ({ action, contractAddress }) => {
       console.log("err", err);
     } finally {
       console.log("finally");
-      dispatch(
-        ContractActions.endBlockchainWriteCall(
-          currentBlockChainWriteCalls,
-          contractAddress
-        )
-      );
+      dispatch(ContractActions.endBlockchainWriteCall(contractAddress));
     }
   };
   return (
