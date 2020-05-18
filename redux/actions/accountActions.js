@@ -23,7 +23,6 @@ export const asyncLoadAccountInfo = () => {
       const fetchedContracts = await factory.methods
         .getdeployedContracts()
         .call({}, { from: coinbase });
-
       dispatch(setAccount(coinbase));
       dispatch(setContracts(fetchedContracts));
     } catch (error) {

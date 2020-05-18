@@ -55,11 +55,11 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
     if (!accountReducer || !accountReducer.account) {
       return;
     }
-    if (accountReducer.account.toLowerCase() === coinbase && !isUserLoggedIn) {
+    if (accountReducer.account === coinbase && !isUserLoggedIn) {
       setIsUserLoggedIn(true);
     }
 
-    if (accountReducer.account.toLowerCase() !== coinbase && isUserLoggedIn) {
+    if (accountReducer.account !== coinbase && isUserLoggedIn) {
       setIsUserLoggedIn(false);
     }
   }, [accountReducer.account]);
@@ -162,7 +162,6 @@ ProfilePage.getInitialProps = async function (props) {
   const contracts = await factory.methods
     .getdeployedContracts()
     .call({}, { from: coinbase });
-  console.log("contracts in [account] getInitialProps", contracts);
   return { data: { coinbase, contracts } };
 };
 

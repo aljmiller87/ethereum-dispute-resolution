@@ -20,12 +20,9 @@ import Button from "components/CustomButtons/Button.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
 
-import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
+import Loader from "../../components/Loading";
 
-// Sections for this page
-import ProductSection from "pages-sections/LandingPage-Sections/ProductSection.js";
-import TeamSection from "pages-sections/LandingPage-Sections/TeamSection.js";
-import WorkSection from "pages-sections/LandingPage-Sections/WorkSection.js";
+import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
 
 // Sections
 import ContractDetails from "pages-sections/Contract-Sections/ContractDetails";
@@ -39,21 +36,16 @@ const useStyles = makeStyles(styles);
 
 const Contract = (props) => {
   const { contractAddress, details, contract, ...rest } = props;
-  const [contractDetails, setContractDetails] = useState(details);
   const { network } = useSelector((state) => state.networkReducer);
   const { account } = useSelector((state) => state.accountReducer);
+  const currentBlockChainWriteCalls = useSelector(
+    (state) => state.blockchainCallsReducer.blockchainWriteCalls
+  );
   const networkURL =
     network === "1"
       ? "https://etherscan.io/address/"
       : "https://rinkeby.etherscan.io/address/";
   const classes = useStyles();
-
-  const fetchLatestContractDetails = async () => {
-    console.log("refetching data");
-    const summary = await contract.methods.getStatus().call();
-    const formattedSummary = formatEscrowStatus(summary);
-    setContractDetails(formattedSummary);
-  };
 
   return (
     <div>
@@ -90,20 +82,19 @@ const Contract = (props) => {
       </Parallax>
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div className={classes.container}>
-          <ContractDetails details={contractDetails} account={account} />
-          <StatusTracker details={contractDetails} />
+          <ContractDetails details={details} account={account} />
+          <StatusTracker details={details} />
           <ContractActions
-            details={contractDetails}
+            details={details}
             account={account}
             contractAddress={contractAddress}
-            onSuccessfulCall={fetchLatestContractDetails}
           />
-          <ProductSection />
-          <TeamSection />
-          <WorkSection />
         </div>
       </div>
       <Footer />
+      {currentBlockChainWriteCalls.findIndex(
+        (address) => address === contractAddress
+      ) >= 0 && <Loader />}
     </div>
   );
 };

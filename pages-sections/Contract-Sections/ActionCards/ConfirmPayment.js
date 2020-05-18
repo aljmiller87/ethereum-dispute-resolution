@@ -1,5 +1,9 @@
 import React, { useState, useRef } from "react";
 import styled from "styled-components";
+import { useDispatch, useSelector } from "react-redux";
+
+// Actions
+import * as ContractActions from "../../../redux/actions/blockchainStatusActions";
 
 // Ethereum
 import threeJudge from "../../../ethereum/threejudge";
@@ -17,7 +21,12 @@ import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader";
 import CustomInput from "components/CustomInput/CustomInput.js";
 
-const ConfirmPayment = ({ action, onSuccess, contractAddress }) => {
+const ConfirmPayment = ({ action, contractAddress }) => {
+  const dispatch = useDispatch();
+  const currentBlockChainWriteCalls = useSelector(
+    (state) => state.blockchainCallsReducer.blockchainWriteCalls
+  );
+
   const etherInputRef = useRef();
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -42,11 +51,15 @@ const ConfirmPayment = ({ action, onSuccess, contractAddress }) => {
   const handleSubmitForm = async () => {
     const contractValue = isFormValidated();
     if (contractValue) {
-      console.log("here");
       try {
+        dispatch(
+          ContractActions.beginBlockchainWriteCall(
+            currentBlockChainWriteCalls,
+            contractAddress
+          )
+        );
         const wei = web3.utils.toWei(`${contractValue}`, "ether");
         const [coinbase] = await web3.eth.getAccounts();
-        console.log("contractAddress", contractAddress);
         const contractInstance = threeJudge(contractAddress);
         await contractInstance.methods
           .confirmPayment()
@@ -58,14 +71,20 @@ const ConfirmPayment = ({ action, onSuccess, contractAddress }) => {
             // If first confirmation...
             if (confirmationNumber === 1) {
               console.log("payment confirmed", receipt);
-              onSuccess();
             }
           });
       } catch (err) {
         console.log("err", err);
         setErrorMessage(err.message);
+      } finally {
+        console.log("finally");
+        dispatch(
+          ContractActions.endBlockchainWriteCall(
+            currentBlockChainWriteCalls,
+            contractAddress
+          )
+        );
       }
-      setLoading(!loading);
     }
   };
   return (

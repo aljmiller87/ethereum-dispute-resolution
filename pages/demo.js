@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
 
 // Ethereum
-import factory from '../ethereum/factory';
-import web3 from '../ethereum/web3';
-
-// Utilities
-import ethereumAccountDetect from '../utilities/ethereumAccountDetect';
+import factory from "../ethereum/factory";
+import web3 from "../ethereum/web3";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -16,17 +13,17 @@ import HeaderLinks from "components/Header/HeaderLinks.js";
 import Footer from "components/Footer/Footer.js";
 
 // Section
-import CreateDemoContract from 'pages-sections/LandingPage-Sections/CreateDemoSection';
-import ActiveDemoContract from 'pages-sections/LandingPage-Sections/ActiveDemoSection';
+import CreateDemoContract from "pages-sections/LandingPage-Sections/CreateDemoSection";
+import ActiveDemoContract from "pages-sections/LandingPage-Sections/ActiveDemoSection";
 
 // Styles
-import styles from 'assets/jss/sections/CreateDemoSection';
+import styles from "assets/jss/sections/CreateDemoSection";
 
 import image from "assets/img/bg7.jpg";
 
 const useStyles = makeStyles(styles);
 
-const demoSteps = ['CREATE_CONTRACT', 'ACTIVE_CONTRACT', 'COMPLETE_CONTRACT'];
+const demoSteps = ["CREATE_CONTRACT", "ACTIVE_CONTRACT", "COMPLETE_CONTRACT"];
 
 const Demo = (props) => {
   const [demoStep, setDemoStep] = useState(-1);
@@ -35,28 +32,32 @@ const Demo = (props) => {
   const { ...rest } = props;
 
   const nextDemoStep = () => {
-    console.log('nextDemoStep called')
-    setDemoStep(prev => prev + 1);
-  }
+    console.log("nextDemoStep called");
+    setDemoStep((prev) => prev + 1);
+  };
 
   const createContract = (value) => {
     setContractValue(value);
     nextDemoStep();
-  }
+  };
 
   useEffect(() => {
-    ethereumAccountDetect(props.data.coinbase);
+    // ethereumAccountDetect(props.data.coinbase);
     setTimeout(() => {
       nextDemoStep();
     }, 700);
-  }, [])
+  }, []);
   return (
     <div>
       <Header
         absolute
         color="transparent"
         brand="Arbitration Distributed"
-        rightLinks={<HeaderLinks coinbase={props.data.coinbase ? props.data.coinbase : null} />}
+        rightLinks={
+          <HeaderLinks
+            coinbase={props.data.coinbase ? props.data.coinbase : null}
+          />
+        }
         {...rest}
       />
       <div
@@ -64,16 +65,16 @@ const Demo = (props) => {
         style={{
           backgroundImage: "url(" + image + ")",
           backgroundSize: "cover",
-          backgroundPosition: "top center"
+          backgroundPosition: "top center",
         }}
       >
         <div className={classes.container}>
           <CreateDemoContract
-            active={demoSteps[demoStep] === 'CREATE_CONTRACT'}
+            active={demoSteps[demoStep] === "CREATE_CONTRACT"}
             callback={createContract}
           />
           <ActiveDemoContract
-            active={demoSteps[demoStep] === 'ACTIVE_CONTRACT'}
+            active={demoSteps[demoStep] === "ACTIVE_CONTRACT"}
             callback={nextDemoStep}
           />
         </div>
@@ -81,13 +82,14 @@ const Demo = (props) => {
       </div>
     </div>
   );
-}
-
+};
 
 Demo.getInitialProps = async function () {
   const [coinbase] = await web3.eth.getAccounts();
-  const contracts = await factory.methods.getdeployedContracts().call({}, { from: coinbase });
-  return { data: { coinbase, contracts } }
+  const contracts = await factory.methods
+    .getdeployedContracts()
+    .call({}, { from: coinbase });
+  return { data: { coinbase, contracts } };
 };
 
 export default Demo;

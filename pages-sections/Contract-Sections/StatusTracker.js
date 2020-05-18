@@ -10,20 +10,20 @@ import {
   EscrowState,
   EscrowSteps,
   DisputeState,
-  DisputeSteps
+  DisputeSteps,
 } from "components/config/contract.js";
 
 // Styles
 import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   backButton: {
-    marginRight: theme.spacing(1)
+    marginRight: theme.spacing(1),
   },
   instructions: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1)
-  }
+    marginBottom: theme.spacing(1),
+  },
 }));
 
 const StatusTracker = ({ details, ActiveStep }) => {
@@ -32,7 +32,7 @@ const StatusTracker = ({ details, ActiveStep }) => {
   const isDispute = details.escrowState === "IN_DISPUTE";
 
   const findStatusIndex = (array, status) =>
-    array.findIndex(state => state === status);
+    array.findIndex((state) => state === status);
 
   let steps = isDispute
     ? DisputeState.map((state, index) => {
@@ -44,13 +44,8 @@ const StatusTracker = ({ details, ActiveStep }) => {
         return step;
       });
 
-  if (activeStep <= 3 && !isDispute) {
-    steps = steps.slice(0, 4);
-  }
-
-  if (activeStep === 4 && !isDispute) {
-    steps.splice(3, 1);
-    steps.splice(4, 1);
+  if (!isDispute) {
+    steps.splice(3, 2);
   }
 
   useEffect(() => {

@@ -69,7 +69,6 @@ const ContractListItem = ({ contract }) => {
 
   const fetchDetails = async () => {
     const summary = await campaign.methods.getStatus().call();
-    console.log("summary", summary);
     const formattedSummary = formatEscrowStatus(summary);
     setDetails(formattedSummary);
     setIsLoading(false);

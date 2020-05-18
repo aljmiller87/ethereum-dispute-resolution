@@ -1,17 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import Stepper from '@material-ui/core/Stepper';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
+import React, { useState, useEffect } from "react";
+import Stepper from "@material-ui/core/Stepper";
+import Step from "@material-ui/core/Step";
+import StepLabel from "@material-ui/core/StepLabel";
+import Button from "@material-ui/core/Button";
+import Typography from "@material-ui/core/Typography";
 
 // Contract Config
-import { EscrowState, EscrowSteps, DisputeState, DisputeSteps } from 'components/config/contract.js';
+import {
+  EscrowState,
+  EscrowSteps,
+  DisputeState,
+  DisputeSteps,
+} from "components/config/contract.js";
 
 // Styles
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from "@material-ui/core/styles";
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles((theme) => ({
   backButton: {
     marginRight: theme.spacing(1),
   },
@@ -21,12 +26,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 const StatusTracker = ({ ActiveStep }) => {
   const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
-  console.log('ActiveStep', ActiveStep);
-  console.log('activeStep: ', activeStep);
 
   let steps = EscrowState.map((state, index) => {
     const step = { ...EscrowSteps[state] };
@@ -40,14 +42,11 @@ const StatusTracker = ({ ActiveStep }) => {
   if (ActiveStep === 4) {
     steps.splice(3, 1);
     steps.splice(4, 1);
-    console.log('steps', steps);
   }
 
   useEffect(() => {
-    console.log('Status tracker useEffect run', ActiveStep);
     setActiveStep(ActiveStep);
-  }, [ActiveStep])
-
+  }, [ActiveStep]);
 
   return (
     <div>
@@ -72,6 +71,6 @@ const StatusTracker = ({ ActiveStep }) => {
       </Stepper>
     </div>
   );
-}
+};
 
 export default StatusTracker;

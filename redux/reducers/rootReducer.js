@@ -7,13 +7,13 @@ import {
 import networkReducer from "./networkReducer";
 import accountReducer from "./accountReducer";
 import contractDetailReducer from "./contractDetailReducer";
-import apiCallsInProgress from "./apiStatusReducer";
+import blockchainCallsReducer from "./blockchainStatusReducer";
 
 const rootReducer = combineReducers({
   accountReducer,
   networkReducer,
   contractDetailReducer,
-  apiCallsInProgress,
+  blockchainCallsReducer,
   router: routerReducer,
 });
 

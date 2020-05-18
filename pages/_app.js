@@ -27,7 +27,6 @@ import wrapper from "../redux/store/configureStore";
 
 import PageChange from "components/PageChange/PageChange.js";
 import EthereumConnectionDetect from "../components/EthereumConnectionDetect";
-import { ContextProvider } from "../context/ethereum";
 
 import "assets/scss/nextjs-material-kit.scss?v=1.0.0";
 
@@ -86,9 +85,7 @@ class MyApp extends App {
         </Head>
         <ConnectedRouter>
           <EthereumConnectionDetect>
-            <ContextProvider>
-              <Component {...pageProps} />
-            </ContextProvider>
+            <Component {...pageProps} />
           </EthereumConnectionDetect>
         </ConnectedRouter>
       </React.Fragment>

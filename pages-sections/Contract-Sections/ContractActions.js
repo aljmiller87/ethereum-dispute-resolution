@@ -27,6 +27,9 @@ import Title from "components/Title";
 // Action Card Components
 import Abort from "pages-sections/Contract-Sections/ActionCards/Abort.js";
 import ConfirmPayment from "pages-sections/Contract-Sections/ActionCards/ConfirmPayment.js";
+import ConfirmProductSent from "pages-sections/Contract-Sections/ActionCards/ConfirmProductSent.js";
+import ConfirmDelivery from "pages-sections/Contract-Sections/ActionCards/ConfirmDelivery.js";
+import InitDispute from "pages-sections/Contract-Sections/ActionCards/InitDispute.js";
 
 // Contract Config
 import {
@@ -39,17 +42,23 @@ import {
 const ActionCards = {
   abort: Abort,
   confirmPayment: ConfirmPayment,
+  confirmProductSent: ConfirmProductSent,
+  confirmDelivery: ConfirmDelivery,
+  initDispute: InitDispute,
 };
 
-const ActionCard = ({ action, callback, ...rest }) => {
+const ActionCard = ({ action, ...rest }) => {
   if (!action || !Object.keys(action).length > 0) {
     return null;
   }
   const Component = ActionCards[action.slug];
-  return <Component action={action} onSuccess={callback} {...rest} />;
+  if (!Component) {
+    return null;
+  }
+  return <Component action={action} {...rest} />;
 };
 
-const ContractActions = ({ details, account, onSuccessfulCall, ...rest }) => {
+const ContractActions = ({ details, account, ...rest }) => {
   const { buyer, seller, balance, escrowState, disputeState } = details;
   const [userAlias, setUserAlias] = useState("");
   const isDispute = details.escrowState === "IN_DISPUTE";
@@ -76,17 +85,11 @@ const ContractActions = ({ details, account, onSuccessfulCall, ...rest }) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
       return findStatusIndex(actionConfigObject.requiredUsers, userAlias);
     });
-    console.log("userActions", userActions);
     return userActions.map((action) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
-      console.log("actionConfigObject", actionConfigObject);
       return (
         <GridItem xs={12} sm={12} md={6} lg={4} key={action}>
-          <ActionCard
-            action={actionConfigObject}
-            callback={onSuccessfulCall}
-            {...rest}
-          />
+          <ActionCard action={actionConfigObject} {...rest} />
         </GridItem>
       );
     });

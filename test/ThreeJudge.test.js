@@ -6,7 +6,7 @@ const Web3 = require("web3");
 const OPTIONS = {
   defaultBlock: "latest",
   transactionConfirmationBlocks: 1,
-  transactionBlockTimeout: 5
+  transactionBlockTimeout: 5,
 };
 const web3 = new Web3(ganache.provider(), null, OPTIONS);
 web3.currentProvider.setMaxListeners(300);
@@ -33,7 +33,7 @@ beforeEach(async () => {
 
   await factory.methods.createContract(`${accounts[0]}`, false).send({
     from: accounts[1],
-    gas: "5000000"
+    gas: "5000000",
   });
 
   [threeJudgeAddress] = await factory.methods.getdeployedContracts().call();
@@ -56,7 +56,6 @@ describe("Factory and Contract Initialization", () => {
     const contracts = await factory.methods
       .getdeployedContracts()
       .call({}, { from: accounts[0] });
-    console.log("contracts", contracts);
     contracts.length.should.equal(1);
     contractAddress.should.equal(contracts[0]);
   });
@@ -64,10 +63,6 @@ describe("Factory and Contract Initialization", () => {
   it("confirms correct roles initialized for escrow contract", async () => {
     const buyer = await threeJudge.methods.buyer().call();
     const seller = await threeJudge.methods.seller().call();
-    console.log("buyer", buyer);
-    console.log("seller", seller);
-    console.log("accounts[0]", accounts[0]);
-    console.log("accounts[1]", accounts[1]);
     const initialState = await threeJudge.methods.currentState().call();
     const initialDisputeState = await threeJudge.methods
       .currentDisputeState()
@@ -85,7 +80,7 @@ describe("Submitting payment step", async () => {
     try {
       await threeJudge.methods.confirmPayment().send({
         value: "1000000",
-        from: accounts[1]
+        from: accounts[1],
       });
     } catch (e) {
       err = e;
@@ -96,7 +91,7 @@ describe("Submitting payment step", async () => {
   it("Confirms confirmPayment results in contract balance and new state", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
     const updatedState = await threeJudge.methods.currentState().call();
     updatedState.should.equal("1");
@@ -111,7 +106,7 @@ describe("Confirms Abort Functionality", async () => {
   it("Confirms only Seller can call Abort", async () => {
     try {
       await threeJudge.methods.abort().send({
-        from: accounts[0]
+        from: accounts[0],
       });
       assert(false);
     } catch (err) {
@@ -121,7 +116,7 @@ describe("Confirms Abort Functionality", async () => {
 
   it("Confirms abort can be called in AWAITING_PAYMENT state", async () => {
     await threeJudge.methods.abort().send({
-      from: accounts[1]
+      from: accounts[1],
     });
     let abortedState = await threeJudge.methods.currentState().call();
     abortedState.should.equal("5");
@@ -130,7 +125,7 @@ describe("Confirms Abort Functionality", async () => {
   it("Confirms abort can be called in AWAITING_PRODUCT_SENT state", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
 
     let initialState = await threeJudge.methods.currentState().call();
@@ -140,12 +135,12 @@ describe("Confirms Abort Functionality", async () => {
   it("Confirms abort functionality will refund contract balance", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
 
     let initialBalance = await web3.eth.getBalance(accounts[0]);
     await threeJudge.methods.abort().send({
-      from: accounts[1]
+      from: accounts[1],
     });
 
     const balance = await web3.eth.getBalance(threeJudge.options.address);
@@ -164,7 +159,7 @@ describe("Confirm confirmProductSent Functionality", async () => {
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.confirmProductSent().send({
-        from: accounts[1]
+        from: accounts[1],
       });
     } catch (e) {
       err = e;
@@ -175,13 +170,13 @@ describe("Confirm confirmProductSent Functionality", async () => {
   it("Requires confirmProductSent to be called by seller", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
 
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.confirmProductSent().send({
-        from: accounts[0]
+        from: accounts[0],
       });
     } catch (e) {
       err = e;
@@ -193,10 +188,10 @@ describe("Confirm confirmProductSent Functionality", async () => {
     let state = "_PRETEST_";
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
     await threeJudge.methods.confirmProductSent().send({
-      from: accounts[1]
+      from: accounts[1],
     });
     state = await threeJudge.methods.currentState().call();
     state.should.be.equal("2");
@@ -208,7 +203,7 @@ describe("Confirm confirmDelivery Functionality", async () => {
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.confirmDelivery().send({
-        from: accounts[0]
+        from: accounts[0],
       });
     } catch (e) {
       err = e;
@@ -219,17 +214,17 @@ describe("Confirm confirmDelivery Functionality", async () => {
   it("Requires confirmProductSent to be called by buyer", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
 
     await threeJudge.methods.confirmProductSent().send({
-      from: accounts[1]
+      from: accounts[1],
     });
 
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.confirmDelivery().send({
-        from: accounts[1]
+        from: accounts[1],
       });
     } catch (e) {
       err = e;
@@ -240,17 +235,17 @@ describe("Confirm confirmDelivery Functionality", async () => {
   it("Confirms confirmDelivery updates state and transfers balance to seller", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
 
     await threeJudge.methods.confirmProductSent().send({
-      from: accounts[1]
+      from: accounts[1],
     });
 
     let initialSellerBalance = await web3.eth.getBalance(accounts[1]);
 
     await threeJudge.methods.confirmDelivery().send({
-      from: accounts[0]
+      from: accounts[0],
     });
 
     let newSellerBalance = await web3.eth.getBalance(accounts[1]);
@@ -271,7 +266,7 @@ describe("Initiating Dispute Functionality", async () => {
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.initDispute().send({
-        from: accounts[2]
+        from: accounts[2],
       });
     } catch (e) {
       err = e;
@@ -284,7 +279,7 @@ describe("Initiating Dispute Functionality", async () => {
     try {
       await threeJudge.methods.initDispute().send({
         from: accounts[0],
-        gas: "1000000"
+        gas: "1000000",
       });
     } catch (e) {
       err = e;
@@ -297,17 +292,17 @@ describe("Initiating Dispute Functionality", async () => {
   it("Confirms initDispute cannot be called during active dispute", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
     await threeJudge.methods.initDispute().send({
       from: accounts[0],
-      gas: "1000000"
+      gas: "1000000",
     });
     let err = "_PRETEST_";
     try {
       await threeJudge.methods.initDispute().send({
         from: accounts[0],
-        gas: "1000000"
+        gas: "1000000",
       });
     } catch (e) {
       err = e;
@@ -320,11 +315,11 @@ describe("Initiating Dispute Functionality", async () => {
   it("Confirms initDispute updates state and dispute variables", async () => {
     await threeJudge.methods.confirmPayment().send({
       value: "1000000",
-      from: accounts[0]
+      from: accounts[0],
     });
     await threeJudge.methods.initDispute().send({
       from: accounts[0],
-      gas: "1000000"
+      gas: "1000000",
     });
     const state = await threeJudge.methods.currentState().call();
     const disputeState = await threeJudge.methods.currentDisputeState().call();

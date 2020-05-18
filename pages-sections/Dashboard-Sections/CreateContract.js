@@ -206,7 +206,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
               }}
             />
           )}
-          {isRoleChosen && isBuyer && (
+          {/* {isRoleChosen && isBuyer && (
             <CustomInput
               labelText="Contract Value (in Ether)"
               id="ether"
@@ -226,7 +226,7 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
                 autoComplete: "off",
               }}
             />
-          )}
+          )} */}
         </CardBody>
         <CardFooter className={classes.cardFooter}>
           <Button onClick={handleClick} disabled={isLoading}>
