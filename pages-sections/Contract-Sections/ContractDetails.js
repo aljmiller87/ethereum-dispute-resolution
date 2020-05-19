@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import web3 from "../../ethereum/web3";
 
 import styled from "styled-components";
 
@@ -21,6 +22,7 @@ import Title from "components/Title";
 
 const ContractDetails = ({ details, account }) => {
   const { buyer, seller, balance, escrowState } = details;
+  const ether = balance ? web3.utils.fromWei(balance, "ether") : 0;
 
   return (
     <Wrapper>
@@ -64,7 +66,10 @@ const ContractDetails = ({ details, account }) => {
               <ListItemIcon>
                 <Icon className="fab fa-ethereum" />
               </ListItemIcon>
-              <ListItemText primary="Contract Balance" secondary={balance} />
+              <ListItemText
+                primary="Contract Balance (Ether)"
+                secondary={ether}
+              />
             </ListItem>
           </List>
         </GridItem>

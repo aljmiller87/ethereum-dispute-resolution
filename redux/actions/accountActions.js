@@ -27,7 +27,7 @@ export const asyncLoadAccountInfo = () => {
       dispatch(setContracts(fetchedContracts));
     } catch (error) {
       // dispatch(errorHandle(error));
-      console.log("error", error);
+      console.log("asyncLoadAccountInfo: ", error);
     }
 
     return "done";
