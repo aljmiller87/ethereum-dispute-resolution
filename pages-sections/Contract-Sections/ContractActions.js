@@ -94,12 +94,6 @@ const ContractActions = ({ details, account, ...rest }) => {
   const CurrentStep = isDispute ? disputeState : escrowState;
 
   const checkAlias = () => {
-    console.log("account", account);
-    console.log("buyer", buyer);
-    console.log("seller", seller);
-    console.log("buyerJudge", buyerJudge);
-    console.log("sellerJudge", sellerJudge);
-    console.log("finalJudge", finalJudge);
     if (!account) {
       return null;
     }
@@ -132,9 +126,6 @@ const ContractActions = ({ details, account, ...rest }) => {
   };
 
   const renderAvailableActions = () => {
-    console.log("StepsConfig", StepsConfig);
-    console.log("CurrentStep", CurrentStep);
-    console.log("StepsConfig[CurrentStep]", StepsConfig[CurrentStep]);
     const AvailableActions = Object.keys(StepsConfig[CurrentStep].actions);
     const userActions = AvailableActions.filter((action) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
