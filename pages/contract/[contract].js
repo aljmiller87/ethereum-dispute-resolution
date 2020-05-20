@@ -40,7 +40,6 @@ const useStyles = makeStyles(styles);
 const Contract = (props) => {
   const { contractAddress, contractSummary, logs, ...rest } = props;
   const instanceRef = useRef();
-  console.log("instanceRef.current", instanceRef.current);
 
   // Selectors
   const { network, isEthereumConnected } = useSelector(

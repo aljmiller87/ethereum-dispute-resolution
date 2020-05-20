@@ -1,12 +1,45 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
+
+// Ethereum
+import threeJudge from "../../../ethereum/threejudge";
+import web3 from "../../../ethereum/web3";
+
+// Actions
+import * as ContractActions from "../../../redux/actions/blockchainStatusActions";
+
+// Kit Core Components
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader";
 
-const Abort = ({ action }) => {
+const Abort = ({ action, contractAddress }) => {
+  const dispatch = useDispatch();
+
+  const handleAbort = async () => {
+    try {
+      dispatch(ContractActions.beginBlockchainWriteCall(contractAddress));
+      const [coinbase] = await web3.eth.getAccounts();
+      const contractInstance = threeJudge(contractAddress);
+      await contractInstance.methods
+        .abort()
+        .send({ from: coinbase })
+        .on("confirmation", (confirmationNumber, receipt) => {
+          // If first confirmation...
+          if (confirmationNumber === 1) {
+            console.log("payment confirmed", receipt);
+          }
+        });
+    } catch (error) {
+      console.log("err", err);
+    } finally {
+      console.log("finally");
+      dispatch(ContractActions.endBlockchainWriteCall(contractAddress));
+    }
+  };
   return (
     <>
       <Card className="ActionCard">
@@ -17,7 +50,7 @@ const Abort = ({ action }) => {
         </CardHeader>
         <CardBody className="ActionCard-Body">{action.description}</CardBody>
         <CardFooter>
-          <Button simple color="primary" size="lg">
+          <Button simple color="primary" size="lg" onClick={handleAbort}>
             {action.name}
           </Button>
         </CardFooter>

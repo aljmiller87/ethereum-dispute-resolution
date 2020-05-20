@@ -43,9 +43,17 @@ export const EscrowSteps = {
       initDispute: {
         slug: "initDispute",
         name: "Initiate Dispute",
-        requiredUsers: ["buyer", "seller"],
+        requiredUsers: ["buyer"],
         nextState: "IN_DISPUTE",
         description: "UPDATE THIS DESCRIPTION.",
+      },
+      abort: {
+        slug: "abort",
+        name: "Abort",
+        requiredUsers: ["seller"],
+        nextState: "CANCELLED",
+        description:
+          "The seller can abort at this time. This will result in the contract being cancelled and all funds in the contract will be returned to the Buyer.",
       },
     },
     name: "Awaiting Product Sent",
@@ -99,51 +107,73 @@ export const DisputeState = [
 
 export const DisputeSteps = {
   AWAITING_JUDGE_SELECTION: {
-    pickJudge: {
-      requiredUsers: ["buyer", "seller"],
-      nextState: ["AWAITING_JUDGE_SELECTION", "AWAITING_NOMINATION"],
-    },
-    provideTestimony: {
-      requiredUsers: ["buyer", "seller"],
-      nextState: null,
+    actions: {
+      pickJudge: {
+        requiredUsers: ["buyer", "seller"],
+        nextState: ["AWAITING_JUDGE_SELECTION", "AWAITING_NOMINATION"],
+      },
+      provideTestimony: {
+        requiredUsers: ["buyer", "seller"],
+        nextState: null,
+      },
     },
   },
   AWAITING_NOMINATION: {
-    nominateFinalJudge: {
-      requiredUsers: ["buyerJudge", "sellerJudge"],
-      nextState: ["AWAITING_NOMINATION_CONFIRMATION"],
-    },
-    provideTestimony: {
-      requiredUsers: ["buyer", "seller"],
-      nextState: null,
+    name: "Awaiting Final Judge Nomination",
+    description:
+      "One of the judges must nominate the third and final judge to arbitrate the dispute.",
+
+    actions: {
+      nominateFinalJudge: {
+        requiredUsers: ["buyerJudge", "sellerJudge"],
+        nextState: ["AWAITING_NOMINATION_CONFIRMATION"],
+      },
+      provideTestimony: {
+        requiredUsers: ["buyer", "seller"],
+        nextState: null,
+      },
     },
   },
   AWAITING_NOMINATION_CONFIRMATION: {
-    confirmFinalJudge: {
-      requiredUsers: ["buyerJudge", "sellerJudge"],
-      nextState: ["AWAITING_NOMINATION", "AWAITING_RESOLUTION"],
-    },
-    provideTestimony: {
-      requiredUsers: ["buyer", "seller"],
-      nextState: null,
+    name: "Awaiting Final Judge Confirmation",
+    description:
+      "After the final judge has been nominated, the nomination must either be approved or rejected by a judge. The judge who created the nomination cannot approve the nomination.",
+    action: {
+      confirmFinalJudge: {
+        requiredUsers: ["buyerJudge", "sellerJudge"],
+        nextState: ["AWAITING_NOMINATION", "AWAITING_RESOLUTION"],
+      },
+      provideTestimony: {
+        requiredUsers: ["buyer", "seller"],
+        nextState: null,
+      },
     },
   },
   AWAITING_RESOLUTION: {
-    arbtrateDispute: {
-      requiredUsers: ["buyerJudge", "sellerJudge", "finalJudge"],
-      nextState: ["COMPLETE"],
+    name: "Awaiting Arbitration Resolution from Judges",
+    description:
+      "Each of the three judges will vote in favor of either the buyer or seller. If either of the Buyer's or Seller's judge fails to vote within alotted 3 days, their claim in the dispute will forfeit and the smart contract will rule in favor of the other.",
+    action: {
+      arbtrateDispute: {
+        requiredUsers: ["buyerJudge", "sellerJudge", "finalJudge"],
+        nextState: ["COMPLETE"],
+      },
     },
   },
   COMPLETE: {
-    distributeFunds: {
-      requiredUsers: [
-        "buyer",
-        "seller",
-        "buyerJudge",
-        "sellerJudge",
-        "finalJudge",
-      ],
-      nextState: null,
+    name: "Complete",
+    description: "Contract has been completed and is now closed.",
+    actions: {
+      distributeFunds: {
+        requiredUsers: [
+          "buyer",
+          "seller",
+          "buyerJudge",
+          "sellerJudge",
+          "finalJudge",
+        ],
+        nextState: null,
+      },
     },
   },
 };

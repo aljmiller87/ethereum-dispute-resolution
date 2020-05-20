@@ -1,9 +1,13 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
 
 // Ethereum
 import threeJudge from "../../../ethereum/threejudge";
 import web3 from "../../../ethereum/web3";
+
+// Actions
+import * as ContractActions from "../../../redux/actions/blockchainStatusActions";
 
 // Kit core components
 import Button from "components/CustomButtons/Button.js";
@@ -13,8 +17,10 @@ import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader";
 
 const InitDispute = ({ action, contractAddress }) => {
+  const dispatch = useDispatch();
   const handleInitDispute = async () => {
     try {
+      dispatch(ContractActions.beginBlockchainWriteCall(contractAddress));
       const [coinbase] = await web3.eth.getAccounts();
       const contractInstance = threeJudge(contractAddress);
       await contractInstance.methods
@@ -30,6 +36,8 @@ const InitDispute = ({ action, contractAddress }) => {
         });
     } catch (err) {
       console.log("err", err);
+    } finally {
+      dispatch(ContractActions.endBlockchainWriteCall(contractAddress));
     }
   };
   return (
