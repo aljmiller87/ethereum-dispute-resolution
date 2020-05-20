@@ -107,19 +107,6 @@ const Contract = (props) => {
     }
   }, [isEthereumConnected]);
 
-  useEffect(() => {
-    if (isEthereumConnected) {
-      const getStatus = async () => {
-        const instance = ThreeJudge(contractAddress);
-        const updatedSummary = await instance.methods.getStatus().call();
-        dispatch(
-          contractActions.updateSummary(contractAddress, updatedSummary)
-        );
-      };
-      getStatus();
-    }
-  }, [events]);
-
   return (
     <div>
       <Header
@@ -177,13 +164,14 @@ Contract.getInitialProps = async (props) => {
   const address = props.query.contract;
   const contract = ThreeJudge(address);
   const summary = await contract.methods.getStatus().call();
+  const disputeSummary = await contract.methods.getDisputeStatus().call();
   const logs = await contract.getPastEvents("allEvents", {
     fromBlock: 0,
   });
 
   return {
     contractAddress: address,
-    contractSummary: summary,
+    contractSummary: { ...summary, disputeSummary },
     logs,
   };
 };

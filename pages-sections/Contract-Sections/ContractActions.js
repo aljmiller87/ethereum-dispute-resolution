@@ -30,6 +30,12 @@ import ConfirmPayment from "pages-sections/Contract-Sections/ActionCards/Confirm
 import ConfirmProductSent from "pages-sections/Contract-Sections/ActionCards/ConfirmProductSent.js";
 import ConfirmDelivery from "pages-sections/Contract-Sections/ActionCards/ConfirmDelivery.js";
 import InitDispute from "pages-sections/Contract-Sections/ActionCards/InitDispute.js";
+import ProvideTestimony from "pages-sections/Contract-Sections/ActionCards/ProvideTestimony.js";
+import PickJudge from "pages-sections/Contract-Sections/ActionCards/PickJudge.js";
+import NominateFinalJudge from "pages-sections/Contract-Sections/ActionCards/NominateFinalJudge.js";
+import ConfirmFinalJudge from "pages-sections/Contract-Sections/ActionCards/ConfirmFinalJudge.js";
+import ArbitrateDispute from "pages-sections/Contract-Sections/ActionCards/ArbitrateDispute.js";
+import DistributeFunds from "pages-sections/Contract-Sections/ActionCards/DistributeFunds.js";
 
 // Contract Config
 import {
@@ -45,6 +51,12 @@ const ActionCards = {
   confirmProductSent: ConfirmProductSent,
   confirmDelivery: ConfirmDelivery,
   initDispute: InitDispute,
+  provideTestimony: ProvideTestimony,
+  pickJudge: PickJudge,
+  nominateFinalJudge: NominateFinalJudge,
+  confirmFinalJudge: ConfirmFinalJudge,
+  arbtrateDispute: ArbitrateDispute,
+  distributeFunds: DistributeFunds,
 };
 
 const ActionCard = ({ action, ...rest }) => {
@@ -59,18 +71,58 @@ const ActionCard = ({ action, ...rest }) => {
 };
 
 const ContractActions = ({ details, account, ...rest }) => {
-  const { buyer, seller, balance, escrowState, disputeState } = details;
+  const { buyer, seller, escrowState, disputeState, disputeSummary } = details;
+  const {
+    buyerJudge,
+    buyerJudgeHasNominatedFinalJudge,
+    buyerJudgeHasVotedForResolution,
+    sellerJudge,
+    sellerJudgeHasNominatedFinalJudge,
+    sellerJudgeHasVotedForResolution,
+    nominatedJudge,
+    finalJudge,
+    finalJudgeHasVotedForResolution,
+    votesForBuyer,
+    votesForSeller,
+    deadline,
+    awaitingParty,
+  } = disputeSummary || {};
+
   const [userAlias, setUserAlias] = useState("");
   const isDispute = details.escrowState === "IN_DISPUTE";
   const StepsConfig = isDispute ? DisputeSteps : EscrowSteps;
   const CurrentStep = isDispute ? disputeState : escrowState;
 
   const checkAlias = () => {
-    if (account === buyer) {
-      setUserAlias("buyer");
+    console.log("account", account);
+    console.log("buyer", buyer);
+    console.log("seller", seller);
+    console.log("buyerJudge", buyerJudge);
+    console.log("sellerJudge", sellerJudge);
+    console.log("finalJudge", finalJudge);
+    if (!account) {
+      return null;
     }
-    if (account === seller) {
-      setUserAlias("seller");
+    switch (account.toLowerCase()) {
+      case buyer.toLowerCase():
+        setUserAlias("buyer");
+        break;
+      case seller.toLowerCase():
+        setUserAlias("seller");
+        break;
+      case buyerJudge.toLowerCase():
+        setUserAlias("buyerJudge");
+        break;
+      case sellerJudge.toLowerCase():
+        setUserAlias("sellerJudge");
+        break;
+      case finalJudge.toLowerCase():
+        setUserAlias("finalJudge");
+        break;
+
+      default:
+        setUserAlias("");
+        break;
     }
   };
 
@@ -80,6 +132,9 @@ const ContractActions = ({ details, account, ...rest }) => {
   };
 
   const renderAvailableActions = () => {
+    console.log("StepsConfig", StepsConfig);
+    console.log("CurrentStep", CurrentStep);
+    console.log("StepsConfig[CurrentStep]", StepsConfig[CurrentStep]);
     const AvailableActions = Object.keys(StepsConfig[CurrentStep].actions);
     const userActions = AvailableActions.filter((action) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
@@ -104,11 +159,6 @@ const ContractActions = ({ details, account, ...rest }) => {
       <GridContainer justify="center">
         <GridItem xs={12} sm={12} md={8}>
           <Center>
-            {/* <Title type="h2">
-              {isDispute
-                ? DisputeSteps[disputeState].name
-                : EscrowSteps[escrowState].name}
-            </Title> */}
             <Title type="h2">Available Contract Actions</Title>
             <p>
               <strong>{StepsConfig[CurrentStep].name}:</strong>

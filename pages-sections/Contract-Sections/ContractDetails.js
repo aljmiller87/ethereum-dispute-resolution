@@ -21,7 +21,22 @@ import GridItem from "components/Grid/GridItem.js";
 import Title from "components/Title";
 
 const ContractDetails = ({ details, account }) => {
-  const { buyer, seller, balance, escrowState } = details;
+  const { buyer, seller, balance, escrowState, disputeSummary } = details;
+  const {
+    buyerJudge,
+    buyerJudgeHasNominatedFinalJudge,
+    buyerJudgeHasVotedForResolution,
+    sellerJudge,
+    sellerJudgeHasNominatedFinalJudge,
+    sellerJudgeHasVotedForResolution,
+    nominatedJudge,
+    finalJudge,
+    finalJudgeHasVotedForResolution,
+    votesForBuyer,
+    votesForSeller,
+    deadline,
+    awaitingParty,
+  } = disputeSummary || {};
   const ether = balance ? web3.utils.fromWei(balance, "ether") : 0;
 
   return (
@@ -80,19 +95,108 @@ const ContractDetails = ({ details, account }) => {
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
-                <ListItemText primary="judge1" secondary={buyer} />
+                <ListItemTextWrapper>
+                  <ListItemText
+                    primary="Buyer's Judge"
+                    secondary={
+                      !buyerJudge || buyerJudge.includes("0x00000000")
+                        ? "Awaiting Selection"
+                        : buyerJudge
+                    }
+                  />
+                  <ListItemText
+                    secondary={`Has Nominated or Confirmed Final Judge: ${
+                      buyerJudgeHasNominatedFinalJudge ||
+                      !finalJudge.includes("0x00000000")
+                        ? "True"
+                        : "False"
+                    }`}
+                  />
+                  <ListItemText
+                    secondary={`Has Voted for Resolution: ${
+                      buyerJudgeHasVotedForResolution ? "True" : "False"
+                    }`}
+                  />
+                </ListItemTextWrapper>
+                {account === buyerJudge && (
+                  <Chip
+                    label="Your role"
+                    color="primary"
+                    icon={<DoneIcon />}
+                    variant="outlined"
+                  />
+                )}
               </ListItem>
               <ListItem>
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
-                <ListItemText primary="judge2" secondary={seller} />
+                <ListItemTextWrapper>
+                  <ListItemText
+                    primary="Seller's Judge"
+                    secondary={
+                      !sellerJudge || sellerJudge.includes("0x00000000")
+                        ? "Awaiting Selection"
+                        : sellerJudge
+                    }
+                  />
+                  <ListItemText
+                    secondary={`Has Nominated or Confirmed Final Judge: ${
+                      sellerJudgeHasNominatedFinalJudge ||
+                      !finalJudge.includes("0x00000000")
+                        ? "True"
+                        : "False"
+                    }`}
+                  />
+                  <ListItemText
+                    secondary={`Has Voted for Resolution: ${
+                      sellerJudgeHasVotedForResolution ? "True" : "False"
+                    }`}
+                  />
+                </ListItemTextWrapper>
+                {account === sellerJudge && (
+                  <Chip
+                    label="Your role"
+                    color="primary"
+                    icon={<DoneIcon />}
+                    variant="outlined"
+                  />
+                )}
               </ListItem>
               <ListItem>
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
-                <ListItemText primary="judge3" secondary={seller} />
+                <ListItemTextWrapper>
+                  {!finalJudge || finalJudge.includes("0x00000000") ? (
+                    <ListItemText
+                      primary="Nominated Final Judge"
+                      secondary={
+                        nominatedJudge.includes("0x00000000")
+                          ? "Awaiting Nomination"
+                          : sellerJudge
+                      }
+                    />
+                  ) : (
+                    <ListItemText
+                      primary="Final Judge"
+                      secondary={finalJudge}
+                    />
+                  )}
+                  <ListItemText
+                    secondary={`Has Voted for Resolution: ${
+                      finalJudgeHasVotedForResolution ? "True" : "False"
+                    }`}
+                  />
+                </ListItemTextWrapper>
+                {account === finalJudge && (
+                  <Chip
+                    label="Your role"
+                    color="primary"
+                    icon={<DoneIcon />}
+                    variant="outlined"
+                  />
+                )}
               </ListItem>
             </List>
           </GridItem>
@@ -118,6 +222,14 @@ const Wrapper = styled.section`
 
 const Center = styled.div`
   text-align: center;
+`;
+
+const ListItemTextWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  > div {
+    margin: 0;
+  }
 `;
 
 export default ContractDetails;

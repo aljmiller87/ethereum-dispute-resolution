@@ -17,15 +17,22 @@ export const formatEscrowStatus = (summary) => {
     buyer: summary["2"],
     seller: summary["3"],
     balance: summary["4"],
+    disputeSummary: {
+      buyerJudge: summary.disputeSummary["0"],
+      buyerJudgeHasNominatedFinalJudge: summary.disputeSummary["1"],
+      buyerJudgeHasVotedForResolution: summary.disputeSummary["2"],
+      sellerJudge: summary.disputeSummary["3"],
+      sellerJudgeHasNominatedFinalJudge: summary.disputeSummary["4"],
+      sellerJudgeHasVotedForResolution: summary.disputeSummary["5"],
+      nominatedJudge: summary.disputeSummary["6"],
+      finalJudge: summary.disputeSummary["7"],
+      sellerJudgeHasVotedForResolution: summary.disputeSummary["8"],
+      votesForBuyer: summary.disputeSummary["9"],
+      votesForSeller: summary.disputeSummary["10"],
+      deadline: summary.disputeSummary["11"],
+      awaitingParty: summary.disputeSummary["12"],
+    },
   };
 
   return details;
-};
-
-export const getEscrowStatus = (state) => {
-  if (!state) {
-    return null;
-  }
-  let stateAsInt = typeof state === "string" ? Number(state) : state;
-  const escrowState = EscrowState[stateAsInt];
 };

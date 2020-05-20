@@ -52,7 +52,6 @@ contract ThreeJudge {
         COMPLETE
     }
     enum DisputeState {
-        NO_DISPUTE,
         AWAITING_JUDGE_SELECTION,
         AWAITING_NOMINATION,
         AWAITING_NOMINATION_CONFIRMATION,
@@ -141,7 +140,7 @@ contract ThreeJudge {
         sellerJudge = address(0);
         balance = 0;
         currentState = State.AWAITING_PAYMENT;
-        currentDisputeState = DisputeState.NO_DISPUTE;
+        currentDisputeState = DisputeState.AWAITING_JUDGE_SELECTION;
     }
 
     function setNewDeadline() private {
@@ -230,7 +229,6 @@ contract ThreeJudge {
             "Cannot initiate dispute because contract must either be in Awaiting Product Sent or Awaiting Delivery states."
         );
         currentState = State.IN_DISPUTE;
-        currentDisputeState = DisputeState.AWAITING_JUDGE_SELECTION;
         emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
 
@@ -242,6 +240,10 @@ contract ThreeJudge {
         require(
             currentDisputeState == DisputeState.AWAITING_JUDGE_SELECTION,
             "Cannot select Judges at this time."
+        );
+        require(
+            (_judge != buyer && _judge != seller),
+            "Parties in the dispute are not elligible as judges."
         );
         if (msg.sender == buyer) {
             require(
@@ -283,6 +285,10 @@ contract ThreeJudge {
         require(
             hasNominated[msg.sender] == false,
             "Your nomination has already been submitted."
+        );
+        require(
+            (_nominatedJudge != buyerJudge && _nominatedJudge != sellerJudge),
+            "Existing judges are not eligible to nominated for the final judge."
         );
         hasNominated[msg.sender] = true;
         nominatedJudge = _nominatedJudge;
@@ -355,7 +361,6 @@ contract ThreeJudge {
 
         if (votesForBuyer >= 2 || votesForSeller >= 2) {
             currentDisputeState = DisputeState.COMPLETE;
-            currentState = State.COMPLETE;
         }
         emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
     }
@@ -397,6 +402,7 @@ contract ThreeJudge {
             bool,
             address,
             address,
+            bool,
             uint256,
             uint256,
             uint256,
@@ -412,6 +418,7 @@ contract ThreeJudge {
             hasVoted[sellerJudge],
             nominatedJudge,
             finalJudge,
+            hasVoted[finalJudge],
             votesForBuyer,
             votesForSeller,
             deadline,

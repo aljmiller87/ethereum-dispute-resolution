@@ -97,7 +97,6 @@ export const EscrowSteps = {
 };
 
 export const DisputeState = [
-  "NO_DISPUTE",
   "AWAITING_JUDGE_SELECTION",
   "AWAITING_NOMINATION",
   "AWAITING_NOMINATION_CONFIRMATION",
@@ -107,14 +106,25 @@ export const DisputeState = [
 
 export const DisputeSteps = {
   AWAITING_JUDGE_SELECTION: {
+    name: "Awaiting Judge Selections",
+    description:
+      "Buyer and Seller must select a judge to arbtrate the dispute.",
     actions: {
       pickJudge: {
         requiredUsers: ["buyer", "seller"],
         nextState: ["AWAITING_JUDGE_SELECTION", "AWAITING_NOMINATION"],
+        slug: "pickJudge",
+        name: "Pick Judge",
+        description:
+          "Buyer and Seller must select a single judge to arbitrate the dispute.",
       },
       provideTestimony: {
         requiredUsers: ["buyer", "seller"],
         nextState: null,
+        slug: "provideTestimony",
+        name: "Provide Testimony",
+        description:
+          "Provide testimony to be submitted to judges for their consideration in arbitrating the dispute.",
       },
     },
   },
@@ -127,10 +137,18 @@ export const DisputeSteps = {
       nominateFinalJudge: {
         requiredUsers: ["buyerJudge", "sellerJudge"],
         nextState: ["AWAITING_NOMINATION_CONFIRMATION"],
+        slug: "nominateFinalJudge",
+        name: "Nominate Final Judge",
+        description:
+          "Either the buyer's or seller's judge must nominate the third and final judge. The other judge will then either confirm or reject the nomination.",
       },
       provideTestimony: {
         requiredUsers: ["buyer", "seller"],
         nextState: null,
+        slug: "provideTestimony",
+        name: "Provide Testimony",
+        description:
+          "Provide testimony to be submitted to judges for their consideration in arbitrating the dispute.",
       },
     },
   },
@@ -138,10 +156,14 @@ export const DisputeSteps = {
     name: "Awaiting Final Judge Confirmation",
     description:
       "After the final judge has been nominated, the nomination must either be approved or rejected by a judge. The judge who created the nomination cannot approve the nomination.",
-    action: {
+    actions: {
       confirmFinalJudge: {
         requiredUsers: ["buyerJudge", "sellerJudge"],
         nextState: ["AWAITING_NOMINATION", "AWAITING_RESOLUTION"],
+        slug: "confirmFinalJudge",
+        name: "Confirm Final Judge",
+        description:
+          "The judge who has not nominated the final judge can either confirm or reject the nomination. If confirmed, judges will be able to arbitrate the dispute by voting for either buyer or seller. If nomination is rejected, either judge can make a new nomination.",
       },
       provideTestimony: {
         requiredUsers: ["buyer", "seller"],
@@ -153,16 +175,21 @@ export const DisputeSteps = {
     name: "Awaiting Arbitration Resolution from Judges",
     description:
       "Each of the three judges will vote in favor of either the buyer or seller. If either of the Buyer's or Seller's judge fails to vote within alotted 3 days, their claim in the dispute will forfeit and the smart contract will rule in favor of the other.",
-    action: {
+    actions: {
       arbtrateDispute: {
         requiredUsers: ["buyerJudge", "sellerJudge", "finalJudge"],
         nextState: ["COMPLETE"],
+        slug: "arbtrateDispute",
+        name: "Arbitrate Dispute",
+        description:
+          "All judges must arbitrate the dispute between Buyer and Seller by voting once in favor of either the Buyer or Seller. Dispute is resolved when either party has a 2/3 majority of voes from judges.",
       },
     },
   },
   COMPLETE: {
     name: "Complete",
-    description: "Contract has been completed and is now closed.",
+    description:
+      "Contract has been completed and is now closed. Funds can be distributed if they have not been already.",
     actions: {
       distributeFunds: {
         requiredUsers: [
@@ -173,6 +200,10 @@ export const DisputeSteps = {
           "finalJudge",
         ],
         nextState: null,
+        slug: "distributeFunds",
+        name: "Distribute Funds",
+        description:
+          "Any party can distribute funds once dispute has been resolved. Funds will immediately transfer to the appropriate party.",
       },
     },
   },

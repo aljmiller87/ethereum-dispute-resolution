@@ -12,13 +12,16 @@ import rootReducer from "../reducers/rootReducer";
 const routerMiddleware = createRouterMiddleware();
 
 const makeStore = (initialState = {}, options) => {
+  const devToolOptions = { trace: true };
+  const composeEnhancers = composeWithDevTools(devToolOptions);
+
   if (options && options.asPath) {
     initialState.router = initialRouterState(options.asPath);
   }
   const store = createStore(
     rootReducer,
     initialState,
-    composeWithDevTools(
+    composeEnhancers(
       applyMiddleware(thunk, routerMiddleware, reduxImmutableStateInvariant())
     )
   );

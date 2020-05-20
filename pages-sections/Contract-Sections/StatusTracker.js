@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
-import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
 
 // Contract Config
 import {
@@ -13,23 +11,11 @@ import {
   DisputeSteps,
 } from "components/config/contract.js";
 
-// Styles
-import { makeStyles } from "@material-ui/core/styles";
-
-const useStyles = makeStyles((theme) => ({
-  backButton: {
-    marginRight: theme.spacing(1),
-  },
-  instructions: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-}));
-
 const StatusTracker = ({ details, ActiveStep }) => {
-  const classes = useStyles();
   const [activeStep, setActiveStep] = useState(0);
   const isDispute = details.escrowState === "IN_DISPUTE";
+
+  const enumState = isDispute ? DisputeState : EscrowState;
 
   const findStatusIndex = (array, status) =>
     array.findIndex((state) => state === status);
@@ -49,13 +35,10 @@ const StatusTracker = ({ details, ActiveStep }) => {
   }
 
   useEffect(() => {
-    if (isDispute) {
-      const index = findStatusIndex(DisputeState, details.disputeState);
-      setActiveStep(index);
-    } else {
-      const index = findStatusIndex(EscrowState, details.escrowState);
-      setActiveStep(index);
-    }
+    const index = isDispute
+      ? findStatusIndex(DisputeState, details.disputeState)
+      : findStatusIndex(EscrowState, details.escrowState);
+    setActiveStep(index);
   }, [details]);
 
   return (
@@ -67,7 +50,7 @@ const StatusTracker = ({ details, ActiveStep }) => {
             labelProps.error = true;
           }
           return (
-            <Step key={EscrowState[index]}>
+            <Step key={enumState[index]}>
               <StepLabel {...labelProps}>{label.name}</StepLabel>
             </Step>
           );

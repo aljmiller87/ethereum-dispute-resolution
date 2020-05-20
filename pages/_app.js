@@ -20,8 +20,6 @@ import ReactDOM from "react-dom";
 import App from "next/app";
 import Head from "next/head";
 import Router from "next/router";
-import { Provider } from "react-redux";
-import { createWrapper } from "next-redux-wrapper";
 import { ConnectedRouter } from "connected-next-router";
 import wrapper from "../redux/store/configureStore";
 
