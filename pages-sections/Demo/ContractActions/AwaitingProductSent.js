@@ -4,13 +4,14 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import Grid from "@material-ui/core/Grid";
 
 // Kit Components
-import Button from "./node_modules/components/CustomButtons/Button.js.js";
-import Card from "./node_modules/components/Card/Card.js.js";
-import CardBody from "./node_modules/components/Card/CardBody.js.js";
-import CardHeader from "./node_modules/components/Card/CardHeader.js.js";
-import CustomInput from "./node_modules/components/CustomInput/CustomInput.js.js";
+import Button from "components/CustomButtons/Button.js";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 
 const AwaitingProductSent = ({ classes, dispatchAction }) => {
   return (

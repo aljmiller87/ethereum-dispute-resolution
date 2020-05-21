@@ -4,15 +4,16 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import Grid from "@material-ui/core/Grid";
 
 // Kit Components
-import Button from "./node_modules/components/CustomButtons/Button.js.js";
-import Card from "./node_modules/components/Card/Card.js.js";
-import CardBody from "./node_modules/components/Card/CardBody.js.js";
-import CardHeader from "./node_modules/components/Card/CardHeader.js.js";
-import CustomInput from "./node_modules/components/CustomInput/CustomInput.js.js";
+import Button from "components/CustomButtons/Button.js";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 
-const AwaitingDelivery = ({ classes, dispatchAction }) => {
+const AwaitingPayment = ({ classes, dispatchAction }) => {
   return (
     <React.Fragment>
       <Grid item xs={12} sm={6} md={4}>
@@ -24,35 +25,48 @@ const AwaitingDelivery = ({ classes, dispatchAction }) => {
             </div>
           </CardHeader>
           <CardBody>
-            <h4>Confirm Delivery</h4>
-            <p>
-              Buyer confirms that products and/or services have been provided by
-              seller.
-            </p>
+            <h4>Confirm Payment</h4>
+            <CustomInput
+              labelText="Confirm Payment"
+              id="ether"
+              formControlProps={{
+                fullWidth: true,
+              }}
+              inputProps={{
+                required: true,
+                type: "number",
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <Icon className="fab fa-ethereum" />
+                  </InputAdornment>
+                ),
+                autoComplete: "off",
+              }}
+            />
             <Button
               simple
               color="primary"
               size="lg"
               block={true}
-              onClick={() => dispatchAction("confirmDelivery", "buyer")}
+              onClick={() => dispatchAction("confirmPayment", "buyer")}
             >
-              Click to Confirm Delivery
+              Click to Send Payment to contract
             </Button>
           </CardBody>
           <CardBody>
-            <h4>Initiate Dispute</h4>
+            <h4>Abort</h4>
             <p>
-              Initiating a dispute cancel's the contract normal operation and
-              initiates the contract's internal dispute resolution process.
+              Aborting contract updates contract status to "Cancelled" and
+              prevents funds from being sent to contract
             </p>
             <Button
               simple
               color="danger"
               size="lg"
               block={true}
-              onClick={() => dispatchAction("initDispute", "buyer")}
+              onClick={() => dispatchAction("abort", "buyer")}
             >
-              Click to Initiate a Dispute
+              Click to Abort
             </Button>
           </CardBody>
         </Card>
@@ -66,19 +80,19 @@ const AwaitingDelivery = ({ classes, dispatchAction }) => {
             </div>
           </CardHeader>
           <CardBody>
-            <h4>Initiate Dispute</h4>
+            <h4>Abort</h4>
             <p>
-              Initiating a dispute cancel's the contract normal operation and
-              initiates the contract's internal dispute resolution process.
+              Aborting contract updates contract status to "Cancelled" and
+              prevents funds from being sent to contract
             </p>
             <Button
               simple
               color="danger"
               size="lg"
               block={true}
-              onClick={() => dispatchAction("initDispute", "seller")}
+              onClick={() => dispatchAction("abort", "seller")}
             >
-              Click to Initiate a Dispute
+              Click to Abort
             </Button>
           </CardBody>
         </Card>
@@ -87,4 +101,4 @@ const AwaitingDelivery = ({ classes, dispatchAction }) => {
   );
 };
 
-export default AwaitingDelivery;
+export default AwaitingPayment;

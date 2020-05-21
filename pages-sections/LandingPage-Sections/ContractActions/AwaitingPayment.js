@@ -6,11 +6,11 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 
 // Kit Components
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
+import Button from "./node_modules/components/CustomButtons/Button.js.js";
+import Card from "./node_modules/components/Card/Card.js.js";
+import CardBody from "./node_modules/components/Card/CardBody.js.js";
+import CardHeader from "./node_modules/components/Card/CardHeader.js.js";
+import CustomInput from "./node_modules/components/CustomInput/CustomInput.js.js";
 
 const AwaitingPayment = ({ classes, dispatchAction }) => {
   return (

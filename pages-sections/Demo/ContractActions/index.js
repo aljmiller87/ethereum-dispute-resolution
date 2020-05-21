@@ -6,18 +6,18 @@ import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
 
 // Kit Components
-import Button from "./node_modules/components/CustomButtons/Button.js.js";
-import Card from "./node_modules/components/Card/Card.js.js";
-import CardBody from "./node_modules/components/Card/CardBody.js.js";
-import CardHeader from "./node_modules/components/Card/CardHeader.js.js";
-import CardFooter from "./node_modules/components/Card/CardFooter.js.js";
-import CustomInput from "./node_modules/components/CustomInput/CustomInput.js.js";
+import Button from "components/CustomButtons/Button.js";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
+import CardFooter from "components/Card/CardFooter.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 import Grid from "@material-ui/core/Grid";
 
 // Sections
-import AwaitingPayment from "./node_modules/pages-sections/Demo/ContractActions/AwaitingPayment.js.js";
-import AwaitingProductSent from "./node_modules/pages-sections/Demo/ContractActions/AwaitingProductSent.js.js";
-import AwaitingDelivery from "./node_modules/pages-sections/Demo/ContractActions/AwaitingDelivery.js.js";
+import AwaitingPayment from "pages-sections/Demo/ContractActions/AwaitingPayment.js";
+import AwaitingProductSent from "pages-sections/Demo/ContractActions/AwaitingProductSent.js";
+import AwaitingDelivery from "pages-sections/Demo/ContractActions/AwaitingDelivery.js";
 
 // Contract Config
 import {
@@ -25,10 +25,10 @@ import {
   EscrowSteps,
   DisputeState,
   DisputeSteps,
-} from "./node_modules/components/config/contract.js.js";
+} from "components/config/contract.js";
 
 // Styles
-import styles from "./node_modules/assets/jss/sections/ContractActions.js.js";
+import styles from "assets/jss/sections/ContractActions.js";
 const useStyles = makeStyles(styles);
 
 const ContractActions = ({

@@ -4,15 +4,16 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import InputAdornment from "@material-ui/core/InputAdornment";
 import Icon from "@material-ui/core/Icon";
+import Grid from "@material-ui/core/Grid";
 
 // Kit Components
-import Button from "./node_modules/components/CustomButtons/Button.js.js";
-import Card from "./node_modules/components/Card/Card.js.js";
-import CardBody from "./node_modules/components/Card/CardBody.js.js";
-import CardHeader from "./node_modules/components/Card/CardHeader.js.js";
-import CustomInput from "./node_modules/components/CustomInput/CustomInput.js.js";
+import Button from "components/CustomButtons/Button.js";
+import Card from "components/Card/Card.js";
+import CardBody from "components/Card/CardBody.js";
+import CardHeader from "components/Card/CardHeader.js";
+import CustomInput from "components/CustomInput/CustomInput.js";
 
-const AwaitingProductSent = ({ classes, dispatchAction }) => {
+const AwaitingDelivery = ({ classes, dispatchAction }) => {
   return (
     <React.Fragment>
       <Grid item xs={12} sm={6} md={4}>
@@ -23,6 +24,22 @@ const AwaitingProductSent = ({ classes, dispatchAction }) => {
               <p>Actions only Buyer can perform</p>
             </div>
           </CardHeader>
+          <CardBody>
+            <h4>Confirm Delivery</h4>
+            <p>
+              Buyer confirms that products and/or services have been provided by
+              seller.
+            </p>
+            <Button
+              simple
+              color="primary"
+              size="lg"
+              block={true}
+              onClick={() => dispatchAction("confirmDelivery", "buyer")}
+            >
+              Click to Confirm Delivery
+            </Button>
+          </CardBody>
           <CardBody>
             <h4>Initiate Dispute</h4>
             <p>
@@ -50,22 +67,6 @@ const AwaitingProductSent = ({ classes, dispatchAction }) => {
             </div>
           </CardHeader>
           <CardBody>
-            <h4>Confirm Product Sent</h4>
-            <p>
-              Confirm the product or services have been sent or provided to
-              buyer.
-            </p>
-            <Button
-              simple
-              color="info"
-              size="lg"
-              block={true}
-              onClick={() => dispatchAction("confirmProductSent", "seller")}
-            >
-              Click to Initiate a Dispute
-            </Button>
-          </CardBody>
-          <CardBody>
             <h4>Initiate Dispute</h4>
             <p>
               Initiating a dispute cancel's the contract normal operation and
@@ -87,4 +88,4 @@ const AwaitingProductSent = ({ classes, dispatchAction }) => {
   );
 };
 
-export default AwaitingProductSent;
+export default AwaitingDelivery;

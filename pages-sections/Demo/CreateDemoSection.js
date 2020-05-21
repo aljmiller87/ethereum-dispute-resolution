@@ -34,10 +34,7 @@ const CreateDemoSection = ({ active, callback }) => {
     return etherValue;
   };
   const handleSubmitForm = () => {
-    const contractValue = isFormValidated();
-    if (contractValue) {
-      callback(contractValue);
-    }
+    callback();
   };
   return (
     <div className={classes.demoStep} active={active}>
@@ -94,7 +91,7 @@ const CreateDemoSection = ({ active, callback }) => {
                     ),
                   }}
                 />
-                <CustomInput
+                {/* <CustomInput
                   labelText="Contract Value (in Ether)"
                   id="ether"
                   formControlProps={{
@@ -110,7 +107,7 @@ const CreateDemoSection = ({ active, callback }) => {
                     ),
                     autoComplete: "off",
                   }}
-                />
+                /> */}
               </CardBody>
               <CardFooter className={classes.cardFooter}>
                 <Button

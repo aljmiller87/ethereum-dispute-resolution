@@ -13,8 +13,8 @@ import HeaderLinks from "components/Header/HeaderLinks.js";
 import Footer from "components/Footer/Footer.js";
 
 // Section
-import CreateDemoContract from "pages-sections/LandingPage-Sections/CreateDemoSection";
-import ActiveDemoContract from "pages-sections/LandingPage-Sections/ActiveDemoSection";
+import CreateDemoContract from "pages-sections/Demo/CreateDemoSection";
+import ActiveDemoContract from "pages-sections/Demo/ActiveDemoSection";
 
 // Styles
 import styles from "assets/jss/sections/CreateDemoSection";

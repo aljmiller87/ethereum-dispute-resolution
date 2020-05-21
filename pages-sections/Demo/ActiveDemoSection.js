@@ -9,10 +9,10 @@ import Icon from "@material-ui/core/Icon";
 import People from "@material-ui/icons/People";
 
 // Kit Components
-import ContractActions from "pages-sections/LandingPage-Sections/ContractActions";
+import ContractActions from "pages-sections/Demo/ContractActions";
 import Grid from "@material-ui/core/Grid";
 
-import StatusTracker from "pages-sections/LandingPage-Sections/StatusTracker.js";
+import StatusTracker from "pages-sections/Demo/StatusTracker.js";
 
 // Styles
 import styles from "assets/jss/sections/CreateDemoSection";

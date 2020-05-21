@@ -12,7 +12,7 @@ import Footer from "components/Footer/Footer.js";
 import Parallax from "components/Parallax/Parallax.js";
 
 // sections for this page
-import SectionAbout from "pages-sections/Components-Sections/SectionAbout.js";
+import SectionAbout from "pages-sections/Home/SectionAbout.js";
 
 import styles from "assets/jss/nextjs-material-kit/pages/components.js";
 import SectionGetStarted from "pages-sections/Components-Sections/SectionGetStarted.js";

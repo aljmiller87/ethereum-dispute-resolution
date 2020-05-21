@@ -18,7 +18,7 @@ import Parallax from "components/Parallax/Parallax.js";
 import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
 
 // Sections for this page
-import ProductSection from "pages-sections/LandingPage-Sections/ProductSection.js";
+import ProductSection from "pages-sections/Blockchain/ProductSection.js";
 
 const dashboardRoutes = [];
 

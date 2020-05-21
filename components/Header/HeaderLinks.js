@@ -46,7 +46,7 @@ export default function HeaderLinks(props) {
       {accountReducer.account && (
         <ListItem className={classes.listItem}>
           <Link href="/[account]" as={`/${accountReducer.account}`}>
-            <a>
+            <a style={{ color: "inherit" }}>
               <Button
                 color="transparent"
                 target="_blank"
