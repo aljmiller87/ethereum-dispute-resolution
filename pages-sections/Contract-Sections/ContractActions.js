@@ -20,8 +20,8 @@ import Card from "components/Card/Card";
 import CardBody from "components/Card/CardBody";
 import CardFooter from "components/Card/CardFooter";
 import CardHeader from "components/Card/CardHeader";
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
+import Grid from "@material-ui/core/Grid";
+
 import Title from "components/Title";
 
 // Action Card Components
@@ -134,9 +134,9 @@ const ContractActions = ({ details, account, ...rest }) => {
     return userActions.map((action) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
       return (
-        <GridItem xs={12} sm={12} md={6} lg={4} key={action}>
+        <Grid item xs={12} sm={12} md={6} lg={4} key={action}>
           <ActionCard action={actionConfigObject} {...rest} />
-        </GridItem>
+        </Grid>
       );
     });
   };
@@ -147,8 +147,8 @@ const ContractActions = ({ details, account, ...rest }) => {
 
   return (
     <Wrapper>
-      <GridContainer justify="center">
-        <GridItem xs={12} sm={12} md={8}>
+      <Grid container justify="center">
+        <Grid item xs={12} sm={12} md={8}>
           <Center>
             <Title type="h2">Available Contract Actions</Title>
             <p>
@@ -156,9 +156,11 @@ const ContractActions = ({ details, account, ...rest }) => {
               {StepsConfig[CurrentStep].description}
             </p>
           </Center>
-        </GridItem>
-      </GridContainer>
-      <GridContainer justify="center">{renderAvailableActions()}</GridContainer>
+        </Grid>
+      </Grid>
+      <Grid container justify="center">
+        {renderAvailableActions()}
+      </Grid>
     </Wrapper>
   );
 };

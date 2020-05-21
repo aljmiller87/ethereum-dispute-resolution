@@ -16,8 +16,8 @@ import { People } from "@material-ui/icons";
 import DoneIcon from "@material-ui/icons/Done";
 
 // core components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
+import Grid from "@material-ui/core/Grid";
+
 import Title from "components/Title";
 
 const ContractDetails = ({ details, account }) => {
@@ -41,13 +41,13 @@ const ContractDetails = ({ details, account }) => {
 
   return (
     <Wrapper>
-      <GridContainer justify="center">
-        <GridItem xs={12} sm={12} md={8}>
+      <Grid container justify="center">
+        <Grid item xs={12} sm={12} md={8}>
           <Center>
             <Title type="h2">Contract Summary</Title>
           </Center>
-        </GridItem>
-        <GridItem xs={12} sm={12} md={6}>
+        </Grid>
+        <Grid item xs={12} sm={12} md={6}>
           <List component="nav" aria-labelledby="contract details">
             <ListItem>
               <ListItemIcon>
@@ -87,9 +87,9 @@ const ContractDetails = ({ details, account }) => {
               />
             </ListItem>
           </List>
-        </GridItem>
+        </Grid>
         {escrowState === "IN_DISPUTE" && (
-          <GridItem xs={12} sm={12} md={6}>
+          <Grid item xs={12} sm={12} md={6}>
             <List component="nav" aria-labelledby="contract details">
               <ListItem>
                 <ListItemIcon>
@@ -199,9 +199,9 @@ const ContractDetails = ({ details, account }) => {
                 )}
               </ListItem>
             </List>
-          </GridItem>
+          </Grid>
         )}
-      </GridContainer>
+      </Grid>
     </Wrapper>
   );
 };

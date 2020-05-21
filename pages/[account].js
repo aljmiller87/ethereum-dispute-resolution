@@ -13,12 +13,11 @@ import factory from "../ethereum/factory";
 import { makeStyles } from "@material-ui/core/styles";
 import Slide from "@material-ui/core/Slide";
 import Dialog from "@material-ui/core/Dialog";
+import Grid from "@material-ui/core/Grid";
 
 // kit core components
 import Header from "components/Header/Header.js";
 import Footer from "components/Footer/Footer.js";
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
 
@@ -34,15 +33,22 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
+const ProfilePage = ({ contracts, ...rest }) => {
   const profileRef = useRef();
   const accountReducer = useSelector((state) => state.accountReducer);
+  let { pathname } = useSelector((state) => state.router.location);
+  pathname = pathname.substr(1);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  console.log("pathname", pathname);
+
+  const contractListToWatch = isUserLoggedIn
+    ? accountReducer.contracts
+    : contracts;
 
   let options = {};
   let avatars = new Avatars(sprites(options));
-  let svg = avatars.create(coinbase);
+  let svg = avatars.create(pathname);
   const classes = useStyles();
   const imageClasses = classNames(
     classes.imgRaised,
@@ -52,17 +58,19 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
   );
 
   useEffect(() => {
+    console.log("pathname", pathname);
     if (!accountReducer || !accountReducer.account) {
       return;
     }
-    if (accountReducer.account === coinbase && !isUserLoggedIn) {
+    console.log("accountReducer.account", accountReducer.account);
+    if (accountReducer.account === pathname && !isUserLoggedIn) {
       setIsUserLoggedIn(true);
     }
 
-    if (accountReducer.account !== coinbase && isUserLoggedIn) {
+    if (accountReducer.account !== pathname && isUserLoggedIn) {
       setIsUserLoggedIn(false);
     }
-  }, [accountReducer.account]);
+  }, [accountReducer.account, pathname]);
 
   useEffect(() => {
     if (profileRef.current) {
@@ -75,7 +83,11 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
       <Header
         color="transparent"
         brand="Arbitration Distributed"
-        rightLinks={<HeaderLinks coinbase={coinbase ? coinbase : null} />}
+        rightLinks={
+          <HeaderLinks
+            coinbase={accountReducer.account ? accountReducer.account : null}
+          />
+        }
         fixed
         changeColorOnScroll={{
           height: 200,
@@ -87,12 +99,12 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
       <div className={classNames(classes.main, classes.mainRaised)}>
         <div>
           <div className={classes.container}>
-            <GridContainer justify="center">
-              <GridItem xs={12} sm={12} md={6}>
+            <Grid container justify="center">
+              <Grid item xs={12} sm={12} md={6}>
                 <div className={classes.profile}>
                   <div ref={profileRef} className={imageClasses}></div>
                   <div className={classes.name}>
-                    <h3 className={classes.title}>{coinbase}</h3>
+                    <h3 className={classes.title}>{pathname}</h3>
                     {isUserLoggedIn && (
                       <button onClick={() => setModalOpen(true)}>
                         Create Contract
@@ -100,16 +112,14 @@ const ProfilePage = ({ data: { coinbase, contracts, ...rest } }) => {
                     )}
                   </div>
                 </div>
-              </GridItem>
-            </GridContainer>
+              </Grid>
+            </Grid>
           </div>
         </div>
       </div>
-      {contracts.length > 0 && (
+      {contractListToWatch.length > 0 && (
         <ListSection>
-          <ContractList
-            contracts={isUserLoggedIn ? accountReducer.contracts : contracts}
-          />
+          <ContractList contracts={contractListToWatch} />
         </ListSection>
       )}
       <Dialog
@@ -158,11 +168,11 @@ const ListSection = styled.section`
 `;
 
 ProfilePage.getInitialProps = async function (props) {
-  const coinbase = props.query.account;
+  const userAddress = props.query.account;
   const contracts = await factory.methods
     .getdeployedContracts()
-    .call({}, { from: coinbase });
-  return { data: { coinbase, contracts } };
+    .call({}, { from: userAddress });
+  return { contracts };
 };
 
 export default ProfilePage;

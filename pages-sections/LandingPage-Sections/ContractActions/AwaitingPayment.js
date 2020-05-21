@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 
 // @material-ui/core components
 import { makeStyles } from "@material-ui/core/styles";
@@ -11,12 +11,11 @@ import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
 import CardHeader from "components/Card/CardHeader.js";
 import CustomInput from "components/CustomInput/CustomInput.js";
-import GridItem from "components/Grid/GridItem.js";
 
 const AwaitingPayment = ({ classes, dispatchAction }) => {
   return (
     <React.Fragment>
-      <GridItem xs={12} sm={6} md={4}>
+      <Grid item xs={12} sm={6} md={4}>
         <Card>
           <CardHeader color="primary" className={classes.cardHeader}>
             <h4>Buyer Actions</h4>
@@ -30,7 +29,7 @@ const AwaitingPayment = ({ classes, dispatchAction }) => {
               labelText="Confirm Payment"
               id="ether"
               formControlProps={{
-                fullWidth: true
+                fullWidth: true,
               }}
               inputProps={{
                 required: true,
@@ -40,7 +39,7 @@ const AwaitingPayment = ({ classes, dispatchAction }) => {
                     <Icon className="fab fa-ethereum" />
                   </InputAdornment>
                 ),
-                autoComplete: "off"
+                autoComplete: "off",
               }}
             />
             <Button
@@ -48,25 +47,30 @@ const AwaitingPayment = ({ classes, dispatchAction }) => {
               color="primary"
               size="lg"
               block={true}
-              onClick={() => dispatchAction('confirmPayment', 'buyer')}>
+              onClick={() => dispatchAction("confirmPayment", "buyer")}
+            >
               Click to Send Payment to contract
-                  </Button>
+            </Button>
           </CardBody>
           <CardBody>
             <h4>Abort</h4>
-            <p>Aborting contract updates contract status to "Cancelled" and prevents funds from being sent to contract</p>
+            <p>
+              Aborting contract updates contract status to "Cancelled" and
+              prevents funds from being sent to contract
+            </p>
             <Button
               simple
               color="danger"
               size="lg"
               block={true}
-              onClick={() => dispatchAction('abort', 'buyer')}>
+              onClick={() => dispatchAction("abort", "buyer")}
+            >
               Click to Abort
-                  </Button>
+            </Button>
           </CardBody>
         </Card>
-      </GridItem>
-      <GridItem xs={12} sm={6} md={4}>
+      </Grid>
+      <Grid item xs={12} sm={6} md={4}>
         <Card>
           <CardHeader color="info" className={classes.cardHeader}>
             <h4>Seller Actions</h4>
@@ -76,20 +80,24 @@ const AwaitingPayment = ({ classes, dispatchAction }) => {
           </CardHeader>
           <CardBody>
             <h4>Abort</h4>
-            <p>Aborting contract updates contract status to "Cancelled" and prevents funds from being sent to contract</p>
+            <p>
+              Aborting contract updates contract status to "Cancelled" and
+              prevents funds from being sent to contract
+            </p>
             <Button
               simple
               color="danger"
               size="lg"
               block={true}
-              onClick={() => dispatchAction('abort', 'seller')}>
+              onClick={() => dispatchAction("abort", "seller")}
+            >
               Click to Abort
-                  </Button>
+            </Button>
           </CardBody>
         </Card>
-      </GridItem>
+      </Grid>
     </React.Fragment>
-  )
-}
+  );
+};
 
 export default AwaitingPayment;

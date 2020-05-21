@@ -29,7 +29,7 @@ const SectionAbout = () => {
               copy="Blockchain is a revolutionary new technology created to solve the issue of trust in economic activity without third parties..."
               buttonText="Read More"
               buttonIcon="blockchain"
-              buttonLink="/test"
+              buttonLink="/blockchain"
             />
           </Grid>
           <Grid item xs={12} sm={6}>

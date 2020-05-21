@@ -18,8 +18,8 @@ import { makeStyles } from "@material-ui/core/styles";
 // core components
 import Header from "components/Header/Header.js";
 import Footer from "components/Footer/Footer.js";
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
+import Grid from "@material-ui/core/Grid";
+
 import Button from "components/CustomButtons/Button.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
@@ -121,8 +121,8 @@ const Contract = (props) => {
       />
       <Parallax filter responsive image={require("assets/img/landing-bg.jpg")}>
         <div className={classes.container}>
-          <GridContainer>
-            <GridItem xs={12} sm={12} md={6}>
+          <Grid container>
+            <Grid item xs={12} sm={12} md={6}>
               <h1 className={classes.title}>Contract Address</h1>
               <h4>{contractAddress}</h4>
               <br />
@@ -136,8 +136,8 @@ const Contract = (props) => {
                 <i className="fas fa-cubes" />
                 View Block Explorer
               </Button>
-            </GridItem>
-          </GridContainer>
+            </Grid>
+          </Grid>
         </div>
       </Parallax>
       {details && (

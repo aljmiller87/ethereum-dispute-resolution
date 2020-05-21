@@ -8,8 +8,8 @@ import Icon from "@material-ui/core/Icon";
 import People from "@material-ui/icons/People";
 
 // Kit Components
-import GridContainer from "components/Grid/GridContainer.js";
-import GridItem from "components/Grid/GridItem.js";
+import Grid from "@material-ui/core/Grid";
+
 import Button from "components/CustomButtons/Button.js";
 import Card from "components/Card/Card.js";
 import CardBody from "components/Card/CardBody.js";
@@ -41,8 +41,8 @@ const CreateDemoSection = ({ active, callback }) => {
   };
   return (
     <div className={classes.demoStep} active={active}>
-      <GridContainer justify="center">
-        <GridItem xs={12} sm={6}>
+      <Grid container justify="center">
+        <Grid item xs={12} sm={6}>
           <Card>
             <form className={classes.form}>
               <CardHeader color="primary" className={classes.cardHeader}>
@@ -63,7 +63,7 @@ const CreateDemoSection = ({ active, callback }) => {
                   labelText="Buyer"
                   id="buyer"
                   formControlProps={{
-                    fullWidth: true
+                    fullWidth: true,
                   }}
                   inputProps={{
                     readOnly: true,
@@ -73,7 +73,7 @@ const CreateDemoSection = ({ active, callback }) => {
                       <InputAdornment position="end">
                         <People className={classes.inputIconsColor} />
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
                 <CustomInput
@@ -81,7 +81,7 @@ const CreateDemoSection = ({ active, callback }) => {
                   id="seller"
                   value="0x00000002"
                   formControlProps={{
-                    fullWidth: true
+                    fullWidth: true,
                   }}
                   inputProps={{
                     readOnly: true,
@@ -91,14 +91,14 @@ const CreateDemoSection = ({ active, callback }) => {
                       <InputAdornment position="end">
                         <People className={classes.inputIconsColor} />
                       </InputAdornment>
-                    )
+                    ),
                   }}
                 />
                 <CustomInput
                   labelText="Contract Value (in Ether)"
                   id="ether"
                   formControlProps={{
-                    fullWidth: true
+                    fullWidth: true,
                   }}
                   inputProps={{
                     required: true,
@@ -108,7 +108,7 @@ const CreateDemoSection = ({ active, callback }) => {
                         <Icon className="fab fa-ethereum" />
                       </InputAdornment>
                     ),
-                    autoComplete: "off"
+                    autoComplete: "off",
                   }}
                 />
               </CardBody>
@@ -124,8 +124,8 @@ const CreateDemoSection = ({ active, callback }) => {
               </CardFooter>
             </form>
           </Card>
-        </GridItem>
-      </GridContainer>
+        </Grid>
+      </Grid>
     </div>
   );
 };
