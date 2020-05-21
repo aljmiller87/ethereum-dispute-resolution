@@ -5,10 +5,9 @@ import "isomorphic-fetch";
 import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 import { Grid } from "@material-ui/core";
+// Layout
+import Layout from "../layouts";
 // core components
-import Header from "components/Header/Header.js";
-import HeaderLinks from "components/Header/HeaderLinks.js";
-import Footer from "components/Footer/Footer.js";
 import Parallax from "components/Parallax/Parallax.js";
 
 // sections for this page
@@ -23,17 +22,7 @@ const HomePage = (props) => {
   const classes = useStyles();
 
   return (
-    <div>
-      <Header
-        brand="Arbitration Distributed"
-        rightLinks={<HeaderLinks />}
-        fixed
-        color="transparent"
-        changeColorOnScroll={{
-          height: 400,
-          color: "white",
-        }}
-      />
+    <Layout>
       <Parallax image={require("assets/img/nextjs_header.jpg")}>
         <div className={classes.container}>
           <Grid container>
@@ -50,8 +39,7 @@ const HomePage = (props) => {
       </Parallax>
       <SectionAbout />
       <SectionGetStarted />
-      <Footer />
-    </div>
+    </Layout>
   );
 };
 

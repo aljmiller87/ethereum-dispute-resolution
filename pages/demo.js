@@ -85,11 +85,11 @@ const Demo = (props) => {
 };
 
 Demo.getInitialProps = async function () {
-  const [coinbase] = await web3.eth.getAccounts();
-  const contracts = await factory.methods
-    .getdeployedContracts()
-    .call({}, { from: coinbase });
-  return { data: { coinbase, contracts } };
+  // const [coinbase] = await web3.eth.getAccounts();
+  // const contracts = await factory.methods
+  //   .getdeployedContracts()
+  //   .call({}, { from: coinbase });
+  // return { data: { coinbase, contracts } };
 };
 
 export default Demo;

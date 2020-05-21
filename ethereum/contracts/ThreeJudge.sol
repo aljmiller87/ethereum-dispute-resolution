@@ -71,8 +71,8 @@ contract ThreeJudge {
     event StatusEvent(
         uint256 indexed timestamp,
         address triggeredByUser,
-        State currentState,
-        DisputeState currentDisputeState
+        string functionCalled,
+        string newState
     );
 
     uint256 public deadline;
@@ -170,9 +170,13 @@ contract ThreeJudge {
                 buyer.transfer(address(this).balance);
             }
             currentDisputeState = DisputeState.COMPLETE;
-            currentState = State.COMPLETE;
         }
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(
+            now,
+            msg.sender,
+            "claimFunds",
+            "Dispute State: Complete"
+        );
     }
 
     function abort() public buyerSellerOnly {
@@ -191,7 +195,7 @@ contract ThreeJudge {
         if (address(this).balance > 0) {
             buyer.transfer(address(this).balance);
         }
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(now, msg.sender, "abort", "State: Cancelled");
     }
 
     function confirmPayment()
@@ -203,13 +207,23 @@ contract ThreeJudge {
         require(msg.value > 0, "No funds sent");
         currentState = State.AWAITING_PRODUCT_SENT;
         balance += msg.value;
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(
+            now,
+            msg.sender,
+            "confirmPayment",
+            "State: Awaiting Product Sent"
+        );
     }
 
     function confirmProductSent() public inState(State.AWAITING_PRODUCT_SENT) {
         require(msg.sender == seller, "Only seller is authorized.");
         currentState = State.AWAITING_DELIVERY;
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(
+            now,
+            msg.sender,
+            "confirmProductSent",
+            "State: Awaiting Delivery"
+        );
     }
 
     function confirmDelivery()
@@ -219,7 +233,7 @@ contract ThreeJudge {
     {
         seller.transfer(address(this).balance);
         currentState = State.COMPLETE;
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(now, msg.sender, "confirmDelivery", "State: Complete");
     }
 
     function initDispute() public buyerSellerOnly {
@@ -229,7 +243,7 @@ contract ThreeJudge {
             "Cannot initiate dispute because contract must either be in Awaiting Product Sent or Awaiting Delivery states."
         );
         currentState = State.IN_DISPUTE;
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(now, msg.sender, "initDispute", "State: In Dispute");
     }
 
     function pickJudge(address payable _judge)
@@ -271,7 +285,11 @@ contract ThreeJudge {
         } else {
             setNewDeadline();
         }
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        string memory newState = currentDisputeState ==
+            DisputeState.AWAITING_JUDGE_SELECTION
+            ? "Dispute State: Awaiting Judge Selection"
+            : "State: Awaiting Final Judge Nomination";
+        emit StatusEvent(now, msg.sender, "pickJudge", newState);
     }
 
     function nominateFinalJudge(address payable _nominatedJudge)
@@ -299,7 +317,12 @@ contract ThreeJudge {
         } else {
             awaitingParty = buyer;
         }
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        emit StatusEvent(
+            now,
+            msg.sender,
+            "nominateFinalJudge",
+            "Dispute State: Awaiting Nomination Confirmation"
+        );
     }
 
     function confirmFinalJudge(bool _approve)
@@ -320,7 +343,12 @@ contract ThreeJudge {
             hasNominated[sellerJudge] = false;
             nominatedJudge = address(0);
         }
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+
+        string memory newState = currentDisputeState ==
+            DisputeState.AWAITING_RESOLUTION
+            ? "Dispute State: Awaiting Resolution"
+            : "Dispute State: Awaiting Final Judge Nomination";
+        emit StatusEvent(now, msg.sender, "confirmFinalJudge", newState);
     }
 
     function provideTestimony(string memory _testimony)
@@ -362,7 +390,10 @@ contract ThreeJudge {
         if (votesForBuyer >= 2 || votesForSeller >= 2) {
             currentDisputeState = DisputeState.COMPLETE;
         }
-        emit StatusEvent(now, msg.sender, currentState, currentDisputeState);
+        string memory newState = currentDisputeState == DisputeState.COMPLETE
+            ? "Dispute State: Complete"
+            : "Dispute State: Awaiting Resolution";
+        emit StatusEvent(now, msg.sender, "arbtrateDispute", newState);
     }
 
     function distributeFunds()
@@ -380,6 +411,13 @@ contract ThreeJudge {
         } else {
             seller.transfer(settlement);
         }
+        balance = address(this).balance;
+        emit StatusEvent(
+            now,
+            msg.sender,
+            "distributeFunds",
+            "Dispute State: Complete"
+        );
     }
 
     function getStatus()
