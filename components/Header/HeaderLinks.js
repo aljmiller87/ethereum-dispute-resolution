@@ -23,6 +23,7 @@ const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
   const accountReducer = useSelector((state) => state.accountReducer);
+  const userAddress = accountReducer.account ? accountReducer.account : "";
   const classes = useStyles();
   return (
     <List className={classes.list}>
@@ -45,7 +46,7 @@ export default function HeaderLinks(props) {
       </ListItem>
       {accountReducer.account && (
         <ListItem className={classes.listItem}>
-          <Link href="/[account]" as={`/${accountReducer.account}`}>
+          <Link href="/dashboard/[account]" as={`/dashboard/${userAddress}`}>
             <a style={{ color: "inherit" }}>
               <Button
                 color="transparent"

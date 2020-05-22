@@ -2,11 +2,11 @@ import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // Ethereum
-import web3 from "../../ethereum/web3";
-import ThreeJudge from "../../ethereum/threejudge";
+import web3 from "../../../ethereum/web3";
+import ThreeJudge from "../../../ethereum/threejudge";
 
 // Actions
-import * as contractActions from "../../redux/actions/contractActions";
+import * as contractActions from "../../../redux/actions/contractActions";
 
 // nodejs library that concatenates classes
 import classNames from "classnames";
@@ -24,7 +24,7 @@ import Button from "components/CustomButtons/Button.js";
 import HeaderLinks from "components/Header/HeaderLinks.js";
 import Parallax from "components/Parallax/Parallax.js";
 
-import Loader from "../../components/Loading";
+import Loader from "../../../components/Loading";
 
 // Sections
 import ContractDetails from "pages-sections/Contract-Sections/ContractDetails";
@@ -32,7 +32,7 @@ import StatusTracker from "pages-sections/Contract-Sections/StatusTracker";
 import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 
 // Utilities
-import { formatEscrowStatus } from "../../utilities/contractHelpers";
+import { formatEscrowStatus } from "../../../utilities/contractHelpers";
 
 import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
 const useStyles = makeStyles(styles);

@@ -1,10 +1,11 @@
 import styled from "styled-components";
+import breakpoint from "styled-components-breakpoint";
 
 export const StyledSideBar = styled.aside`
   background-color: #252525 !important;
   box-shadow: none;
   color: #a1a1a1 !important;
-  display: flex;
+  display: none;
   flex-direction: column;
   flex-wrap: nowrap;
   max-width: 250px;
@@ -23,7 +24,7 @@ export const StyledSideBar = styled.aside`
     width: 250px;
   }
 
-  @media (max-width: 991px) {
-    display: none;
-  }
+  ${breakpoint("lg")`
+    display: flex;
+  `}
 `;

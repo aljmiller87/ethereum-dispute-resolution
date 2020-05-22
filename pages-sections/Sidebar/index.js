@@ -1,17 +1,22 @@
 import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import Drawer from "@material-ui/core/Drawer";
 
 // Components
 import ConnectionStatus from "./components/ConnectionStatus";
 import Navigation from "./components/Navigation";
 
+// Actions
+import { toggleMobileNav } from "../../redux/actions/dashboardActions";
+
 // Styles
 import { StyledSideBar } from "./styles";
 
 const Sidebar = () => {
+  const dispatch = useDispatch();
+  const { mobileMenuOpen } = useSelector((state) => state.dashboardReducer);
   const [isRendered, setIsRendered] = useState(false);
   const [windowWidth, setWindowWidth] = useState(0);
-  const [isNavCollapsed, setNavCollapsed] = useState(true);
 
   useEffect(() => {
     setIsRendered(true);
@@ -26,8 +31,8 @@ const Sidebar = () => {
     setWindowWidth(window.innerWidth);
   };
 
-  const onToggleCollapsedNav = () => {
-    setNavCollapsed((prevState) => !prevState);
+  const onToggleMobileNav = () => {
+    dispatch(toggleMobileNav());
   };
 
   if (!isRendered) {
@@ -41,8 +46,8 @@ const Sidebar = () => {
       <Drawer
         className="app-sidebar-content"
         variant={type}
-        open={type.includes("temporary") ? !isNavCollapsed : true}
-        onClose={onToggleCollapsedNav}
+        open={type.includes("temporary") ? mobileMenuOpen : true}
+        onClose={onToggleMobileNav}
         classes={{
           paper: "SideBar-Mobile",
         }}

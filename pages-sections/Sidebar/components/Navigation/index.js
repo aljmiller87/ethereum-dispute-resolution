@@ -11,13 +11,13 @@ import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import SearchIcon from "@material-ui/icons/Search";
 
 // Actions
-import { setDashboardNav } from "../../../../redux/actions/dashboardNavActions";
+import { setDashboardNav } from "../../../../redux/actions/dashboardActions";
 
 // Styles
 import { Wrapper, StyledListItem, Title } from "./styles";
 
 const Navigation = () => {
-  const { dashboardNavReducer } = useSelector((state) => state);
+  const { activeTab } = useSelector((state) => state.dashboardReducer);
   const dispatch = useDispatch();
 
   const handleTabClick = (tab) => {
@@ -29,7 +29,7 @@ const Navigation = () => {
       <List component="nav" aria-label="main mailbox folders">
         <StyledListItem
           button
-          isActive={dashboardNavReducer === "contracts"}
+          isActive={activeTab === "contracts"}
           onClick={() => handleTabClick("contracts")}
         >
           <ListItemIcon>
@@ -39,7 +39,7 @@ const Navigation = () => {
         </StyledListItem>
         <StyledListItem
           button
-          isActive={dashboardNavReducer === "create"}
+          isActive={activeTab === "create"}
           onClick={() => handleTabClick("create")}
         >
           <ListItemIcon>
@@ -49,7 +49,7 @@ const Navigation = () => {
         </StyledListItem>
         <StyledListItem
           button
-          isActive={dashboardNavReducer === "search"}
+          isActive={activeTab === "search"}
           onClick={() => handleTabClick("search")}
         >
           <ListItemIcon>

@@ -22,6 +22,8 @@ import Head from "next/head";
 import Router from "next/router";
 import { ConnectedRouter } from "connected-next-router";
 import wrapper from "../redux/store/configureStore";
+import { ThemeProvider } from "styled-components";
+import { theme } from "../assets/theme";
 
 import PageChange from "components/PageChange/PageChange.js";
 import EthereumConnectionDetect from "../components/EthereumConnectionDetect";
@@ -83,7 +85,9 @@ class MyApp extends App {
         </Head>
         <ConnectedRouter>
           <EthereumConnectionDetect>
-            <Component {...pageProps} />
+            <ThemeProvider theme={theme}>
+              <Component {...pageProps} />
+            </ThemeProvider>
           </EthereumConnectionDetect>
         </ConnectedRouter>
       </React.Fragment>
