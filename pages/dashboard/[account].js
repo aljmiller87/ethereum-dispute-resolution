@@ -10,34 +10,36 @@ import Layout from "../../layouts";
 
 // Sections
 import ContractList from "pages-sections/Dashboard-Sections/ContractList";
+import ContractGrid from "pages-sections/Dashboard-Sections/contracts/ContractGrid";
 
-const ProfilePage = ({ contracts, ...rest }) => {
+const ProfilePage = ({ contracts, userAddress, ...rest }) => {
   const profileRef = useRef();
   const accountReducer = useSelector((state) => state.accountReducer);
-  let { pathname } = useSelector((state) => state.router.location);
-  pathname = pathname.substr(1);
+  const { pathname } = useSelector((state) => state.router.location);
+  let address =
+    pathname === "/" ? userAddress : pathname.replace("/dashboard/", "");
   const [isModalOpen, setModalOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  console.log("pathname", pathname);
+  console.log("address", address);
 
   const contractListToWatch = isUserLoggedIn
     ? accountReducer.contracts
     : contracts;
 
   useEffect(() => {
-    console.log("pathname", pathname);
+    console.log("address", address);
     if (!accountReducer || !accountReducer.account) {
       return;
     }
     console.log("accountReducer.account", accountReducer.account);
-    if (accountReducer.account === pathname && !isUserLoggedIn) {
+    if (accountReducer.account === address && !isUserLoggedIn) {
       setIsUserLoggedIn(true);
     }
 
-    if (accountReducer.account !== pathname && isUserLoggedIn) {
+    if (accountReducer.account !== address && isUserLoggedIn) {
       setIsUserLoggedIn(false);
     }
-  }, [accountReducer.account, pathname]);
+  }, [accountReducer.account, address]);
 
   useEffect(() => {
     if (profileRef.current) {
@@ -47,11 +49,12 @@ const ProfilePage = ({ contracts, ...rest }) => {
 
   return (
     <Layout layout="dashboard">
-      {contractListToWatch.length > 0 && (
+      <ContractGrid contracts={contractListToWatch} />
+      {/* {contractListToWatch.length > 0 && (
         <ListSection>
           <ContractList contracts={contractListToWatch} />
         </ListSection>
-      )}
+      )} */}
     </Layout>
   );
 };
@@ -83,7 +86,7 @@ ProfilePage.getInitialProps = async function (props) {
   const contracts = await factory.methods
     .getdeployedContracts()
     .call({}, { from: userAddress });
-  return { contracts };
+  return { userAddress, contracts };
 };
 
 export default ProfilePage;

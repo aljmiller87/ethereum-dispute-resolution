@@ -16,7 +16,7 @@ import {
 } from "../../components/config/contract";
 
 // Utilities
-import { formatEscrowStatus } from "../../utilities/contractHelpers";
+import { formatContractData } from "../../utilities/contractHelpers";
 
 // Material Core Components
 import {
@@ -68,10 +68,11 @@ const ContractListItem = ({ contract }) => {
   };
 
   const fetchDetails = async () => {
-    const escrowSummary = await campaign.methods.getStatus().call();
+    const summary = await campaign.methods.getStatus().call();
     const disputeSummary = await campaign.methods.getDisputeStatus().call();
-    const summary = { ...escrowSummary, disputeSummary };
-    const formattedSummary = formatEscrowStatus(summary);
+    const fullSummary = { ...summary, disputeSummary };
+    console.log("fullSummary", fullSummary);
+    const formattedSummary = formatContractData(fullSummary);
     setDetails(formattedSummary);
     setIsLoading(false);
   };
@@ -102,7 +103,10 @@ const ContractListItem = ({ contract }) => {
           {isLoading ? (
             <CircularProgress size={14} />
           ) : (
-            <Link href="/contract/[contract]" as={`/contract/${contract}`}>
+            <Link
+              href="/dashboard/contract/[contract]"
+              as={`/dashboard/contract/${contract}`}
+            >
               <StyledLink>
                 <ListItemIcon>
                   <InboxIcon />

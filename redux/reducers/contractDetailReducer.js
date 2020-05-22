@@ -4,6 +4,10 @@ const contractDetailReducer = (state = {}, action) => {
   switch (action.type) {
     case HYDRATE:
       return { ...state };
+    case "SET_ALL_CONTRACT_DATA":
+      return {
+        ...action.payload,
+      };
     case "SET_CONTRACT_DETAILS":
       return {
         ...state,

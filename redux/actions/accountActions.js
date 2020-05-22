@@ -3,7 +3,7 @@ import factory from "../../ethereum/factory";
 
 //Action Types
 export const SET_ACCOUNT = "SET_ACCOUNT";
-export const SET_CONTRACTS = "SET_CONTRACTS";
+export const SET_ACCOUNT_CONTRACT_LIST = "SET_ACCOUNT_CONTRACT_LIST";
 
 //Action Creator
 export const setAccount = (coinbase) => ({
@@ -11,8 +11,8 @@ export const setAccount = (coinbase) => ({
   payload: coinbase,
 });
 
-export const setContracts = (contracts) => ({
-  type: SET_CONTRACTS,
+export const setAccountContractList = (contracts) => ({
+  type: SET_ACCOUNT_CONTRACT_LIST,
   payload: contracts,
 });
 
@@ -24,7 +24,7 @@ export const asyncLoadAccountInfo = () => {
         .getdeployedContracts()
         .call({}, { from: coinbase });
       dispatch(setAccount(coinbase));
-      dispatch(setContracts(fetchedContracts));
+      dispatch(setAccountContractList(fetchedContracts));
     } catch (error) {
       // dispatch(errorHandle(error));
       console.log("asyncLoadAccountInfo: ", error);

@@ -33,14 +33,13 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const ProfilePage = ({ contracts, ...rest }) => {
+const ProfilePage = ({ contracts, userAddress, ...rest }) => {
   const profileRef = useRef();
   const accountReducer = useSelector((state) => state.accountReducer);
-  let { pathname } = useSelector((state) => state.router.location);
-  pathname = pathname.substr(1);
+  const { pathname } = useSelector((state) => state.router.location);
+  let address = pathname === "/" ? userAddress : pathname.substr(1);
   const [isModalOpen, setModalOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  console.log("pathname", pathname);
 
   const contractListToWatch = isUserLoggedIn
     ? accountReducer.contracts
@@ -58,19 +57,19 @@ const ProfilePage = ({ contracts, ...rest }) => {
   );
 
   useEffect(() => {
-    console.log("pathname", pathname);
+    console.log("address", address);
     if (!accountReducer || !accountReducer.account) {
       return;
     }
     console.log("accountReducer.account", accountReducer.account);
-    if (accountReducer.account === pathname && !isUserLoggedIn) {
+    if (accountReducer.account === address && !isUserLoggedIn) {
       setIsUserLoggedIn(true);
     }
 
-    if (accountReducer.account !== pathname && isUserLoggedIn) {
+    if (accountReducer.account !== address && isUserLoggedIn) {
       setIsUserLoggedIn(false);
     }
-  }, [accountReducer.account, pathname]);
+  }, [accountReducer.account, address]);
 
   useEffect(() => {
     if (profileRef.current) {
@@ -104,7 +103,7 @@ const ProfilePage = ({ contracts, ...rest }) => {
                 <div className={classes.profile}>
                   <div ref={profileRef} className={imageClasses}></div>
                   <div className={classes.name}>
-                    <h3 className={classes.title}>{pathname}</h3>
+                    <h3 className={classes.title}>{address}</h3>
                     {isUserLoggedIn && (
                       <button onClick={() => setModalOpen(true)}>
                         Create Contract
@@ -172,7 +171,7 @@ ProfilePage.getInitialProps = async function (props) {
   const contracts = await factory.methods
     .getdeployedContracts()
     .call({}, { from: userAddress });
-  return { contracts };
+  return { userAddress, contracts };
 };
 
 export default ProfilePage;

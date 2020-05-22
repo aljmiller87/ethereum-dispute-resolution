@@ -15,7 +15,7 @@ const accountReducer = (state = initialState, action) => {
         account: action.payload,
       };
     }
-    case "SET_CONTRACTS": {
+    case "SET_ACCOUNT_CONTRACT_LIST": {
       return {
         ...state,
         contracts: action.payload,

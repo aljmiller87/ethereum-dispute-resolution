@@ -32,7 +32,7 @@ import StatusTracker from "pages-sections/Contract-Sections/StatusTracker";
 import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 
 // Utilities
-import { formatEscrowStatus } from "../../../utilities/contractHelpers";
+import { formatEscrowStatusOriginal } from "../../../utilities/contractHelpers";
 
 import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
 const useStyles = makeStyles(styles);
@@ -53,7 +53,7 @@ const Contract = (props) => {
   const currentBlockChainWriteCalls = useSelector(
     (state) => state.blockchainCallsReducer.blockchainWriteCalls
   );
-  const details = summary ? formatEscrowStatus(summary) : false;
+  const details = summary ? formatEscrowStatusOriginal(summary) : false;
 
   const dispatch = useDispatch();
 
