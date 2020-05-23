@@ -8,12 +8,13 @@ const contractReducer = (state = {}, action) => {
       return {
         ...action.payload,
       };
-    case "SET_CONTRACT_DETAILS":
+    case "SET_SINGLE_CONTRACT_DATA":
       return {
         ...state,
         [action.payload.contractAddress]: {
           events: action.payload.eventsArray,
           summary: action.payload.summary,
+          isListening: false,
         },
       };
     case "SET_LISTENING_ACTIVE":

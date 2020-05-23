@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
 // Ethereum
-import web3 from "../../../ethereum/web3";
 import ThreeJudge from "../../../ethereum/threejudge";
 
 // Actions
@@ -16,15 +15,13 @@ import ContractDetails from "pages-sections/Contract-Sections/ContractDetails";
 import StatusTracker from "pages-sections/Contract-Sections/StatusTracker";
 import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 
-//Components
-import Loader from "../../../components/Loading";
-
 // Utilities
 import { getNetworkURL } from "../../../utilities/getNetwork";
 import { formatContractData } from "../../../utilities/contractHelpers";
+import { setContractEventListeners } from "../../../utilities/contractListeners";
 
-const Contract = ({ contractAddress, contractData, ...rest }) => {
-  const { summaryProps, eventsProps } = contractData;
+const Contract = ({ addressProps, contractDataProps, ...rest }) => {
+  const { summaryProps, eventsProps } = contractDataProps;
   const instanceRef = useRef();
 
   // Selectors
@@ -32,58 +29,52 @@ const Contract = ({ contractAddress, contractData, ...rest }) => {
     (state) => state.networkReducer
   );
   const { account } = useSelector((state) => state.accountReducer);
-  const { events, summary } =
+  const contractFromStore =
     useSelector((state) => {
-      return state.contractReducer[contractAddress];
-    }) || {};
+      return state.contractReducer[addressProps];
+    }) || false;
   const currentBlockChainWriteCalls = useSelector(
     (state) => state.blockchainCallsReducer.blockchainWriteCalls
   );
 
+  console.log("contractFromStore", contractFromStore);
+  // console.log("isListening", isListening);
+
   const dispatch = useDispatch();
 
-  const setContractEventListeners = () => {
-    const instance = ThreeJudge(contractAddress);
-    instanceRef.current = instance;
+  const initEventListeners = (address) => {
+    let error = "PRETEST";
+    try {
+      setContractEventListeners(address);
+    } catch (err) {
+      console.log("err", err);
+      error = err.messagae;
+    }
 
-    // (instance);
-    instance.events
-      .allEvents({
-        fromBlock: "latest",
-      })
-      .on("connected", function (subscriptionId) {
-        console.log("connected subscriptionId", subscriptionId);
-      })
-      .on("data", function (event) {
-        console.log("data event", event);
-        dispatch(contractActions.addEvent(contractAddress, event));
-        dispatch(
-          contractActions.asyncFetchState(contractAddress, instanceRef.current)
-        );
-      })
-      .on("changed", function (event) {
-        console.log("changed event", event);
-        // remove event from local database
-      })
-      .on("error", function (error, receipt) {
-        // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-        console.log("error", error);
-        console.log("error receipt", receipt);
-      });
+    if (error === "PRETEST") {
+      dispatch(contractActions.setListeningActive(address));
+    }
   };
 
-  // useEffect(() => {
-  //   if (isEthereumConnected) {
-  //     setContractEventListeners();
-  //     dispatch(
-  //       contractActions.setSingleContractData(
-  //         contractAddress,
-  //         contractSummary,
-  //         logs
-  //       )
-  //     );
-  //   }
-  // }, [isEthereumConnected]);
+  useEffect(() => {
+    if (isEthereumConnected) {
+      if (!contractFromStore) {
+        dispatch(
+          contractActions.setSingleContractData(
+            addressProps,
+            summaryProps,
+            eventsProps
+          )
+        );
+
+        initEventListeners(addressProps);
+      } else if (!contractFromStore.isListening) {
+        console.log("only need to set event listeners");
+      }
+      // setContractEventListeners();
+      // );
+    }
+  }, [isEthereumConnected, contractFromStore]);
 
   return (
     <Layout layout="dashboard">
@@ -96,13 +87,13 @@ const Contract = ({ contractAddress, contractData, ...rest }) => {
             <ContractActions
               details={details}
               account={account}
-              contractAddress={contractAddress}
+              addressProps={addressProps}
             />
           </div>
         </div>
       )}
        {currentBlockChainWriteCalls.findIndex( 
-         (address) => address === contractAddress
+         (address) => address === addressProps
        ) >= 0 && <Loader />}
       */}
     </Layout>
@@ -119,8 +110,8 @@ Contract.getInitialProps = async (props) => {
   });
 
   return {
-    contractAddress: address,
-    contractData: {
+    addressProps: address,
+    contractDataProps: {
       summaryProps: formattedSummary,
       eventsProps: logs,
     },

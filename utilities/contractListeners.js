@@ -24,6 +24,7 @@ export const setContractEventListeners = async (contractAddress) => {
       })
       .on("connected", function (subscriptionId) {
         console.log("connected subscriptionId", subscriptionId);
+        dispatch(contractActions.addEvent(contractAddress, event));
       })
       .on("data", function (event) {
         console.log("data event", event);
