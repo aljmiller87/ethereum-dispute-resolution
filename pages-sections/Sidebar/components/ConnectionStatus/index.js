@@ -1,6 +1,9 @@
 import React from "react";
 import { useSelector } from "react-redux";
 
+// Utitlites
+import { getNetwork } from "../../../../utilities/getNetwork";
+
 // Material
 import Icon from "@material-ui/core/Icon";
 
@@ -12,21 +15,6 @@ const ConnectionStatus = () => {
     (state) => state.networkReducer
   );
 
-  const getNetwork = (id) => {
-    switch (id) {
-      case "1":
-        return "Main";
-      case "3":
-        return "Ropsten";
-      case "4":
-        return "Rinkeby";
-      case "42":
-        return "Kovan";
-
-      default:
-        return "Error";
-    }
-  };
   return (
     <Wrapper>
       <Icon className="fab fa-ethereum" />

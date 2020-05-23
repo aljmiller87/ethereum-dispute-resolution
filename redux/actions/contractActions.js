@@ -2,14 +2,19 @@ import ThreeJudge from "../../ethereum/threejudge";
 import { formatContractData } from "../../utilities/contractHelpers";
 
 //Action Types
-export const SET_CONTRACT_DETAILS = "SET_CONTRACT_DETAILS";
+export const SET_SINGLE_CONTRACT_DATA = "SET_SINGLE_CONTRACT_DATA";
 export const ADD_EVENT = "ADD_EVENT";
 export const UPDATE_SUMMARY = "UPDATE_SUMMARY";
 export const SET_ALL_CONTRACT_DATA = "SET_ALL_CONTRACT_DATA";
+export const SET_LISTENING_ACTIVE = "SET_LISTENING_ACTIVE";
 
 //Action Creator
-export const setContractDetails = (contractAddress, summary, eventsArray) => ({
-  type: SET_CONTRACT_DETAILS,
+export const setSingleContractData = (
+  contractAddress,
+  summary,
+  eventsArray
+) => ({
+  type: SET_SINGLE_CONTRACT_DATA,
   payload: { contractAddress, summary, eventsArray },
 });
 
@@ -21,6 +26,11 @@ export const addEvent = (contractAddress, event) => ({
 export const updateSummary = (contractAddress, summary) => ({
   type: UPDATE_SUMMARY,
   payload: { contractAddress, summary },
+});
+
+export const setListeningActive = (contractAddress) => ({
+  type: SET_LISTENING_ACTIVE,
+  payload: contractAddress,
 });
 
 export const setAllContractData = (allContractData) => ({
@@ -53,6 +63,7 @@ export const fetchAllContractData = (contracts) => {
           const contractData = {
             summary: contractState,
             events: contractEventLogs,
+            isListening: false,
           };
           allData[contract] = contractData;
         })

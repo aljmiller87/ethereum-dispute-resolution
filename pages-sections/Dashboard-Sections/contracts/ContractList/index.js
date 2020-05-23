@@ -38,16 +38,14 @@ const filterFunctions = {
 };
 const ContractList = ({ filter }) => {
   const [filteredContracts, setFilteredContracts] = useState([]);
-  const contractDetailReducer = useSelector(
-    (state) => state.contractDetailReducer
-  );
+  const contractReducer = useSelector((state) => state.contractReducer);
   useEffect(() => {
     const filterFunction = filterFunctions[filter];
-    const activeContracts = filterFunction(contractDetailReducer);
+    const activeContracts = filterFunction(contractReducer);
     if (typeof activeContracts === "object" && activeContracts.length) {
       setFilteredContracts(activeContracts);
     }
-  }, [contractDetailReducer]);
+  }, [contractReducer]);
   return (
     <Card>
       <CardHeader color="info">

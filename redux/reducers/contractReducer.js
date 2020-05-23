@@ -1,6 +1,6 @@
 import { HYDRATE } from "next-redux-wrapper";
 
-const contractDetailReducer = (state = {}, action) => {
+const contractReducer = (state = {}, action) => {
   switch (action.type) {
     case HYDRATE:
       return { ...state };
@@ -16,6 +16,15 @@ const contractDetailReducer = (state = {}, action) => {
           summary: action.payload.summary,
         },
       };
+    case "SET_LISTENING_ACTIVE":
+      return {
+        ...state,
+        [action.payload]: {
+          events: state[action.payload].events,
+          summary: state[action.payload].summary,
+          isLoading: true,
+        },
+      };
     case "ADD_EVENT":
       const updatedEvents = [
         ...state[action.payload.contractAddress].events,
@@ -27,6 +36,7 @@ const contractDetailReducer = (state = {}, action) => {
         [action.payload.contractAddress]: {
           events: updatedEvents,
           summary: state[action.payload.contractAddress].summary,
+          isLoading: state[action.payload.contractAddress].isLoading,
         },
       };
     case "UPDATE_SUMMARY":
@@ -35,6 +45,7 @@ const contractDetailReducer = (state = {}, action) => {
         [action.payload.contractAddress]: {
           events: state[action.payload.contractAddress].events,
           summary: action.payload.summary,
+          isLoading: state[action.payload.contractAddress].isLoading,
         },
       };
     default:
@@ -42,4 +53,4 @@ const contractDetailReducer = (state = {}, action) => {
   }
 };
 
-export default contractDetailReducer;
+export default contractReducer;

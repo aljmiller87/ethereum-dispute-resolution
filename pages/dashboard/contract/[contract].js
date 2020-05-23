@@ -8,37 +8,23 @@ import ThreeJudge from "../../../ethereum/threejudge";
 // Actions
 import * as contractActions from "../../../redux/actions/contractActions";
 
-// nodejs library that concatenates classes
-import classNames from "classnames";
-// @material-ui/core components
-import { makeStyles } from "@material-ui/core/styles";
-
-// @material-ui/icons
-
-// core components
-import Header from "components/Header/Header.js";
-import Footer from "components/Footer/Footer.js";
-import Grid from "@material-ui/core/Grid";
-
-import Button from "components/CustomButtons/Button.js";
-import HeaderLinks from "components/Header/HeaderLinks.js";
-import Parallax from "components/Parallax/Parallax.js";
-
-import Loader from "../../../components/Loading";
+// Layout
+import Layout from "../../../layouts";
 
 // Sections
 import ContractDetails from "pages-sections/Contract-Sections/ContractDetails";
 import StatusTracker from "pages-sections/Contract-Sections/StatusTracker";
 import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 
+//Components
+import Loader from "../../../components/Loading";
+
 // Utilities
-import { formatEscrowStatusOriginal } from "../../../utilities/contractHelpers";
+import { getNetworkURL } from "../../../utilities/getNetwork";
+import { formatContractData } from "../../../utilities/contractHelpers";
 
-import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
-const useStyles = makeStyles(styles);
-
-const Contract = (props) => {
-  const { contractAddress, contractSummary, logs, ...rest } = props;
+const Contract = ({ contractAddress, contractData, ...rest }) => {
+  const { summaryProps, eventsProps } = contractData;
   const instanceRef = useRef();
 
   // Selectors
@@ -48,21 +34,13 @@ const Contract = (props) => {
   const { account } = useSelector((state) => state.accountReducer);
   const { events, summary } =
     useSelector((state) => {
-      return state.contractDetailReducer[contractAddress];
+      return state.contractReducer[contractAddress];
     }) || {};
   const currentBlockChainWriteCalls = useSelector(
     (state) => state.blockchainCallsReducer.blockchainWriteCalls
   );
-  const details = summary ? formatEscrowStatusOriginal(summary) : false;
 
   const dispatch = useDispatch();
-
-  const networkURL =
-    network === "1"
-      ? "https://etherscan.io/address/"
-      : "https://rinkeby.etherscan.io/address/";
-
-  const classes = useStyles();
 
   const setContractEventListeners = () => {
     const instance = ThreeJudge(contractAddress);
@@ -94,53 +72,23 @@ const Contract = (props) => {
       });
   };
 
-  useEffect(() => {
-    if (isEthereumConnected) {
-      setContractEventListeners();
-      dispatch(
-        contractActions.setContractDetails(
-          contractAddress,
-          contractSummary,
-          logs
-        )
-      );
-    }
-  }, [isEthereumConnected]);
+  // useEffect(() => {
+  //   if (isEthereumConnected) {
+  //     setContractEventListeners();
+  //     dispatch(
+  //       contractActions.setSingleContractData(
+  //         contractAddress,
+  //         contractSummary,
+  //         logs
+  //       )
+  //     );
+  //   }
+  // }, [isEthereumConnected]);
 
   return (
-    <div>
-      <Header
-        brand="Arbitration Distributed"
-        rightLinks={<HeaderLinks />}
-        fixed
-        color="transparent"
-        changeColorOnScroll={{
-          height: 100,
-          color: "white",
-        }}
-      />
-      <Parallax filter responsive image={require("assets/img/landing-bg.jpg")}>
-        <div className={classes.container}>
-          <Grid container>
-            <Grid item xs={12} sm={12} md={6}>
-              <h1 className={classes.title}>Contract Address</h1>
-              <h4>{contractAddress}</h4>
-              <br />
-              <Button
-                color="info"
-                size="lg"
-                href={`${networkURL}${contractAddress}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <i className="fas fa-cubes" />
-                View Block Explorer
-              </Button>
-            </Grid>
-          </Grid>
-        </div>
-      </Parallax>
-      {details && (
+    <Layout layout="dashboard">
+      contract detail component
+      {/*{details && (
         <div className={classNames(classes.main, classes.mainRaised)}>
           <div className={classes.container}>
             <ContractDetails details={details} account={account} />
@@ -153,11 +101,11 @@ const Contract = (props) => {
           </div>
         </div>
       )}
-      <Footer />
-      {currentBlockChainWriteCalls.findIndex(
-        (address) => address === contractAddress
-      ) >= 0 && <Loader />}
-    </div>
+       {currentBlockChainWriteCalls.findIndex( 
+         (address) => address === contractAddress
+       ) >= 0 && <Loader />}
+      */}
+    </Layout>
   );
 };
 Contract.getInitialProps = async (props) => {
@@ -165,14 +113,17 @@ Contract.getInitialProps = async (props) => {
   const contract = ThreeJudge(address);
   const summary = await contract.methods.getStatus().call();
   const disputeSummary = await contract.methods.getDisputeStatus().call();
+  const formattedSummary = formatContractData({ summary, disputeSummary });
   const logs = await contract.getPastEvents("allEvents", {
     fromBlock: 0,
   });
 
   return {
     contractAddress: address,
-    contractSummary: { ...summary, disputeSummary },
-    logs,
+    contractData: {
+      summaryProps: formattedSummary,
+      eventsProps: logs,
+    },
   };
 };
 
