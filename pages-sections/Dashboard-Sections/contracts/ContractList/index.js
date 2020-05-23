@@ -1,26 +1,63 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+import {
+  filterByActive,
+  filterByActionNeeded,
+  filterByInDispute,
+  filterByCompleted,
+  filterByDisputeCompleted,
+  filterByAborted,
+} from "../../../../utilities/contractHelpers";
 
 // Material Components
 import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
+
+import ContractListItem from "../ContractListItem";
 
 // Kit Components
 import Card from "../../../../components/Card/Card";
 import CardBody from "../../../../components/Card/CardBody";
 import CardHeader from "../../../../components/Card/CardHeader";
 
-const ContractList = () => {
+const title = {
+  active: "Active Contracts",
+  actionNeeded: "Action Needed By User",
+  inDispute: "Contracts In Active Dispute",
+  completed: "Completed Contracts",
+  disputeCompleted: "Dispute Completed",
+  aborted: "Contracts that were Cancelled",
+};
+
+const filterFunctions = {
+  active: filterByActive,
+  actionNeeded: filterByActionNeeded,
+  inDispute: filterByInDispute,
+  completed: filterByCompleted,
+  disputeCompleted: filterByDisputeCompleted,
+  aborted: filterByAborted,
+};
+const ContractList = ({ filter }) => {
+  const [filteredContracts, setFilteredContracts] = useState([]);
+  const contractDetailReducer = useSelector(
+    (state) => state.contractDetailReducer
+  );
+  useEffect(() => {
+    const filterFunction = filterFunctions[filter];
+    const activeContracts = filterFunction(contractDetailReducer);
+    if (typeof activeContracts === "object" && activeContracts.length) {
+      setFilteredContracts(activeContracts);
+    }
+  }, [contractDetailReducer]);
   return (
     <Card>
       <CardHeader color="info">
-        <h2>ContractList component</h2>
+        <h2>{title[filter]}</h2>
       </CardHeader>
       <CardBody>
         <List component="nav" aria-label="main mailbox folders">
-          {/* {contracts.map((contract) => (
-            <ListItem key={contract} contract={contract} />
-          ))} */}
-          <ListItem>List Item</ListItem>
+          {filteredContracts.map((contract) => (
+            <ContractListItem key={contract} contract={contract} />
+          ))}
         </List>
       </CardBody>
     </Card>

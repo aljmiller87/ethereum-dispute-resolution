@@ -20,18 +20,15 @@ const ProfilePage = ({ contracts, userAddress, ...rest }) => {
     pathname === "/" ? userAddress : pathname.replace("/dashboard/", "");
   const [isModalOpen, setModalOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
-  console.log("address", address);
 
   const contractListToWatch = isUserLoggedIn
     ? accountReducer.contracts
     : contracts;
 
   useEffect(() => {
-    console.log("address", address);
     if (!accountReducer || !accountReducer.account) {
       return;
     }
-    console.log("accountReducer.account", accountReducer.account);
     if (accountReducer.account === address && !isUserLoggedIn) {
       setIsUserLoggedIn(true);
     }

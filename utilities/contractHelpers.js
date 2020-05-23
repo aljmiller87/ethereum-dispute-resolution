@@ -68,3 +68,50 @@ export const formatContractData = ({ summary, disputeSummary }) => {
 
   return details;
 };
+
+// Filter functions
+export const filterByActive = (allContracts) => {
+  if (!allContracts) {
+    return [];
+  }
+  const activeContracts = Object.keys(allContracts).filter((contract) => {
+    const contractEscrowState = allContracts[contract].escrowState;
+    return (
+      contractEscrowState !== "IN_DISPUTE" && contractEscrowState !== "COMPLETE"
+    );
+  });
+  return activeContracts;
+};
+
+export const filterByActionNeeded = (allContracts) => {
+  return [];
+};
+
+export const filterByInDispute = (allContracts) => {
+  if (!allContracts) {
+    return [];
+  }
+  const activeDisputeContracts = Object.keys(allContracts).filter(
+    (contract) => {
+      const contractEscrowState = allContracts[contract].escrowState;
+      const contractDisputeState = allContracts[contract].disputeState;
+      return (
+        contractEscrowState === "IN_DISPUTE" &&
+        contractDisputeState !== "COMPLETE"
+      );
+    }
+  );
+  return activeDisputeContracts;
+};
+
+export const filterByCompleted = (allContracts) => {
+  return [];
+};
+
+export const filterByDisputeCompleted = (allContracts) => {
+  return [];
+};
+
+export const filterByAborted = (allContracts) => {
+  return [];
+};

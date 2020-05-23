@@ -17,22 +17,22 @@ const ContractGrid = ({ contracts }) => {
     <Container>
       <Grid container spacing={3}>
         <Grid item lg={6}>
-          <ContractList />
+          <ContractList filter="active" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList />
+          <ContractList filter="actionNeeded" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList />
+          <ContractList filter="inDispute" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList />
+          <ContractList filter="completed" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList />
+          <ContractList filter="disputeCompleted" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList />
+          <ContractList filter="aborted" />
         </Grid>
       </Grid>
     </Container>

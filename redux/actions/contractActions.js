@@ -29,13 +29,11 @@ export const setAllContractData = (allContractData) => ({
 });
 
 export const asyncFetchState = (address, instance) => {
-  console.log("instance in asyncFetchState", instance);
   return async (dispatch) => {
     try {
       const escrowSummary = await instance.methods.getStatus().call();
       const disputeSummary = await instance.methods.getDisputeStatus().call();
       const summary = { ...escrowSummary, disputeSummary };
-      console.log("summary in asyncFetchState", summary);
       dispatch(updateSummary(address, summary));
     } catch (error) {
       console.log("asyncFetchState: ", error);
@@ -45,22 +43,33 @@ export const asyncFetchState = (address, instance) => {
 };
 
 export const fetchAllContractData = (contracts) => {
-  console.log("Getting HERE????", contracts);
   return async (dispatch) => {
     try {
       const allData = {};
       await Promise.all(
         contracts.map(async (contract) => {
-          let contractData = await fetchContractDetails(contract);
+          let contractState = await fetchContractDetails(contract);
+          let contractEventLogs = await fetchContracEventsLogs(contract);
+          const contractData = {
+            summary: contractState,
+            events: contractEventLogs,
+          };
           allData[contract] = contractData;
         })
       );
-      console.log("allData", allData);
       dispatch(setAllContractData(allData));
     } catch (error) {
       console.log("fetchAllContractData error:", error.message);
     }
   };
+};
+
+export const fetchContracEventsLogs = async (address) => {
+  const contract = ThreeJudge(address);
+  const contractEvents = await contract.getPastEvents("allEvents", {
+    fromBlock: 0,
+  });
+  return contractEvents;
 };
 
 export const fetchContractDetails = async (contract) => {
