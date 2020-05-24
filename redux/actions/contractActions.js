@@ -6,7 +6,7 @@ export const SET_SINGLE_CONTRACT_DATA = "SET_SINGLE_CONTRACT_DATA";
 export const ADD_EVENT = "ADD_EVENT";
 export const UPDATE_SUMMARY = "UPDATE_SUMMARY";
 export const SET_ALL_CONTRACT_DATA = "SET_ALL_CONTRACT_DATA";
-export const SET_LISTENING_ACTIVE = "SET_LISTENING_ACTIVE";
+export const SET_LISTENING_STATUS = "SET_LISTENING_STATUS";
 
 //Action Creator
 export const setSingleContractData = (
@@ -28,8 +28,8 @@ export const updateSummary = (contractAddress, summary) => ({
   payload: { contractAddress, summary },
 });
 
-export const setListeningActive = (contractAddress, subscriptionId) => ({
-  type: SET_LISTENING_ACTIVE,
+export const setListeningStatus = (contractAddress, subscriptionId) => ({
+  type: SET_LISTENING_STATUS,
   payload: { contractAddress, subscriptionId },
 });
 
@@ -63,7 +63,11 @@ export const fetchAllContractData = (contracts) => {
           const contractData = {
             summary: contractState,
             events: contractEventLogs,
-            isListening: false,
+            listeningStatus: {
+              isLoading: false,
+              isListening: false,
+              hasError: false,
+            },
           };
           allData[contract] = contractData;
         })

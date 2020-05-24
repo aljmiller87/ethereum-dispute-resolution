@@ -4,14 +4,25 @@ import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
 import ContractList from "../ContractList";
 
+// Hooks
+import useListeningService from "../../../../hooks/useListeningService";
+
 // Actions
 import { fetchAllContractData } from "../../../../redux/actions/contractActions";
 
 const ContractGrid = ({ contracts }) => {
   const dispatch = useDispatch();
 
+  const setAllNeededEthereumListeners = (contractsArr) => {
+    contractsArr.map((contract, index) => {
+      const [state] = useListeningService(contract);
+      console.log(index, state);
+    });
+  };
+
   useEffect(() => {
     dispatch(fetchAllContractData(contracts));
+    setAllNeededEthereumListeners(contracts);
   }, []);
   return (
     <Container>

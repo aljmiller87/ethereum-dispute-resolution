@@ -14,16 +14,16 @@ const contractReducer = (state = {}, action) => {
         [action.payload.contractAddress]: {
           events: action.payload.eventsArray,
           summary: action.payload.summary,
-          isListening: false,
+          listeningStatus: false,
         },
       };
-    case "SET_LISTENING_ACTIVE":
+    case "SET_LISTENING_STATUS":
       return {
         ...state,
         [action.payload]: {
           events: state[action.payload].events,
           summary: state[action.payload].summary,
-          isLoading: action.payload.subscriptionId,
+          listeningStatus: action.payload.subscriptionId,
         },
       };
     case "ADD_EVENT":
@@ -37,7 +37,8 @@ const contractReducer = (state = {}, action) => {
         [action.payload.contractAddress]: {
           events: updatedEvents,
           summary: state[action.payload.contractAddress].summary,
-          isLoading: state[action.payload.contractAddress].isLoading,
+          listeningStatus:
+            state[action.payload.contractAddress].listeningStatus,
         },
       };
     case "UPDATE_SUMMARY":
@@ -46,7 +47,8 @@ const contractReducer = (state = {}, action) => {
         [action.payload.contractAddress]: {
           events: state[action.payload.contractAddress].events,
           summary: action.payload.summary,
-          isLoading: state[action.payload.contractAddress].isLoading,
+          listeningStatus:
+            state[action.payload.contractAddress].listeningStatus,
         },
       };
     default:

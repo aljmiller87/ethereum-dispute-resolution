@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 
-// Ethereum
+git; // Ethereum
 import ThreeJudge from "../../../ethereum/threejudge";
 
 // Actions
@@ -18,7 +18,7 @@ import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 // Utilities
 import { getNetworkURL } from "../../../utilities/getNetwork";
 import { formatContractData } from "../../../utilities/contractHelpers";
-import { setContractEventListeners } from "../../../utilities/contractListeners";
+// import { setContractEventListeners } from "../../../utilities/contractListeners";
 
 const Contract = ({ addressProps, contractDataProps, ...rest }) => {
   const { summaryProps, eventsProps } = contractDataProps;
@@ -41,6 +41,49 @@ const Contract = ({ addressProps, contractDataProps, ...rest }) => {
   // console.log("isListening", isListening);
 
   const dispatch = useDispatch();
+
+  const setContractEventListeners = async (contractAddress) => {
+    try {
+      const instance = ThreeJudge(contractAddress);
+      const summary = await instance.methods.getStatus().call();
+      const disputeSummary = await instance.methods.getDisputeStatus().call();
+      const { escrowState, disputeState } = formatContractData({
+        summary,
+        disputeSummary,
+      });
+
+      if (
+        escrowState === "CANCELLED" ||
+        escrowState === "COMPLETE" ||
+        disputeState === "COMPLETE"
+      ) {
+        return "Contract is inactive";
+      }
+      instance.events
+        .allEvents({
+          fromBlock: "latest",
+        })
+        .on("connected", function (subscriptionId) {
+          console.log("connected subscriptionId", subscriptionId);
+          dispatch(contractActions.setListeningActive(contractAddress));
+        })
+        .on("data", function (event) {
+          console.log("data event", event);
+          dispatch(contractActions.addEvent(contractAddress, event));
+        })
+        .on("changed", function (event) {
+          console.log("changed event", event);
+          // remove event from local database
+        })
+        .on("error", function (error, receipt) {
+          // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
+          console.log("error", error);
+          console.log("error receipt", receipt);
+        });
+    } catch (error) {
+      return { error: true, message: error.message };
+    }
+  };
 
   const initEventListeners = (address) => {
     let error = "PRETEST";
