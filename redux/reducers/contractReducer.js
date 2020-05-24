@@ -23,7 +23,7 @@ const contractReducer = (state = {}, action) => {
         [action.payload]: {
           events: state[action.payload].events,
           summary: state[action.payload].summary,
-          isLoading: true,
+          isLoading: action.payload.subscriptionId,
         },
       };
     case "ADD_EVENT":
