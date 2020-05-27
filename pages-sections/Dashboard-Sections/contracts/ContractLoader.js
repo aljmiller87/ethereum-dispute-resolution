@@ -10,9 +10,7 @@ const ContractLoader = ({ address }) => {
   );
 
   const contractHasActiveWriteCall = () =>
-    currentBlockChainWriteCalls.findIndex(
-      (address) => address === contractAddress
-    );
+    currentBlockChainWriteCalls.findIndex((adr) => adr === address);
 
   if (contractHasActiveWriteCall() >= 0) {
     return <Loader />;

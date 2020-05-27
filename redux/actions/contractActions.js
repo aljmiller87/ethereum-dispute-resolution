@@ -38,19 +38,22 @@ export const setAllContractData = (allContractData) => ({
   payload: allContractData,
 });
 
-// export const asyncFetchState = (address, instance) => {
-//   return async (dispatch) => {
-//     try {
-//       const escrowSummary = await instance.methods.getStatus().call();
-//       const disputeSummary = await instance.methods.getDisputeStatus().call();
-//       const summary = { ...escrowSummary, disputeSummary };
-//       dispatch(updateSummary(address, summary));
-//     } catch (error) {
-//       console.log("asyncFetchState: ", error);
-//     }
-//     return "done";
-//   };
-// };
+export const asyncFetchState = (address, instance) => {
+  return async (dispatch) => {
+    try {
+      const summary = await instance.methods.getStatus().call();
+      const disputeSummary = await instance.methods.getDisputeStatus().call();
+      const formattedSummary = formatContractData({
+        summary,
+        disputeSummary,
+      });
+      dispatch(updateSummary(address, formattedSummary));
+    } catch (error) {
+      console.log("asyncFetchState: ", error);
+    }
+    return "done";
+  };
+};
 
 export const fetchAllContractData = (contracts) => {
   return async (dispatch) => {

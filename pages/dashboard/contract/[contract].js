@@ -33,7 +33,6 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
   const { summary, events, listeningStatus } = useSelector(
     (state) => state.contractReducer[contractAddress] || {}
   );
-  console.log("events from redux", events);
 
   const noActiveListinging = (data) => {
     if (typeof data === "undefined") {
@@ -92,6 +91,7 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
           console.log("data event", event);
           dispatch(contractActions.addEvent(contractAddress, event));
           // Need to dispatch asyncFetchState
+          dispatch(contractActions.asyncFetchState(contractAddress, instance));
         })
         .on("changed", function (event) {
           console.log("changed event", event);
