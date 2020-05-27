@@ -91,6 +91,7 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
         .on("data", function (event) {
           console.log("data event", event);
           dispatch(contractActions.addEvent(contractAddress, event));
+          // Need to dispatch asyncFetchState
         })
         .on("changed", function (event) {
           console.log("changed event", event);
