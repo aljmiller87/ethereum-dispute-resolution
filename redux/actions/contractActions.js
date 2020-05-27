@@ -28,9 +28,9 @@ export const updateSummary = (contractAddress, summary) => ({
   payload: { contractAddress, summary },
 });
 
-export const setListeningStatus = (contractAddress, subscriptionId) => ({
+export const setListeningStatus = (contractAddress, listeningStatus) => ({
   type: SET_LISTENING_STATUS,
-  payload: { contractAddress, subscriptionId },
+  payload: { contractAddress, listeningStatus },
 });
 
 export const setAllContractData = (allContractData) => ({

@@ -40,7 +40,6 @@ const Sidebar = () => {
   }
 
   let type = windowWidth > 991 ? "permanent" : "temporary";
-  console.log("type", type);
   return (
     <StyledSideBar>
       <Drawer

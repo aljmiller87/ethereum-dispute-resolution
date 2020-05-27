@@ -9,6 +9,7 @@ export const StyledSideBar = styled.aside`
   flex-direction: column;
   flex-wrap: nowrap;
   max-width: 250px;
+  min-width: 250px;
   min-height: 100vh;
   width: 250px;
 

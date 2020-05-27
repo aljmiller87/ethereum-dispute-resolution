@@ -1,7 +1,9 @@
 import React, { useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import _get from "lodash/get";
+import _isEqual from "lodash/isEqual";
 
-git; // Ethereum
+// Ethereum
 import ThreeJudge from "../../../ethereum/threejudge";
 
 // Actions
@@ -15,40 +17,53 @@ import ContractDetails from "pages-sections/Contract-Sections/ContractDetails";
 import StatusTracker from "pages-sections/Contract-Sections/StatusTracker";
 import ContractActions from "pages-sections/Contract-Sections/ContractActions";
 
+// Components
+import ContractLoader from "../../../pages-sections/Dashboard-Sections/contracts/ContractLoader";
+
 // Utilities
-import { getNetworkURL } from "../../../utilities/getNetwork";
 import { formatContractData } from "../../../utilities/contractHelpers";
-// import { setContractEventListeners } from "../../../utilities/contractListeners";
 
-const Contract = ({ addressProps, contractDataProps, ...rest }) => {
-  const { summaryProps, eventsProps } = contractDataProps;
-  const instanceRef = useRef();
-
-  // Selectors
-  const { network, isEthereumConnected } = useSelector(
-    (state) => state.networkReducer
-  );
-  const { account } = useSelector((state) => state.accountReducer);
-  const contractFromStore =
-    useSelector((state) => {
-      return state.contractReducer[addressProps];
-    }) || false;
-  const currentBlockChainWriteCalls = useSelector(
-    (state) => state.blockchainCallsReducer.blockchainWriteCalls
-  );
-
-  console.log("contractFromStore", contractFromStore);
-  // console.log("isListening", isListening);
-
+const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
   const dispatch = useDispatch();
 
+  // Selectors
+  const { isEthereumConnected } = useSelector((state) => state.networkReducer);
+  const { account } = useSelector((state) => state.accountReducer);
+
+  const { summary, events, listeningStatus } = useSelector(
+    (state) => state.contractReducer[contractAddress] || {}
+  );
+  console.log("events from redux", events);
+
+  const noActiveListinging = (data) => {
+    if (typeof data === "undefined") {
+      return true;
+    }
+    const { isLoading, isListening, hasError } = data;
+    return isLoading === false && isListening === false && hasError === false;
+  };
+
   const setContractEventListeners = async (contractAddress) => {
+    /* If ethereum event subscription is either:
+      1. Loading
+      2. Already subscribed or
+      3. Has error
+      Do not attempt additional subscription
+    */
+    if (
+      listeningStatus &&
+      (listeningStatus.isLoading ||
+        listeningStatus.isListening ||
+        listeningStatus.hasError)
+    ) {
+      return null;
+    }
     try {
       const instance = ThreeJudge(contractAddress);
-      const summary = await instance.methods.getStatus().call();
+      const escrowSummary = await instance.methods.getStatus().call();
       const disputeSummary = await instance.methods.getDisputeStatus().call();
       const { escrowState, disputeState } = formatContractData({
-        summary,
+        escrowSummary,
         disputeSummary,
       });
 
@@ -57,7 +72,7 @@ const Contract = ({ addressProps, contractDataProps, ...rest }) => {
         escrowState === "COMPLETE" ||
         disputeState === "COMPLETE"
       ) {
-        return "Contract is inactive";
+        throw new Error("Contract is inactive");
       }
       instance.events
         .allEvents({
@@ -65,7 +80,13 @@ const Contract = ({ addressProps, contractDataProps, ...rest }) => {
         })
         .on("connected", function (subscriptionId) {
           console.log("connected subscriptionId", subscriptionId);
-          dispatch(contractActions.setListeningActive(contractAddress));
+          dispatch(
+            contractActions.setListeningStatus(contractAddress, {
+              isLoading: false,
+              isListening: subscriptionId,
+              hasError: false,
+            })
+          );
         })
         .on("data", function (event) {
           console.log("data event", event);
@@ -81,64 +102,49 @@ const Contract = ({ addressProps, contractDataProps, ...rest }) => {
           console.log("error receipt", receipt);
         });
     } catch (error) {
-      return { error: true, message: error.message };
-    }
-  };
-
-  const initEventListeners = (address) => {
-    let error = "PRETEST";
-    try {
-      setContractEventListeners(address);
-    } catch (err) {
-      console.log("err", err);
-      error = err.messagae;
-    }
-
-    if (error === "PRETEST") {
-      dispatch(contractActions.setListeningActive(address));
+      dispatch(
+        contractActions.setListeningStatus(contractAddress, {
+          isLoading: false,
+          isListening: false,
+          hasError: error.message,
+        })
+      );
     }
   };
 
   useEffect(() => {
-    if (isEthereumConnected) {
-      if (!contractFromStore) {
-        dispatch(
-          contractActions.setSingleContractData(
-            addressProps,
-            summaryProps,
-            eventsProps
-          )
-        );
-
-        initEventListeners(addressProps);
-      } else if (!contractFromStore.isListening) {
-        console.log("only need to set event listeners");
-      }
-      // setContractEventListeners();
-      // );
+    // if page is loaded directly, then redux store will need to be updated because it is empty on page load
+    if (!_isEqual(summaryProps, summary)) {
+      dispatch(
+        contractActions.setSingleContractData(
+          contractAddress,
+          summaryProps,
+          eventsProps
+        )
+      );
     }
-  }, [isEthereumConnected, contractFromStore]);
+  }, []);
+
+  useEffect(() => {
+    if (isEthereumConnected && noActiveListinging(listeningStatus)) {
+      setContractEventListeners(contractAddress);
+    }
+  }, [isEthereumConnected]);
 
   return (
     <Layout layout="dashboard">
-      contract detail component
-      {/*{details && (
-        <div className={classNames(classes.main, classes.mainRaised)}>
-          <div className={classes.container}>
-            <ContractDetails details={details} account={account} />
-            <StatusTracker details={details} />
-            <ContractActions
-              details={details}
-              account={account}
-              addressProps={addressProps}
-            />
-          </div>
-        </div>
+      {typeof summary !== "undefined" && (
+        <>
+          <ContractDetails details={summary} account={account} />
+          <StatusTracker details={summary} />
+          <ContractActions
+            details={summary}
+            account={account}
+            contractAddress={contractAddress}
+          />
+        </>
       )}
-       {currentBlockChainWriteCalls.findIndex( 
-         (address) => address === addressProps
-       ) >= 0 && <Loader />}
-      */}
+      <ContractLoader address={contractAddress} />
     </Layout>
   );
 };
@@ -153,11 +159,9 @@ Contract.getInitialProps = async (props) => {
   });
 
   return {
-    addressProps: address,
-    contractDataProps: {
-      summaryProps: formattedSummary,
-      eventsProps: logs,
-    },
+    contractAddress: address,
+    summaryProps: formattedSummary,
+    eventsProps: logs,
   };
 };
 

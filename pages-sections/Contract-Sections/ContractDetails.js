@@ -21,8 +21,12 @@ import Grid from "@material-ui/core/Grid";
 import Title from "components/Title";
 
 const ContractDetails = ({ details, account }) => {
-  const { buyer, seller, balance, escrowState, disputeSummary } = details;
   const {
+    balance,
+    buyer,
+    seller,
+    escrowState,
+    disputeState,
     buyerJudge,
     buyerJudgeHasNominatedFinalJudge,
     buyerJudgeHasVotedForResolution,
@@ -36,7 +40,7 @@ const ContractDetails = ({ details, account }) => {
     votesForSeller,
     deadline,
     awaitingParty,
-  } = disputeSummary || {};
+  } = details;
   const ether = balance ? web3.utils.fromWei(balance, "ether") : 0;
 
   return (

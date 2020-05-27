@@ -1,5 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
+import Link from "next/link";
 
 // Material
 import List from "@material-ui/core/List";
@@ -18,6 +19,7 @@ import { Wrapper, StyledListItem, Title } from "./styles";
 
 const Navigation = () => {
   const { activeTab } = useSelector((state) => state.dashboardReducer);
+  const { account } = useSelector((state) => state.accountReducer);
   const dispatch = useDispatch();
 
   const handleTabClick = (tab) => {
@@ -26,6 +28,9 @@ const Navigation = () => {
   return (
     <Wrapper>
       <Title>Dashboard</Title>
+      <Link href="/dashboard/[account]" as={`/dashboard/${account}`}>
+        <a>Contracts</a>
+      </Link>
       <List component="nav" aria-label="main mailbox folders">
         <StyledListItem
           button

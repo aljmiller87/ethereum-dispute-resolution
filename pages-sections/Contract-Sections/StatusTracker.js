@@ -12,8 +12,10 @@ import {
 } from "components/config/contract.js";
 
 const StatusTracker = ({ details, ActiveStep }) => {
+  const { escrowState, disputeState } = details;
+
   const [activeStep, setActiveStep] = useState(0);
-  const isDispute = details.escrowState === "IN_DISPUTE";
+  const isDispute = escrowState === "IN_DISPUTE";
 
   const enumState = isDispute ? DisputeState : EscrowState;
 
@@ -36,10 +38,10 @@ const StatusTracker = ({ details, ActiveStep }) => {
 
   useEffect(() => {
     const index = isDispute
-      ? findStatusIndex(DisputeState, details.disputeState)
-      : findStatusIndex(EscrowState, details.escrowState);
+      ? findStatusIndex(DisputeState, disputeState)
+      : findStatusIndex(EscrowState, escrowState);
     setActiveStep(index);
-  }, [details]);
+  }, [escrowState, disputeState]);
 
   return (
     <div>

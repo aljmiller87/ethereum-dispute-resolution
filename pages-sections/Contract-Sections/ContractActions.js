@@ -59,7 +59,7 @@ const ActionCards = {
   distributeFunds: DistributeFunds,
 };
 
-const ActionCard = ({ action, ...rest }) => {
+const ActionCard = ({ action, contractAddress, ...rest }) => {
   if (!action || !Object.keys(action).length > 0) {
     return null;
   }
@@ -67,12 +67,17 @@ const ActionCard = ({ action, ...rest }) => {
   if (!Component) {
     return null;
   }
-  return <Component action={action} {...rest} />;
+  return (
+    <Component action={action} contractAddress={contractAddress} {...rest} />
+  );
 };
 
-const ContractActions = ({ details, account, ...rest }) => {
-  const { buyer, seller, escrowState, disputeState, disputeSummary } = details;
+const ContractActions = ({ details, account, contractAddress, ...rest }) => {
   const {
+    buyer,
+    seller,
+    escrowState,
+    disputeState,
     buyerJudge,
     buyerJudgeHasNominatedFinalJudge,
     buyerJudgeHasVotedForResolution,
@@ -86,7 +91,7 @@ const ContractActions = ({ details, account, ...rest }) => {
     votesForSeller,
     deadline,
     awaitingParty,
-  } = disputeSummary || {};
+  } = details;
 
   const [userAlias, setUserAlias] = useState("");
   const isDispute = details.escrowState === "IN_DISPUTE";
@@ -135,7 +140,11 @@ const ContractActions = ({ details, account, ...rest }) => {
       const actionConfigObject = StepsConfig[CurrentStep].actions[action];
       return (
         <Grid item xs={12} sm={12} md={6} lg={4} key={action}>
-          <ActionCard action={actionConfigObject} {...rest} />
+          <ActionCard
+            action={actionConfigObject}
+            contractAddress={contractAddress}
+            {...rest}
+          />
         </Grid>
       );
     });
