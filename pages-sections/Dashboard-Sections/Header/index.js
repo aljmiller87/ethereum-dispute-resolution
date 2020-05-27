@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch } from "react-redux";
+import Link from "next/link";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
@@ -34,9 +35,13 @@ const Header = () => {
             <MenuIcon />
           </IconButton>
         </MenuWrapper>
-        <Typography variant="h6" className="">
-          Arbitration Distributed
-        </Typography>
+        <Link href="/">
+          <a style={{ color: "inherit" }}>
+            <Typography variant="h6" className="">
+              Arbitration Distributed
+            </Typography>
+          </a>
+        </Link>
         <IconButton
           aria-label="show 17 new notifications"
           color="inherit"

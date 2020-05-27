@@ -50,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContractNew = ({ coinbase, closeModal, ...rest }) => {
+const ContractNew = ({ coinbase, ...rest }) => {
   const dispatch = useDispatch();
   const formRef = useRef();
   const [isRoleChosen, setIsRoleChosen] = useState(false);
@@ -122,7 +122,6 @@ const ContractNew = ({ coinbase, closeModal, ...rest }) => {
             console.log("contract created", receipt);
             dispatch(accountActions.asyncLoadAccountInfo());
             setLoading(false);
-            closeModal();
           }
         });
     } catch (err) {

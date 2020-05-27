@@ -25,9 +25,7 @@ const ContractGrid = ({ contracts, userAddress }) => {
   //   });
   // };
   // setAllNeededEthereumListeners(contracts);
-  useEffect(() => {
-    dispatch(fetchAllContractData(contracts));
-  }, []);
+
   return (
     <Container>
       <Grid container spacing={3}>

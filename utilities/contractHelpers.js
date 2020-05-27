@@ -77,7 +77,9 @@ export const filterByActive = (allContracts) => {
   const activeContracts = Object.keys(allContracts).filter((contract) => {
     const contractEscrowState = allContracts[contract].summary.escrowState;
     return (
-      contractEscrowState !== "IN_DISPUTE" && contractEscrowState !== "COMPLETE"
+      contractEscrowState !== "IN_DISPUTE" &&
+      contractEscrowState !== "CANCELLED" &&
+      contractEscrowState !== "COMPLETE"
     );
   });
   return activeContracts;
@@ -100,7 +102,6 @@ export const filterByInDispute = (allContracts) => {
   }
   const activeDisputeContracts = Object.keys(allContracts).filter(
     (contract) => {
-      console.log("contract in object.keys filter", allContracts[contract]);
       const contractEscrowState = allContracts[contract].summary.escrowState;
       const contractDisputeState = allContracts[contract].summary.disputeState;
       return (

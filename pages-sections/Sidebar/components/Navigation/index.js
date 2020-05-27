@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Link from "next/link";
+import { useRouter } from "next/router";
 
 // Material
 import List from "@material-ui/core/List";
@@ -21,26 +21,38 @@ const Navigation = () => {
   const { activeTab } = useSelector((state) => state.dashboardReducer);
   const { account } = useSelector((state) => state.accountReducer);
   const dispatch = useDispatch();
+  const Router = useRouter();
+  console.log("Router", Router);
 
   const handleTabClick = (tab) => {
     dispatch(setDashboardNav(tab));
+    if (tab === "dashboard" && typeof account !== "undefined") {
+      Router.push("/dashboard/[account]", `/dashboard/${account}`);
+    }
   };
   return (
     <Wrapper>
-      <Title>Dashboard</Title>
-      <Link href="/dashboard/[account]" as={`/dashboard/${account}`}>
-        <a>Contracts</a>
-      </Link>
+      <Title>Account</Title>
       <List component="nav" aria-label="main mailbox folders">
         <StyledListItem
           button
-          isActive={activeTab === "contracts"}
-          onClick={() => handleTabClick("contracts")}
+          isActive={activeTab === "dashboard"}
+          onClick={() => handleTabClick("dashboard")}
         >
           <ListItemIcon>
             <ListIcon />
           </ListItemIcon>
-          <ListItemText primary="Contracts" />
+          <ListItemText primary="Dashboard" />
+        </StyledListItem>
+        <StyledListItem
+          button
+          isActive={activeTab === "detail"}
+          onClick={() => handleTabClick("detail")}
+        >
+          <ListItemIcon>
+            <ListIcon />
+          </ListItemIcon>
+          <ListItemText primary="Detail" />
         </StyledListItem>
         <StyledListItem
           button
@@ -52,6 +64,9 @@ const Navigation = () => {
           </ListItemIcon>
           <ListItemText primary="Create" />
         </StyledListItem>
+      </List>
+      <Divider />
+      <List component="nav" aria-label="main mailbox folders">
         <StyledListItem
           button
           isActive={activeTab === "search"}
@@ -63,7 +78,6 @@ const Navigation = () => {
           <ListItemText primary="Search" />
         </StyledListItem>
       </List>
-      <Divider />
     </Wrapper>
   );
 };

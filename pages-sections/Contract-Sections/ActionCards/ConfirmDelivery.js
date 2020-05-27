@@ -36,16 +36,10 @@ const ConfirmDelivery = ({ action, contractAddress }) => {
           // If first confirmation...
           if (confirmationNumber === 1) {
             console.log("confirmDelivery confirmed", receipt);
-            const index = currentBlockChainWriteCalls.findIndex(
-              (address) => address === contract
-            );
           }
         });
     } catch (err) {
       console.log("err", err);
-      const index = currentBlockChainWriteCalls.findIndex(
-        (address) => address === contract
-      );
     } finally {
       dispatch(ContractActions.endBlockchainWriteCall(contractAddress));
     }

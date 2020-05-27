@@ -8,6 +8,7 @@ import ThreeJudge from "../../../ethereum/threejudge";
 
 // Actions
 import * as contractActions from "../../../redux/actions/contractActions";
+import { setDashboardNav } from "../../../redux/actions/dashboardActions";
 
 // Layout
 import Layout from "../../../layouts";
@@ -127,6 +128,7 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
   }, []);
 
   useEffect(() => {
+    dispatch(setDashboardNav("detail"));
     if (isEthereumConnected && noActiveListinging(listeningStatus)) {
       setContractEventListeners(contractAddress);
     }
