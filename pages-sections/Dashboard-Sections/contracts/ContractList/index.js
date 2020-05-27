@@ -36,12 +36,12 @@ const filterFunctions = {
   disputeCompleted: filterByDisputeCompleted,
   aborted: filterByAborted,
 };
-const ContractList = ({ filter }) => {
+const ContractList = ({ filter, address = null }) => {
   const [filteredContracts, setFilteredContracts] = useState([]);
   const contractReducer = useSelector((state) => state.contractReducer);
   useEffect(() => {
     const filterFunction = filterFunctions[filter];
-    const activeContracts = filterFunction(contractReducer);
+    const activeContracts = filterFunction(contractReducer, address);
     if (typeof activeContracts === "object" && activeContracts.length) {
       setFilteredContracts(activeContracts);
     }

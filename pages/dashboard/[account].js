@@ -46,7 +46,7 @@ const ProfilePage = ({ contracts, userAddress, ...rest }) => {
 
   return (
     <Layout layout="dashboard">
-      <ContractGrid contracts={contractListToWatch} />
+      <ContractGrid contracts={contractListToWatch} userAddress={userAddress} />
       {/* {contractListToWatch.length > 0 && (
         <ListSection>
           <ContractList contracts={contractListToWatch} />

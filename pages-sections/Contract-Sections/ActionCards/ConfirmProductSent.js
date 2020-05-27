@@ -19,7 +19,6 @@ import CardHeader from "components/Card/CardHeader";
 const ConfirmProductSent = ({ action, contractAddress }) => {
   const dispatch = useDispatch();
   const handleConfirmProductSent = async () => {
-    console.log("getting here");
     try {
       dispatch(ContractActions.beginBlockchainWriteCall(contractAddress));
       const [coinbase] = await web3.eth.getAccounts();

@@ -10,7 +10,7 @@ import useContractEventSubscription from "../../../../hooks/useContractEventSubs
 // Actions
 import { fetchAllContractData } from "../../../../redux/actions/contractActions";
 
-const ContractGrid = ({ contracts }) => {
+const ContractGrid = ({ contracts, userAddress }) => {
   const dispatch = useDispatch();
   // const [initListeners, setInitListeners] = useState(false);
 
@@ -35,7 +35,7 @@ const ContractGrid = ({ contracts }) => {
           <ContractList filter="active" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList filter="actionNeeded" />
+          <ContractList filter="actionNeeded" address={userAddress} />
         </Grid>
         <Grid item lg={6}>
           <ContractList filter="inDispute" />

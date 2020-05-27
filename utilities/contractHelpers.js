@@ -75,7 +75,7 @@ export const filterByActive = (allContracts) => {
     return [];
   }
   const activeContracts = Object.keys(allContracts).filter((contract) => {
-    const contractEscrowState = allContracts[contract].escrowState;
+    const contractEscrowState = allContracts[contract].summary.escrowState;
     return (
       contractEscrowState !== "IN_DISPUTE" && contractEscrowState !== "COMPLETE"
     );
@@ -83,8 +83,15 @@ export const filterByActive = (allContracts) => {
   return activeContracts;
 };
 
-export const filterByActionNeeded = (allContracts) => {
-  return [];
+export const filterByActionNeeded = (allContracts, address) => {
+  if (!allContracts || !address) {
+    return [];
+  }
+  const actionNeededContracts = Object.keys(allContracts).filter((contract) => {
+    const awaitingParty = allContracts[contract].summary.awaitingParty;
+    return awaitingParty === address;
+  });
+  return actionNeededContracts;
 };
 
 export const filterByInDispute = (allContracts) => {
@@ -93,8 +100,9 @@ export const filterByInDispute = (allContracts) => {
   }
   const activeDisputeContracts = Object.keys(allContracts).filter(
     (contract) => {
-      const contractEscrowState = allContracts[contract].escrowState;
-      const contractDisputeState = allContracts[contract].disputeState;
+      console.log("contract in object.keys filter", allContracts[contract]);
+      const contractEscrowState = allContracts[contract].summary.escrowState;
+      const contractDisputeState = allContracts[contract].summary.disputeState;
       return (
         contractEscrowState === "IN_DISPUTE" &&
         contractDisputeState !== "COMPLETE"
@@ -105,13 +113,36 @@ export const filterByInDispute = (allContracts) => {
 };
 
 export const filterByCompleted = (allContracts) => {
-  return [];
+  if (!allContracts) {
+    return [];
+  }
+  const completedContracts = Object.keys(allContracts).filter((contract) => {
+    const contractEscrowState = allContracts[contract].summary.escrowState;
+    return contractEscrowState === "COMPLETE";
+  });
+  return completedContracts;
 };
 
 export const filterByDisputeCompleted = (allContracts) => {
-  return [];
+  if (!allContracts) {
+    return [];
+  }
+  const completedDisputeContracts = Object.keys(allContracts).filter(
+    (contract) => {
+      const contractDisputeState = allContracts[contract].summary.disputeState;
+      return contractDisputeState === "COMPLETE";
+    }
+  );
+  return completedDisputeContracts;
 };
 
 export const filterByAborted = (allContracts) => {
-  return [];
+  if (!allContracts) {
+    return [];
+  }
+  const cancelledContracts = Object.keys(allContracts).filter((contract) => {
+    const contractEscrowState = allContracts[contract].summary.escrowState;
+    return contractEscrowState === "CANCELLED";
+  });
+  return cancelledContracts;
 };
