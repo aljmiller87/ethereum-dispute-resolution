@@ -37,8 +37,8 @@ export const formatEscrowStatusOriginal = (summary) => {
   return details;
 };
 
-export const formatContractData = ({ summary, disputeSummary }) => {
-  if (!summary || !Object.keys(summary.length > 0)) {
+export const formatContractData = (escrowSummary, disputeSummary) => {
+  if (!escrowSummary || !Object.keys(escrowSummary.length > 0)) {
     return { error: "Error fetching escrow summary" };
   }
   if (!disputeSummary || !Object.keys(disputeSummary.length > 0)) {
@@ -46,11 +46,11 @@ export const formatContractData = ({ summary, disputeSummary }) => {
   }
 
   const details = {
-    escrowState: EscrowState[Number(summary["0"])],
-    disputeState: DisputeState[Number(summary["1"])],
-    buyer: summary["2"],
-    seller: summary["3"],
-    balance: summary["4"],
+    escrowState: EscrowState[Number(escrowSummary["0"])],
+    disputeState: DisputeState[Number(escrowSummary["1"])],
+    buyer: escrowSummary["2"],
+    seller: escrowSummary["3"],
+    balance: escrowSummary["4"],
     buyerJudge: disputeSummary["0"],
     buyerJudgeHasNominatedFinalJudge: disputeSummary["1"],
     buyerJudgeHasVotedForResolution: disputeSummary["2"],

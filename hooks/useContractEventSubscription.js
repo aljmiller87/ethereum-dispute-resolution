@@ -49,12 +49,12 @@ const useContractEventSubscription = (contractAddress) => {
     setError(false);
     try {
       const instance = ThreeJudge(contractAddress);
-      const summary = await instance.methods.getStatus().call();
+      const escrowSummary = await instance.methods.getStatus().call();
       const disputeSummary = await instance.methods.getDisputeStatus().call();
-      const { escrowState, disputeState } = formatContractData({
-        summary,
-        disputeSummary,
-      });
+      const { escrowState, disputeState } = formatContractData(
+        escrowSummary,
+        disputeSummary
+      );
 
       if (
         escrowState === "CANCELLED" ||

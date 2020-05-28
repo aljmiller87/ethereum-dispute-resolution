@@ -35,6 +35,8 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
     (state) => state.contractReducer[contractAddress] || {}
   );
 
+  console.log("summary", summary);
+
   const noActiveListinging = (data) => {
     if (typeof data === "undefined") {
       return true;
@@ -62,10 +64,10 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
       const instance = ThreeJudge(contractAddress);
       const escrowSummary = await instance.methods.getStatus().call();
       const disputeSummary = await instance.methods.getDisputeStatus().call();
-      const { escrowState, disputeState } = formatContractData({
+      const { escrowState, disputeState } = formatContractData(
         escrowSummary,
-        disputeSummary,
-      });
+        disputeSummary
+      );
 
       if (
         escrowState === "CANCELLED" ||
@@ -156,7 +158,7 @@ Contract.getInitialProps = async (props) => {
   const contract = ThreeJudge(address);
   const summary = await contract.methods.getStatus().call();
   const disputeSummary = await contract.methods.getDisputeStatus().call();
-  const formattedSummary = formatContractData({ summary, disputeSummary });
+  const formattedSummary = formatContractData(summary, disputeSummary);
   const logs = await contract.getPastEvents("allEvents", {
     fromBlock: 0,
   });

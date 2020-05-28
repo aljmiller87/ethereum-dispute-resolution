@@ -41,12 +41,12 @@ export const setAllContractData = (allContractData) => ({
 export const asyncFetchState = (address, instance) => {
   return async (dispatch) => {
     try {
-      const summary = await instance.methods.getStatus().call();
+      const escrowSummary = await instance.methods.getStatus().call();
       const disputeSummary = await instance.methods.getDisputeStatus().call();
-      const formattedSummary = formatContractData({
-        summary,
-        disputeSummary,
-      });
+      const formattedSummary = formatContractData(
+        escrowSummary,
+        disputeSummary
+      );
       dispatch(updateSummary(address, formattedSummary));
     } catch (error) {
       console.log("asyncFetchState: ", error);
@@ -92,8 +92,8 @@ export const fetchContracEventsLogs = async (address) => {
 
 export const fetchContractDetails = async (contract) => {
   const campaign = ThreeJudge(contract);
-  const summary = await campaign.methods.getStatus().call();
+  const escrowSummary = await campaign.methods.getStatus().call();
   const disputeSummary = await campaign.methods.getDisputeStatus().call();
-  const formattedSummary = formatContractData({ summary, disputeSummary });
+  const formattedSummary = formatContractData(escrowSummary, disputeSummary);
   return formattedSummary;
 };
