@@ -22,7 +22,6 @@ const Navigation = () => {
   const { account } = useSelector((state) => state.accountReducer);
   const dispatch = useDispatch();
   const Router = useRouter();
-  console.log("Router", Router);
 
   const handleTabClick = (tab) => {
     dispatch(setDashboardNav(tab));

@@ -75,7 +75,8 @@ html {
 }
 body {
   background-color: #fff;
-  color: $black-color;
+  // color: $black-color;
+  color: #3c4858;
   margin: 0;
   font-size: 1rem;
   text-align: left;
@@ -96,12 +97,12 @@ legend {
 }
 
 a {
-  color: $link-color;
+  // color: $link-color;
   text-decoration: none;
   background-color: transparent;
   &:hover,
   &:focus {
-    color: darken($link-color, 5%);
+    // color: darken($link-color, 5%);
     text-decoration: none;
   }
 }
@@ -109,7 +110,7 @@ a {
 label {
   font-size: 14px;
   line-height: 1.42857;
-  color: $checkboxes-text-color;
+  color: #aaaaaa;
   font-weight: 400;
 }
 small {

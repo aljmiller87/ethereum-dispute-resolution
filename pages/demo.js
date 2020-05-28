@@ -8,9 +8,9 @@ import web3 from "../ethereum/web3";
 import { makeStyles } from "@material-ui/core/styles";
 
 // core components
-import Header from "components/Header/Header.js";
-import HeaderLinks from "components/Header/HeaderLinks.js";
-import Footer from "components/Footer/Footer.js";
+import Header from "components/nextjs-material-kit/Header/Header.js";
+import HeaderLinks from "components/nextjs-material-kit/Header/HeaderLinks.js";
+import Footer from "components/nextjs-material-kit/Footer/Footer.js";
 
 // Section
 import CreateDemoContract from "pages-sections/Demo/CreateDemoSection";

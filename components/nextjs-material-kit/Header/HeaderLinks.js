@@ -15,7 +15,7 @@ import DeleteIcon from "@material-ui/icons/Delete";
 import IconButton from "@material-ui/core/IconButton";
 
 // core components
-import Button from "components/CustomButtons/Button.js";
+import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
 
 import styles from "assets/jss/nextjs-material-kit/components/headerLinksStyle.js";
 

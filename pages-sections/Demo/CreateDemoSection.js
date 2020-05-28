@@ -10,12 +10,12 @@ import People from "@material-ui/icons/People";
 // Kit Components
 import Grid from "@material-ui/core/Grid";
 
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CardFooter from "components/Card/CardFooter.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
+import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
+import Card from "components/nextjs-material-kit/Card/Card.js";
+import CardBody from "components/nextjs-material-kit/Card/CardBody.js";
+import CardHeader from "components/nextjs-material-kit/Card/CardHeader.js";
+import CardFooter from "components/nextjs-material-kit/Card/CardFooter.js";
+import CustomInput from "components/nextjs-material-kit/CustomInput/CustomInput.js";
 
 // Styles
 import styles from "assets/jss/sections/CreateDemoSection";

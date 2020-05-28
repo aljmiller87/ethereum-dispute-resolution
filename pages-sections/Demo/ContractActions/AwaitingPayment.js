@@ -7,11 +7,11 @@ import Icon from "@material-ui/core/Icon";
 import Grid from "@material-ui/core/Grid";
 
 // Kit Components
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card.js";
-import CardBody from "components/Card/CardBody.js";
-import CardHeader from "components/Card/CardHeader.js";
-import CustomInput from "components/CustomInput/CustomInput.js";
+import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
+import Card from "components/nextjs-material-kit/Card/Card.js";
+import CardBody from "components/nextjs-material-kit/Card/CardBody.js";
+import CardHeader from "components/nextjs-material-kit/Card/CardHeader.js";
+import CustomInput from "components/nextjs-material-kit/CustomInput/CustomInput.js";
 
 const AwaitingPayment = ({ classes, dispatchAction }) => {
   return (

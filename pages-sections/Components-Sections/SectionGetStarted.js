@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 import Grid from "@material-ui/core/Grid";
 
-import Button from "components/CustomButtons/Button.js";
+import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
 import Section from "components/Section";
 // core components
 import styles from "assets/jss/sections/SectionGetStarted.js";

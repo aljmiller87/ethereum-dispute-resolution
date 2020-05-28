@@ -15,11 +15,11 @@ import { People } from "@material-ui/icons";
 import DoneIcon from "@material-ui/icons/Done";
 
 // core components
-import Button from "components/CustomButtons/Button.js";
-import Card from "components/Card/Card";
-import CardBody from "components/Card/CardBody";
-import CardFooter from "components/Card/CardFooter";
-import CardHeader from "components/Card/CardHeader";
+import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
+import Card from "components/nextjs-material-kit/Card/Card";
+import CardBody from "components/nextjs-material-kit/Card/CardBody";
+import CardFooter from "components/nextjs-material-kit/Card/CardFooter";
+import CardHeader from "components/nextjs-material-kit/Card/CardHeader";
 import Grid from "@material-ui/core/Grid";
 
 import Title from "components/Title";

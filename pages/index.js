@@ -8,7 +8,7 @@ import { Grid } from "@material-ui/core";
 // Layout
 import Layout from "../layouts";
 // core components
-import Parallax from "components/Parallax/Parallax.js";
+import Parallax from "components/nextjs-material-kit/Parallax/Parallax.js";
 
 // sections for this page
 import SectionAbout from "pages-sections/Home/SectionAbout.js";

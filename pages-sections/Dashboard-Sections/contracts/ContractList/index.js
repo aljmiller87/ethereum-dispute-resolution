@@ -15,9 +15,9 @@ import List from "@material-ui/core/List";
 import ContractListItem from "../ContractListItem";
 
 // Kit Components
-import Card from "../../../../components/Card/Card";
-import CardBody from "../../../../components/Card/CardBody";
-import CardHeader from "../../../../components/Card/CardHeader";
+import Card from "../../../../components/nextjs-material-kit/Card/Card";
+import CardBody from "../../../../components/nextjs-material-kit/Card/CardBody";
+import CardHeader from "../../../../components/nextjs-material-kit/Card/CardHeader";
 
 const title = {
   active: "Active Contracts",

@@ -7,13 +7,13 @@ import { makeStyles } from "@material-ui/core/styles";
 // @material-ui/icons
 
 // core components
-import Header from "components/Header/Header.js";
-import Footer from "components/Footer/Footer.js";
+import Header from "components/nextjs-material-kit/Header/Header.js";
+import Footer from "components/nextjs-material-kit/Footer/Footer.js";
 import Grid from "@material-ui/core/Grid";
 
-import Button from "components/CustomButtons/Button.js";
-import HeaderLinks from "components/Header/HeaderLinks.js";
-import Parallax from "components/Parallax/Parallax.js";
+import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
+import HeaderLinks from "components/nextjs-material-kit/Header/HeaderLinks.js";
+import Parallax from "components/nextjs-material-kit/Parallax/Parallax.js";
 
 import styles from "assets/jss/nextjs-material-kit/pages/landingPage.js";
 

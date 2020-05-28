@@ -25,10 +25,10 @@ import wrapper from "../redux/store/configureStore";
 import { ThemeProvider } from "styled-components";
 import { theme } from "../assets/theme";
 
-import PageChange from "components/PageChange/PageChange.js";
+import PageChange from "components/nextjs-material-kit/PageChange/PageChange.js";
 import EthereumConnectionDetect from "../components/EthereumConnectionDetect";
 
-import "assets/scss/nextjs-material-kit.scss?v=1.0.0";
+import "assets/scss/app.scss?v=1.0.0";
 
 Router.events.on("routeChangeStart", (url) => {
   console.log(`Loading: ${url}`);

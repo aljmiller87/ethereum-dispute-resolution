@@ -9,7 +9,7 @@ import Fingerprint from "@material-ui/icons/Fingerprint";
 // core components
 import Grid from "@material-ui/core/Grid";
 
-import InfoArea from "components/InfoArea/InfoArea.js";
+import InfoArea from "components/nextjs-material-kit/InfoArea/InfoArea.js";
 
 import styles from "assets/jss/nextjs-material-kit/pages/landingPageSections/productStyle.js";
 
