@@ -13,7 +13,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import CircularProgress from "@material-ui/core/CircularProgress";
 import InputAdornment from "@material-ui/core/InputAdornment";
-import Icon from "@material-ui/core/Icon";
 import Modal from "@material-ui/core/Modal";
 import People from "@material-ui/icons/People";
 
@@ -57,13 +56,10 @@ const ContractNew = (props) => {
   const [isBuyer, setIsBuyer] = useState();
   const [buyerAddress, setBuyerAddress] = useState("");
   const [sellerAddress, setSellerAddress] = useState("");
-  const [contractValue, setContractValue] = useState(0);
 
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
-
-  console.log("coinbase", coinbase);
 
   const setOtherValue = (e) => {
     if (!e.target || !e.target.value || !isRoleChosen) {
@@ -76,13 +72,6 @@ const ContractNew = (props) => {
       setBuyerAddress(e.target.value);
       setSellerAddress(coinbase);
     }
-  };
-
-  const setEtherValue = (e) => {
-    if (!e.target || !e.target.value) {
-      return null;
-    }
-    setContractValue(e.target.value);
   };
 
   const resetForm = () => {
@@ -122,6 +111,7 @@ const ContractNew = (props) => {
           if (confirmationNumber === 1) {
             console.log("contract created", receipt);
             dispatch(accountActions.asyncLoadAccountInfo());
+            resetForm();
             setLoading(false);
           }
         });
@@ -206,27 +196,6 @@ const ContractNew = (props) => {
               }}
             />
           )}
-          {/* {isRoleChosen && isBuyer && (
-            <CustomInput
-              labelText="Contract Value (in Ether)"
-              id="ether"
-              value={contractValue}
-              formControlProps={{
-                fullWidth: true,
-              }}
-              inputProps={{
-                onChange: setEtherValue,
-                required: true,
-                type: "number",
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <Icon className="fab fa-ethereum" />
-                  </InputAdornment>
-                ),
-                autoComplete: "off",
-              }}
-            />
-          )} */}
         </CardBody>
         <CardFooter className={classes.cardFooter}>
           <Button onClick={handleClick} disabled={isLoading}>
