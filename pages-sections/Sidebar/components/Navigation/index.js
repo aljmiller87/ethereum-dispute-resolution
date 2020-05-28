@@ -22,6 +22,7 @@ const Navigation = () => {
   const { account } = useSelector((state) => state.accountReducer);
   const dispatch = useDispatch();
   const Router = useRouter();
+  console.log("Router", Router);
 
   const handleTabClick = (tab) => {
     dispatch(setDashboardNav(tab));
@@ -43,16 +44,19 @@ const Navigation = () => {
           </ListItemIcon>
           <ListItemText primary="Dashboard" />
         </StyledListItem>
-        <StyledListItem
-          button
-          isActive={activeTab === "detail"}
-          onClick={() => handleTabClick("detail")}
-        >
-          <ListItemIcon>
-            <ListIcon />
-          </ListItemIcon>
-          <ListItemText primary="Detail" />
-        </StyledListItem>
+        {(activeTab === "detail" ||
+          Router.pathname === "/dashboard/contract/[contract]") && (
+          <StyledListItem
+            button
+            isActive={activeTab === "detail"}
+            onClick={() => handleTabClick("detail")}
+          >
+            <ListItemIcon>
+              <ListIcon />
+            </ListItemIcon>
+            <ListItemText primary="Detail" />
+          </StyledListItem>
+        )}
         <StyledListItem
           button
           isActive={activeTab === "create"}

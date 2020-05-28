@@ -1,6 +1,6 @@
 import { HYDRATE } from "next-redux-wrapper";
 
-const initialState = { activeTab: "contracts", mobileMenuOpen: false };
+const initialState = { activeTab: "dashboard", mobileMenuOpen: false };
 
 const dashboardReducer = (state = initialState, action) => {
   switch (action.type) {
