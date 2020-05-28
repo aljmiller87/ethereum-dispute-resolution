@@ -22,11 +22,13 @@ const ProfilePage = ({ contracts, userAddress, error, ...rest }) => {
   const accountReducer = useSelector((state) => state.accountReducer);
   const { activeTab } = useSelector((state) => state.dashboardReducer);
   const { pathname } = useSelector((state) => state.router.location);
+  const { contractReducer } = useSelector((state) => state);
   let address =
     pathname === "/" ? userAddress : pathname.replace("/dashboard/", "");
   const [isModalOpen, setModalOpen] = useState(false);
   const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
 
+  // Need to revisit if accountReducer.contracts is ever needed
   const contractListToWatch = isUserLoggedIn
     ? accountReducer.contracts
     : contracts;
@@ -58,7 +60,18 @@ const ProfilePage = ({ contracts, userAddress, error, ...rest }) => {
   }, [error]);
 
   useEffect(() => {
-    dispatch(fetchAllContractData(contracts));
+    const userContractCountInRedux = Object.keys(contractReducer).length;
+    if (contracts.length > 0) {
+      // If the new fetch request returns contracts, but redux store is empty, then fetch all contracts
+
+      if (userContractCountInRedux === 0) {
+        dispatch(fetchAllContractData(contracts));
+      } else if (contracts.length !== userContractCountInRedux) {
+        // Find any contracts missing in redux store and add those individually
+      }
+    }
+
+    // NEED TO HANDLE NEWLY CREATED CONTRACTS
   }, []);
 
   return (

@@ -27,15 +27,6 @@ const ContractListItem = ({ contract }) => {
   const dispatch = useDispatch();
   const dataObj = useSelector((state) => state.contractReducer[contract]);
   const { listeningStatus } = dataObj;
-  console.log(contract, listeningStatus);
-
-  // const noActiveListinging = (data) => {
-  //   if (typeof data === "undefined") {
-  //     return true;
-  //   }
-  //   const { isLoading, isListening, hasError } = data;
-  //   return isLoading === false && isListening === false && hasError === false;
-  // };
 
   const setContractEventListeners = async (contractAddress) => {
     /* If ethereum event subscription is either:

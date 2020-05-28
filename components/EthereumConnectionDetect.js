@@ -26,7 +26,7 @@ const EthereumConnectionDetect = (props) => {
       dispatch(accountActions.asyncLoadAccountInfo());
       setEthereumEventListeners();
     }
-  });
+  }, []);
 
   return <>{props.children}</>;
 };
