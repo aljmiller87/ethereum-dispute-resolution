@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 // Actions
 import * as accountActions from "../../redux/actions/accountActions";
@@ -27,7 +27,6 @@ import CustomInput from "components/nextjs-material-kit/CustomInput/CustomInput.
 
 // Ethereum
 import factory from "../../ethereum/factory";
-import web3 from "../../ethereum/web3";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -50,9 +49,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ContractNew = ({ coinbase, ...rest }) => {
+const ContractNew = (props) => {
   const dispatch = useDispatch();
   const formRef = useRef();
+  const { account: coinbase } = useSelector((state) => state.accountReducer);
   const [isRoleChosen, setIsRoleChosen] = useState(false);
   const [isBuyer, setIsBuyer] = useState();
   const [buyerAddress, setBuyerAddress] = useState("");
@@ -62,6 +62,8 @@ const ContractNew = ({ coinbase, ...rest }) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
+
+  console.log("coinbase", coinbase);
 
   const setOtherValue = (e) => {
     if (!e.target || !e.target.value || !isRoleChosen) {
@@ -113,7 +115,6 @@ const ContractNew = ({ coinbase, ...rest }) => {
         .send({
           from: buyerAddress,
           gas: "5000000",
-          value: web3.utils.toWei(`${contractValue}`, "ether"),
         }) // Wait for transaction to confirm
         .on("confirmation", async (confirmationNumber, receipt) => {
           // If first confirmation...
