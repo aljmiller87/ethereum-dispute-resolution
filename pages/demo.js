@@ -53,11 +53,7 @@ const Demo = (props) => {
         absolute
         color="transparent"
         brand="Arbitration Distributed"
-        rightLinks={
-          <HeaderLinks
-            coinbase={props.data.coinbase ? props.data.coinbase : null}
-          />
-        }
+        rightLinks={<HeaderLinks />}
         {...rest}
       />
       <div
