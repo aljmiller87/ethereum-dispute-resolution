@@ -42,8 +42,6 @@ const Contract = ({
     (state) => state.contractReducer[contractAddress] || {}
   );
 
-  console.log("summary", summary);
-
   const noActiveListinging = (data) => {
     if (typeof data === "undefined") {
       return true;
@@ -100,7 +98,6 @@ const Contract = ({
         .on("data", function (event) {
           console.log("data event", event);
           dispatch(contractActions.addEvent(contractAddress, event));
-          // Need to dispatch asyncFetchState
           dispatch(contractActions.asyncFetchState(contractAddress, instance));
         })
         .on("changed", function (event) {
@@ -139,7 +136,7 @@ const Contract = ({
   useEffect(() => {
     dispatch(setDashboardNav("detail"));
     if (isEthereumConnected && noActiveListinging(listeningStatus)) {
-      setContractEventListeners(contractAddress);
+      // setContractEventListeners(contractAddress);
     }
   }, [isEthereumConnected]);
 

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import * as networkActions from "../redux/actions/networkActions";
 import * as accountActions from "../redux/actions/accountActions";
-import "isomorphic-fetch";
 
 const EthereumConnectionDetect = (props) => {
   const [isEventListenerSet, setIsEventListenerSet] = useState(false);

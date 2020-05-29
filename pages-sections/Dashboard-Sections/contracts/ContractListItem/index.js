@@ -101,7 +101,7 @@ const ContractListItem = ({ contract }) => {
   };
 
   useEffect(() => {
-    setContractEventListeners(contract);
+    // setContractEventListeners(contract);
   }, [listeningStatus]);
 
   return (

@@ -27,6 +27,7 @@ import { theme } from "../assets/theme";
 
 import PageChange from "components/nextjs-material-kit/PageChange/PageChange.js";
 import EthereumConnectionDetect from "../components/EthereumConnectionDetect";
+import SubscriptionDetect from "../components/SubscriptionDetect";
 
 import "assets/scss/app.scss?v=1.0.0";
 
@@ -85,9 +86,11 @@ class MyApp extends App {
         </Head>
         <ConnectedRouter>
           <EthereumConnectionDetect>
-            <ThemeProvider theme={theme}>
-              <Component {...pageProps} />
-            </ThemeProvider>
+            <SubscriptionDetect>
+              <ThemeProvider theme={theme}>
+                <Component {...pageProps} />
+              </ThemeProvider>
+            </SubscriptionDetect>
           </EthereumConnectionDetect>
         </ConnectedRouter>
       </React.Fragment>

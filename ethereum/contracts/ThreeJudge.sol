@@ -423,7 +423,13 @@ contract ThreeJudge {
     function getStatus()
         public
         view
-        returns (State, DisputeState, address, address, uint256)
+        returns (
+            State,
+            DisputeState,
+            address,
+            address,
+            uint256
+        )
     {
         return (currentState, currentDisputeState, buyer, seller, balance);
     }

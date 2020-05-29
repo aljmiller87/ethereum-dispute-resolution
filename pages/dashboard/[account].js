@@ -4,6 +4,7 @@ import { replace } from "connected-next-router";
 
 // Ethereum
 import factory from "../../ethereum/factory";
+import web3 from "../../ethereum/web3";
 
 // Actions
 import { fetchAllContractData } from "../../redux/actions/contractActions";
@@ -60,6 +61,7 @@ const ProfilePage = ({ contracts, userAddress, error, ...rest }) => {
   }, [error]);
 
   useEffect(() => {
+    console.log("web3.version", web3.version);
     const userContractCountInRedux = Object.keys(contractReducer).length;
     if (contracts.length > 0) {
       // If the new fetch request returns contracts, but redux store is empty, then fetch all contracts

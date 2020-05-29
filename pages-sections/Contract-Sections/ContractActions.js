@@ -97,8 +97,6 @@ const ContractActions = ({ details, account, contractAddress, ...rest }) => {
   const isDispute = details.escrowState === "IN_DISPUTE";
   const StepsConfig = isDispute ? DisputeSteps : EscrowSteps;
   const CurrentStep = isDispute ? disputeState : escrowState;
-  console.log("StepsConfig", StepsConfig);
-  console.log("CurrentStep", CurrentStep);
 
   const checkAlias = () => {
     if (!account) {

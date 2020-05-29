@@ -7,5 +7,3 @@ const compiledThreeJudgeABI = compiledThreeJudge.abi;
 export default (address) => {
   return new web3.eth.Contract(compiledThreeJudgeABI, address);
 };
-
-export const generalInstance = new web3.eth.Contract(compiledThreeJudgeABI);
