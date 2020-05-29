@@ -1,5 +1,6 @@
-import React, { useRef, useEffect } from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { replace } from "connected-next-router";
 import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 
@@ -24,7 +25,13 @@ import ContractLoader from "../../../pages-sections/Dashboard-Sections/contracts
 // Utilities
 import { formatContractData } from "../../../utilities/contractHelpers";
 
-const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
+const Contract = ({
+  contractAddress,
+  summaryProps,
+  eventsProps,
+  error,
+  ...rest
+}) => {
   const dispatch = useDispatch();
 
   // Selectors
@@ -136,6 +143,13 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
     }
   }, [isEthereumConnected]);
 
+  useEffect(() => {
+    if (error) {
+      console.log("redirecting via dispatch replace due to error: ", error);
+      dispatch(replace("/"));
+    }
+  }, [error]);
+
   return (
     <Layout layout="dashboard">
       {typeof summary !== "undefined" && (
@@ -154,20 +168,29 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, ...rest }) => {
   );
 };
 Contract.getInitialProps = async (props) => {
-  const address = props.query.contract;
-  const contract = ThreeJudge(address);
-  const summary = await contract.methods.getStatus().call();
-  const disputeSummary = await contract.methods.getDisputeStatus().call();
-  const formattedSummary = formatContractData(summary, disputeSummary);
-  const logs = await contract.getPastEvents("allEvents", {
-    fromBlock: 0,
-  });
+  try {
+    const address = props.query.contract;
+    const contract = ThreeJudge(address);
+    const summary = await contract.methods.getStatus().call();
+    const disputeSummary = await contract.methods.getDisputeStatus().call();
+    const formattedSummary = formatContractData(summary, disputeSummary);
+    const logs = await contract.getPastEvents("allEvents", {
+      fromBlock: 0,
+    });
 
-  return {
-    contractAddress: address,
-    summaryProps: formattedSummary,
-    eventsProps: logs,
-  };
+    return {
+      contractAddress: address,
+      summaryProps: formattedSummary,
+      eventsProps: logs,
+    };
+  } catch (error) {
+    if (typeof window === "undefined" && props.res) {
+      props.res.writeHead(302, { Location: "/dashboard" });
+      props.res.end();
+    } else {
+      return { error: error.message };
+    }
+  }
 };
 
 export default Contract;
