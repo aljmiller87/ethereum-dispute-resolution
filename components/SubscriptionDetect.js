@@ -2,9 +2,11 @@ import React, { useRef, useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import ThreeJudge from "../ethereum/threejudge";
 import web3 from "../ethereum/web3";
-import { StatusEventABI, TestimonyEventABI } from "../ethereum/eventABIs";
-
 import * as contractActions from "../redux/actions/contractActions";
+
+/* 
+  TODO: Need to refactor this so subscriptions are managed on individual address basis, rather than: 1) cancelling all 2) refetching all when one contract is added
+*/
 
 const SubscriptionDetect = ({ children }) => {
   const contractList = useSelector((state) => state.accountReducer.contracts);
@@ -25,22 +27,13 @@ const SubscriptionDetect = ({ children }) => {
         console.log("subscriptionId", subscriptionId);
       })
       .on("data", function (log) {
-        console.log("event found", log);
-        const statusEventLog = web3.eth.abi.decodeLog(
-          StatusEventABI,
-          log.data,
-          log.topics
-        );
-        console.log("statusEventLog", statusEventLog);
-        web3.eth.getBlock(log.blockNumber).then(({ timestamp }) => {
-          statusEventLog.timestamp = timestamp;
-          statusEventLog["1"] = timestamp;
-          dispatch(contractActions.addEvent(log.address, statusEventLog));
-          const instance = ThreeJudge(contractAddress);
-          dispatch(contractActions.asyncFetchState(log.address, instance));
-        });
+        dispatch(contractActions.addEvent(log.address, log));
+        const instance = ThreeJudge(log.address);
+        dispatch(contractActions.asyncFetchState(log.address, instance));
       })
-      .on("changed", function (log) {});
+      .on("changed", function (log) {
+        console.log("log changed", log);
+      });
   };
 
   const cancelEventSubscription = () => {
@@ -48,22 +41,32 @@ const SubscriptionDetect = ({ children }) => {
       subscriptionRef.current.unsubscribe(function (error, success) {
         if (success) {
           console.log("Successfully unsubscribed!");
+          setIsListening(false);
         }
       });
     } catch (error) {
-      console.log("cancelEventSubscription erros: ", error.message);
+      console.log("cancelEventSubscription error: ", error.message);
     }
   };
 
   useEffect(() => {
+    if (contractList.length === 0 && isListening) {
+      cancelEventSubscription();
+    }
     if (contractList.length > 0 && !isListening) {
+      // Contracts are found and no previous listening state subscribed
       setIsListening(true);
       initEventSubscription(contractList);
     }
+    if (contractList.length > 0 && isListening) {
+      // Cancel current subscription and create new subscription based on updated contract list
+      cancelEventSubscription();
+      initEventSubscription(contractList);
+    }
     return () => {
-      // if (isListening) {
-      //   cancelEventSubscription();
-      // }
+      if (isListening) {
+        cancelEventSubscription();
+      }
     };
   }, [contractList.length]);
   return <>{children}</>;
