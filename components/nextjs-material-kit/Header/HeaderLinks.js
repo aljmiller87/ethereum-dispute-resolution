@@ -23,7 +23,10 @@ const useStyles = makeStyles(styles);
 
 export default function HeaderLinks(props) {
   const accountReducer = useSelector((state) => state.accountReducer);
-  const userAddress = accountReducer.account ? accountReducer.account : "";
+  const userAddress = accountReducer.coinbase.address
+    ? accountReducer.coinbase.address
+    : "";
+
   const classes = useStyles();
   return (
     <List className={classes.list}>
@@ -44,21 +47,22 @@ export default function HeaderLinks(props) {
           </Button>
         </Tooltip>
       </ListItem>
-      {accountReducer.account && (
-        <ListItem className={classes.listItem}>
-          <Link href="/dashboard/[account]" as={`/dashboard/${userAddress}`}>
-            <a style={{ color: "inherit" }}>
-              <Button
-                color="transparent"
-                target="_blank"
-                className={classes.navLink}
-              >
-                <Apps className={classes.icons} /> Dashboard
-              </Button>
-            </a>
-          </Link>
-        </ListItem>
-      )}
+      <ListItem className={classes.listItem}>
+        <Link
+          href={userAddress ? "/dashboard/[account]" : "/dashboard"}
+          as={userAddress ? `/dashboard/${userAddress}` : "/dashboard"}
+        >
+          <a style={{ color: "inherit" }}>
+            <Button
+              color="transparent"
+              target="_blank"
+              className={classes.navLink}
+            >
+              <Apps className={classes.icons} /> Dashboard
+            </Button>
+          </a>
+        </Link>
+      </ListItem>
     </List>
   );
 }

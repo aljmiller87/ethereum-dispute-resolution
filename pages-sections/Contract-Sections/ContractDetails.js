@@ -1,5 +1,6 @@
 import React from "react";
 import web3 from "../../ethereum/web3";
+import Link from "next/link";
 
 import styled from "styled-components";
 
@@ -57,29 +58,37 @@ const ContractDetails = ({ details, account }) => {
               <ListItemIcon>
                 <People />
               </ListItemIcon>
-              <ListItemText primary="Buyer" secondary={buyer} />
-              {account === buyer && (
-                <Chip
-                  label="Your role"
-                  color="primary"
-                  icon={<DoneIcon />}
-                  variant="outlined"
-                />
-              )}
+              <Link href="/dashboard/[account]" as={`/dashboard/${buyer}`}>
+                <a>
+                  <ListItemText primary="Buyer" secondary={buyer} />
+                  {account === buyer && (
+                    <Chip
+                      label="Your role"
+                      color="primary"
+                      icon={<DoneIcon />}
+                      variant="outlined"
+                    />
+                  )}
+                </a>
+              </Link>
             </ListItem>
             <ListItem>
               <ListItemIcon>
                 <People />
               </ListItemIcon>
-              <ListItemText primary="Seller" secondary={seller} />
-              {account === seller && (
-                <Chip
-                  label="Your role"
-                  color="primary"
-                  icon={<DoneIcon />}
-                  variant="outlined"
-                />
-              )}
+              <Link href="/dashboard/[account]" as={`/dashboard/${seller}`}>
+                <a>
+                  <ListItemText primary="Seller" secondary={seller} />
+                  {account === seller && (
+                    <Chip
+                      label="Your role"
+                      color="primary"
+                      icon={<DoneIcon />}
+                      variant="outlined"
+                    />
+                  )}
+                </a>
+              </Link>
             </ListItem>
             <ListItem>
               <ListItemIcon>

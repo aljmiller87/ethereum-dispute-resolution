@@ -1,51 +1,37 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import React from "react";
+
+// Material UI Components
 import Grid from "@material-ui/core/Grid";
 import Container from "@material-ui/core/Container";
+
+// Components
 import ContractList from "../ContractList";
 
-// Hooks
-import useContractEventSubscription from "../../../../hooks/useContractEventSubscription";
-
-// Actions
-import { fetchAllContractData } from "../../../../redux/actions/contractActions";
-
 const ContractGrid = ({ contracts, userAddress }) => {
-  const dispatch = useDispatch();
-  // const [initListeners, setInitListeners] = useState(false);
-
-  // const setAllNeededEthereumListeners = (contractsArr) => {
-  //   if (initListeners) {
-  //     return null;
-  //   }
-  //   setInitListeners(true);
-  //   contractsArr.map((contract, index) => {
-  //     const [state] = useContractEventSubscription(contract);
-  //     console.log(index, state);
-  //   });
-  // };
-  // setAllNeededEthereumListeners(contracts);
-
   return (
     <Container>
       <Grid container spacing={3}>
         <Grid item lg={6}>
-          <ContractList filter="active" />
+          <ContractList contracts={contracts} filter="active" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList filter="actionNeeded" address={userAddress} />
+          <ContractList
+            contracts={contracts}
+            filter="actionNeeded"
+            address={userAddress}
+          />
         </Grid>
         <Grid item lg={6}>
-          <ContractList filter="inDispute" />
+          <ContractList contracts={contracts} filter="inDispute" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList filter="completed" />
+          <ContractList contracts={contracts} filter="completed" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList filter="disputeCompleted" />
+          <ContractList contracts={contracts} filter="disputeCompleted" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList filter="aborted" />
+          <ContractList contracts={contracts} filter="aborted" />
         </Grid>
       </Grid>
     </Container>

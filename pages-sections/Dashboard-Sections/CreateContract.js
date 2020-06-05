@@ -110,7 +110,7 @@ const ContractNew = (props) => {
           console.log("confirmationNumber", confirmationNumber);
           if (confirmationNumber === 1) {
             console.log("contract created", receipt);
-            dispatch(accountActions.asyncLoadAccountInfo());
+            dispatch(accountActions.asyncLoadCoinbaseInfo());
             resetForm();
             setLoading(false);
           }

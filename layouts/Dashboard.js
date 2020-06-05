@@ -10,15 +10,6 @@ const Dashboard = ({ children }) => {
   const { pathname } = useRouter();
   const { activeTab } = useSelector((state) => state.dashboardReducer);
   const returnContent = () => {
-    if (pathname === "/dashboard/[account]" && activeTab === "dashboard") {
-      return children;
-    }
-    if (
-      pathname === "/dashboard/contract/[contract]" &&
-      activeTab === "detail"
-    ) {
-      return children;
-    }
     if (activeTab === "create") {
       return <CreateContract />;
     }
@@ -29,6 +20,7 @@ const Dashboard = ({ children }) => {
         </div>
       );
     }
+    return children;
   };
   return (
     <DashboardLayout>

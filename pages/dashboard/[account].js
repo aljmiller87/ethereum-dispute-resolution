@@ -1,102 +1,93 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { replace } from "connected-next-router";
+import Router from "next/router";
+import _difference from "lodash/difference";
 
 // Ethereum
 import factory from "../../ethereum/factory";
-import web3 from "../../ethereum/web3";
 
 // Actions
-import { fetchAllContractData } from "../../redux/actions/contractActions";
+import * as accountActions from "../../redux/actions/accountActions";
+import * as contractActions from "../../redux/actions/contractDetails";
+import * as contractLogs from "../../redux/actions/contractLogs";
+import { setDashboardNav } from "../../redux/actions/dashboardActions";
 
 // Layout
 import Layout from "../../layouts";
 
 // Sections
 import ContractGrid from "pages-sections/Dashboard-Sections/contracts/ContractGrid";
-import CreateContract from "pages-sections/Dashboard-Sections/CreateContract";
 
-const ProfilePage = ({ contracts, userAddress, error, ...rest }) => {
+const ProfilePage = ({ contractsProps, userAddressProps, error, ...rest }) => {
   const dispatch = useDispatch();
-
   const profileRef = useRef();
-  const accountReducer = useSelector((state) => state.accountReducer);
-  const { activeTab } = useSelector((state) => state.dashboardReducer);
-  const { pathname } = useSelector((state) => state.router.location);
-  const { contractReducer } = useSelector((state) => state);
-  let address =
-    pathname === "/" ? userAddress : pathname.replace("/dashboard/", "");
-  const [isModalOpen, setModalOpen] = useState(false);
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  const { contracts, address } = useSelector(
+    (state) => state.accountReducer.currentView
+  );
+  const { contractDetails } = useSelector((state) => state);
+  const [dataLoaded, setDataLoaded] = useState(false);
+  console.log("ROUTER ", Router);
 
-  // Need to revisit if accountReducer.contracts is ever needed
-  const contractListToWatch = isUserLoggedIn
-    ? accountReducer.contracts
-    : contracts;
-
+  // If getInitialProps passes error due to invalid address, useEffect will redirect to /dashboard
   useEffect(() => {
-    if (!accountReducer || !accountReducer.account) {
-      return;
+    if (error) {
+      console.log("redirecting via dispatch replace due to error: ", error);
+      Router.replace("/dashboard");
     }
-    if (accountReducer.account === address && !isUserLoggedIn) {
-      setIsUserLoggedIn(true);
-    }
+  }, [error]);
 
-    if (accountReducer.account !== address && isUserLoggedIn) {
-      setIsUserLoggedIn(false);
-    }
-  }, [accountReducer.account, address]);
+  const setBatchContractData = async (contractsArray = contractsProps) => {
+    await dispatch(contractActions.fetchBatchContractData(contractsArray));
+    await dispatch(contractLogs.fetchBatchContractEvents(contractsArray));
+    setDataLoaded(true);
+  };
 
+  const checkReduxStoreStatus = () => {
+    // get list from redux store
+    const reduxStoreContractDetailsArray = Object.keys(contractDetails);
+    // get recently fetched list from initial props
+    // compare the lists to find if Redux Store is missing any data
+    const contractsNotInStore = _difference(
+      contractsProps,
+      reduxStoreContractDetailsArray
+    );
+    // Update store with missing data, if any
+    setBatchContractData(contractsNotInStore);
+  };
+
+  // Set the account and contracts of the currently viewed account to redux store
+  useEffect(() => {
+    console.log("Router.router.query.account useEffect Ran");
+    dispatch(setDashboardNav("dashboard"));
+    dispatch(accountActions.setcurrentView(userAddressProps));
+    dispatch(accountActions.setCurrentViewContractList(contractsProps));
+    checkReduxStoreStatus();
+  }, [Router.router.query.account]);
+
+  // Use Effect that will generate Avatar based on user address
   useEffect(() => {
     if (profileRef.current) {
       profileRef.current.innerHTML = svg;
     }
   }, [profileRef.current]);
 
-  useEffect(() => {
-    if (error) {
-      console.log("redirecting via dispatch replace due to error: ", error);
-      dispatch(replace("/"));
-    }
-  }, [error]);
-
-  useEffect(() => {
-    console.log("web3.version", web3.version);
-    const userContractCountInRedux = Object.keys(contractReducer).length;
-    if (contracts.length > 0) {
-      // If the new fetch request returns contracts, but redux store is empty, then fetch all contracts
-
-      if (userContractCountInRedux === 0) {
-        dispatch(fetchAllContractData(contracts));
-      } else if (contracts.length !== userContractCountInRedux) {
-        // Find any contracts missing in redux store and add those individually
-      }
-    }
-
-    // NEED TO HANDLE NEWLY CREATED CONTRACTS
-  }, []);
-
   return (
     <Layout layout="dashboard">
-      {/* Need to memoize contract grid to prevent unnecessary fetchAllContractData fetches */}
-      <ContractGrid contracts={contractListToWatch} userAddress={userAddress} />
+      {dataLoaded && (
+        <ContractGrid contracts={contracts} userAddress={address} />
+      )}
     </Layout>
   );
 };
 
 ProfilePage.getInitialProps = async function (props) {
-  if (props.store) {
-    console.log("PROPS.STORE", props.store);
-  }
-  const userAddress = props.query.account;
+  const userAddressProps = props.query.account;
   try {
-    const contracts = await factory.methods
+    const contractsProps = await factory.methods
       .getdeployedContracts()
-      .call({}, { from: userAddress });
-    return { userAddress, contracts };
+      .call({}, { from: userAddressProps });
+    return { userAddressProps, contractsProps };
   } catch (error) {
-    console.log("ProfilePage.getInitialProps error", error.message);
-    console.log("props.query.account", props.query.account);
     if (typeof window === "undefined" && props.res) {
       props.res.writeHead(302, { Location: "/dashboard" });
       props.res.end();

@@ -1,6 +1,7 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
+import Router from "next/router";
 
 // Material
 import List from "@material-ui/core/List";
@@ -14,59 +15,104 @@ import SearchIcon from "@material-ui/icons/Search";
 // Actions
 import { setDashboardNav } from "../../../../redux/actions/dashboardActions";
 
+// Utilities
+import { abbreviateAddress } from "../../../../utilities/addressHelpers";
+
 // Styles
 import { Wrapper, StyledListItem, Title } from "./styles";
 
 const Navigation = () => {
   const { activeTab } = useSelector((state) => state.dashboardReducer);
-  const { account } = useSelector((state) => state.accountReducer);
+  const { coinbase, currentView } = useSelector(
+    (state) => state.accountReducer
+  );
   const dispatch = useDispatch();
-  const Router = useRouter();
+  const { pathname } = useRouter();
 
-  const handleTabClick = (tab) => {
+  const handleTabClick = (tab, route = false) => {
     dispatch(setDashboardNav(tab));
-    if (tab === "dashboard" && typeof account !== "undefined") {
-      Router.push("/dashboard/[account]", `/dashboard/${account}`);
+    if (route) {
+      console.log("pushing route", route);
+      Router.push("/dashboard/[account]", route);
     }
   };
+
   return (
     <Wrapper>
-      <Title>Account</Title>
-      <List component="nav" aria-label="main mailbox folders">
-        <StyledListItem
-          button
-          isActive={activeTab === "dashboard"}
-          onClick={() => handleTabClick("dashboard")}
-        >
-          <ListItemIcon>
-            <ListIcon />
-          </ListItemIcon>
-          <ListItemText primary="Dashboard" />
-        </StyledListItem>
-        {(activeTab === "detail" ||
-          Router.pathname === "/dashboard/contract/[contract]") && (
-          <StyledListItem
-            button
-            isActive={activeTab === "detail"}
-            onClick={() => handleTabClick("detail")}
-          >
-            <ListItemIcon>
-              <ListIcon />
-            </ListItemIcon>
-            <ListItemText primary="Detail" />
-          </StyledListItem>
-        )}
-        <StyledListItem
-          button
-          isActive={activeTab === "create"}
-          onClick={() => handleTabClick("create")}
-        >
-          <ListItemIcon>
-            <AddCircleOutlineIcon />
-          </ListItemIcon>
-          <ListItemText primary="Create" />
-        </StyledListItem>
-      </List>
+      {!!coinbase.address && (
+        <>
+          <Title>Account</Title>
+          <List component="nav" aria-label="TBD">
+            <StyledListItem
+              button
+              isActive={activeTab === "dashboard"}
+              onClick={() =>
+                handleTabClick("dashboard", `/dashboard/${coinbase.address}`)
+              }
+            >
+              <ListItemIcon>
+                <ListIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </StyledListItem>
+            {(activeTab === "detail" ||
+              pathname === "/dashboard/contract/[contract]") && (
+              <StyledListItem
+                button
+                isActive={activeTab === "detail"}
+                onClick={() => handleTabClick("detail")}
+              >
+                <ListItemIcon>
+                  <ListIcon />
+                </ListItemIcon>
+                <ListItemText primary="Detail" />
+              </StyledListItem>
+            )}
+            <StyledListItem
+              button
+              isActive={activeTab === "create"}
+              onClick={() => handleTabClick("create")}
+            >
+              <ListItemIcon>
+                <AddCircleOutlineIcon />
+              </ListItemIcon>
+              <ListItemText primary="Create" />
+            </StyledListItem>
+          </List>
+        </>
+      )}
+      {coinbase.address !== currentView.address && (
+        <>
+          <Title>User {abbreviateAddress(currentView.address)}</Title>
+          <List component="nav" aria-label="TBD">
+            <StyledListItem
+              button
+              isActive={activeTab === "dashboard"}
+              onClick={() =>
+                handleTabClick("dashboard", `/dashboard/${currentView.address}`)
+              }
+            >
+              <ListItemIcon>
+                <ListIcon />
+              </ListItemIcon>
+              <ListItemText primary="Dashboard" />
+            </StyledListItem>
+            {(activeTab === "detail" ||
+              pathname === "/dashboard/contract/[contract]") && (
+              <StyledListItem
+                button
+                isActive={activeTab === "detail"}
+                onClick={() => handleTabClick("detail")}
+              >
+                <ListItemIcon>
+                  <ListIcon />
+                </ListItemIcon>
+                <ListItemText primary="Detail" />
+              </StyledListItem>
+            )}
+          </List>
+        </>
+      )}
       <Divider />
       <List component="nav" aria-label="main mailbox folders">
         <StyledListItem

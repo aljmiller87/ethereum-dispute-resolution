@@ -36,16 +36,22 @@ const filterFunctions = {
   disputeCompleted: filterByDisputeCompleted,
   aborted: filterByAborted,
 };
-const ContractList = ({ filter, address = null }) => {
+const ContractList = ({ contracts, filter, address = null }) => {
+  const { contractDetails } = useSelector((state) => state);
+  const [contractDetailList, setContractDetailList] = useState([]);
   const [filteredContracts, setFilteredContracts] = useState([]);
-  const contractReducer = useSelector((state) => state.contractReducer);
+
   useEffect(() => {
+    const contractDetailsArray = contracts.map((contract) => {
+      return { ...contractDetails[contract], address: contract };
+    });
     const filterFunction = filterFunctions[filter];
-    const activeContracts = filterFunction(contractReducer, address);
+    const activeContracts = filterFunction(contractDetailsArray);
     if (typeof activeContracts === "object" && activeContracts.length) {
       setFilteredContracts(activeContracts);
     }
-  }, [contractReducer]);
+  }, [contracts]);
+
   return (
     <Card>
       <CardHeader color="info">
@@ -54,7 +60,7 @@ const ContractList = ({ filter, address = null }) => {
       <CardBody>
         <List component="nav" aria-label="main mailbox folders">
           {filteredContracts.map((contract) => (
-            <ContractListItem key={contract} contract={contract} />
+            <ContractListItem key={contract.address} contract={contract} />
           ))}
         </List>
       </CardBody>

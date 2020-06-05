@@ -1,24 +1,54 @@
 import { HYDRATE } from "next-redux-wrapper";
 
 const initialState = {
-  account: null,
-  contracts: [],
+  coinbase: {
+    address: null,
+    contracts: [],
+  },
+  currentView: {
+    address: null,
+    contracts: [],
+  },
 };
 
 const accountReducer = (state = initialState, action) => {
   switch (action.type) {
     case HYDRATE:
       return { ...state };
-    case "SET_ACCOUNT": {
+    case "SET_COINBASE": {
       return {
         ...state,
-        account: action.payload,
+        coinbase: {
+          ...state.coinbase,
+          address: action.payload,
+        },
       };
     }
-    case "SET_ACCOUNT_CONTRACT_LIST": {
+    case "SET_COINBASE_CONTRACT_LIST": {
       return {
         ...state,
-        contracts: action.payload,
+        coinbase: {
+          ...state.coinbase,
+          contracts: action.payload,
+        },
+      };
+    }
+    case "SET_CURRENT_VIEW_ACCOUNT": {
+      return {
+        ...state,
+        currentView: {
+          ...state.currentView,
+          address: action.payload,
+        },
+      };
+    }
+    case "SET_CURRENT_VIEW_ACCOUNT_CONTRACT_LIST": {
+      return {
+        ...state,
+        currentView: {
+          ...state.currentView,
+          contracts: action.payload,
+        },
       };
     }
     default:

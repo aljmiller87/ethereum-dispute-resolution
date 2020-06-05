@@ -10,11 +10,11 @@ const EthereumConnectionDetect = (props) => {
   const setEthereumEventListeners = () => {
     setIsEventListenerSet(true);
     ethereum.on("accountsChanged", function (accounts) {
-      dispatch(accountActions.asyncLoadAccountInfo());
+      dispatch(accountActions.asyncLoadCoinbaseInfo());
     });
     ethereum.on("networkChanged", function (accounts) {
       dispatch(networkActions.setNetwork(ethereum.networkVersion));
-      dispatch(accountActions.asyncLoadAccountInfo());
+      dispatch(accountActions.asyncLoadCoinbaseInfo());
     });
   };
 
@@ -22,7 +22,7 @@ const EthereumConnectionDetect = (props) => {
     if (!isEventListenerSet && window && window.ethereum) {
       dispatch(networkActions.setIsEthereumConnected(true));
       dispatch(networkActions.setNetwork(ethereum.networkVersion));
-      dispatch(accountActions.asyncLoadAccountInfo());
+      dispatch(accountActions.asyncLoadCoinbaseInfo());
       setEthereumEventListeners();
     }
   }, []);
