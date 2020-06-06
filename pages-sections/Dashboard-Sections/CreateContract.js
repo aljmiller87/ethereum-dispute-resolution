@@ -1,8 +1,11 @@
 import React, { useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import Router from "next/router";
+import _difference from "lodash/difference";
 
 // Actions
 import * as accountActions from "../../redux/actions/accountActions";
+import * as contractDetailActions from "../../redux/actions/contractDetails";
 
 // Material components
 import InputLabel from "@material-ui/core/InputLabel";
@@ -51,7 +54,9 @@ const useStyles = makeStyles((theme) => ({
 const ContractNew = (props) => {
   const dispatch = useDispatch();
   const formRef = useRef();
-  const { account: coinbase } = useSelector((state) => state.accountReducer);
+  const {
+    coinbase: { address: coinbase, contracts },
+  } = useSelector((state) => state.accountReducer);
   const [isRoleChosen, setIsRoleChosen] = useState(false);
   const [isBuyer, setIsBuyer] = useState();
   const [buyerAddress, setBuyerAddress] = useState("");
@@ -60,6 +65,8 @@ const ContractNew = (props) => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
+
+  console.log("coinbase", coinbase);
 
   const setOtherValue = (e) => {
     if (!e.target || !e.target.value || !isRoleChosen) {
@@ -102,7 +109,7 @@ const ContractNew = (props) => {
           `${isBuyer}`
         )
         .send({
-          from: buyerAddress,
+          from: coinbase,
           gas: "5000000",
         }) // Wait for transaction to confirm
         .on("confirmation", async (confirmationNumber, receipt) => {
@@ -110,9 +117,21 @@ const ContractNew = (props) => {
           console.log("confirmationNumber", confirmationNumber);
           if (confirmationNumber === 1) {
             console.log("contract created", receipt);
-            dispatch(accountActions.asyncLoadCoinbaseInfo());
+            const fetchedContracts = await factory.methods
+              .getdeployedContracts()
+              .call({}, { from: coinbase });
+            const [newAddress] = _difference(fetchedContracts, contracts);
+            console.log("newAddress", newAddress);
+            dispatch(accountActions.addNewContract(newAddress));
+            dispatch(
+              contractDetailActions.fetchBatchContractData([newAddress])
+            );
             resetForm();
             setLoading(false);
+            Router.push(
+              "/dashboard/contract/[contract]",
+              `/dashboard/contract/${newAddress}`
+            );
           }
         });
     } catch (err) {

@@ -7,6 +7,8 @@ export const SET_COINBASE_CONTRACT_LIST = "SET_COINBASE_CONTRACT_LIST";
 export const SET_CURRENT_VIEW_ACCOUNT = "SET_CURRENT_VIEW_ACCOUNT";
 export const SET_CURRENT_VIEW_ACCOUNT_CONTRACT_LIST =
   "SET_CURRENT_VIEW_ACCOUNT_CONTRACT_LIST";
+export const SET_COINBASE_AS_CURRENT = "SET_COINBASE_AS_CURRENT";
+export const ADD_NEW_CONTRACT = "ADD_NEW_CONTRACT";
 
 //Action Creator
 export const setCoinbase = (coinbase) => ({
@@ -27,6 +29,15 @@ export const setcurrentView = (address) => ({
 export const setCurrentViewContractList = (contracts) => ({
   type: SET_CURRENT_VIEW_ACCOUNT_CONTRACT_LIST,
   payload: contracts,
+});
+
+export const setCoinbaseAsCurrent = () => ({
+  type: SET_COINBASE_AS_CURRENT,
+});
+
+export const addNewContract = (newAddr) => ({
+  type: ADD_NEW_CONTRACT,
+  payload: newAddr,
 });
 
 export const asyncLoadCoinbaseInfo = () => {

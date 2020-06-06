@@ -11,7 +11,7 @@ import * as contractSubscribeActions from "../redux/actions/contractSubscribe";
 */
 
 const SubscriptionDetect = ({ children }) => {
-  const { contractDetails } = useSelector((state) => state);
+  const { contractDetails, contractSubscribe } = useSelector((state) => state);
   const [contractList, setContractList] = useState(
     Object.keys(contractDetails)
   );
@@ -19,13 +19,20 @@ const SubscriptionDetect = ({ children }) => {
   const subscriptionRef = useRef();
   const dispatch = useDispatch();
 
+  const isActiveContract = ({ escrowState, disputeState }) => {
+    return (
+      escrowState !== "CANCELLED" &&
+      escrowState !== "COMPLETE" &&
+      disputeState !== "COMPLETE"
+    );
+  };
+
   const initEventSubscription = async () => {
     const activeContractList = contractList.filter((contract) => {
       const { escrowState, disputeState } = contractDetails[contract];
       return (
-        escrowState !== "CANCELLED" &&
-        escrowState !== "COMPLETE" &&
-        disputeState !== "COMPLETE"
+        isActiveContract({ escrowState, disputeState }) &&
+        !contractSubscribe[contract]
       );
     });
     console.log("activeContractList", activeContractList);

@@ -14,6 +14,7 @@ import SearchIcon from "@material-ui/icons/Search";
 
 // Actions
 import { setDashboardNav } from "../../../../redux/actions/dashboardActions";
+import { setCoinbaseAsCurrent } from "../../../../redux/actions/accountActions";
 
 // Utilities
 import { abbreviateAddress } from "../../../../utilities/addressHelpers";
@@ -31,6 +32,9 @@ const Navigation = () => {
 
   const handleTabClick = (tab, route = false) => {
     dispatch(setDashboardNav(tab));
+    if (tab === "create") {
+      dispatch(setCoinbaseAsCurrent());
+    }
     if (route) {
       Router.push("/dashboard/[account]", route);
     }

@@ -51,6 +51,27 @@ const accountReducer = (state = initialState, action) => {
         },
       };
     }
+    case "SET_COINBASE_AS_CURRENT": {
+      return {
+        ...state,
+        currentView: {
+          ...state.coinbase,
+        },
+      };
+    }
+    case "ADD_NEW_CONTRACT": {
+      return {
+        ...state,
+        coinbase: {
+          ...state.coinbase,
+          contracts: [...state.coinbase.contracts, action.payload],
+        },
+        currentView: {
+          ...state.currentView,
+          contracts: [...state.currentView.contracts, action.payload],
+        },
+      };
+    }
     default:
       return { ...state };
   }
