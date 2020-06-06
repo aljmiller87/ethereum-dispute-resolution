@@ -8,7 +8,8 @@ import _isEqual from "lodash/isEqual";
 import ThreeJudge from "../../../ethereum/threejudge";
 
 // Actions
-import * as contractActions from "../../../redux/actions/contractActions";
+import * as contractDetailActions from "../../../redux/actions/contractDetails";
+import * as contractLogActions from "../../../redux/actions/contractLogs";
 import { setDashboardNav } from "../../../redux/actions/dashboardActions";
 
 // Layout
@@ -43,88 +44,12 @@ const Contract = ({
     (state) => state.contractDetails[contractAddress] || {}
   );
 
+  console.log("reduxDetails", reduxDetails);
+
   const backToDashboard = () => {
     Router.push("/dashboard/[account]", `/dashboard/${currentView.address}`);
     // dispatch(setDashboardNav("dashboard"));
   };
-
-  // const noActiveListinging = (data) => {
-  //   if (typeof data === "undefined") {
-  //     return true;
-  //   }
-  //   const { isLoading, isListening, hasError } = data;
-  //   return isLoading === false && isListening === false && hasError === false;
-  // };
-
-  // const setContractEventListeners = async (contractAddress) => {
-  //   /* If ethereum event subscription is either:
-  //     1. Loading
-  //     2. Already subscribed or
-  //     3. Has error
-  //     Do not attempt additional subscription
-  //   */
-  //   if (
-  //     listeningStatus &&
-  //     (listeningStatus.isLoading ||
-  //       listeningStatus.isListening ||
-  //       listeningStatus.hasError)
-  //   ) {
-  //     return null;
-  //   }
-  //   try {
-  //     const instance = ThreeJudge(contractAddress);
-  //     const escrowSummary = await instance.methods.getStatus().call();
-  //     const disputeSummary = await instance.methods.getDisputeStatus().call();
-  //     const { escrowState, disputeState } = formatContractData(
-  //       escrowSummary,
-  //       disputeSummary
-  //     );
-
-  //     if (
-  //       escrowState === "CANCELLED" ||
-  //       escrowState === "COMPLETE" ||
-  //       disputeState === "COMPLETE"
-  //     ) {
-  //       throw new Error("Contract is inactive");
-  //     }
-  //     instance.events
-  //       .allEvents({
-  //         fromBlock: "latest",
-  //       })
-  //       .on("connected", function (subscriptionId) {
-  //         console.log("connected subscriptionId", subscriptionId);
-  //         dispatch(
-  //           contractActions.setListeningStatus(contractAddress, {
-  //             isLoading: false,
-  //             isListening: subscriptionId,
-  //             hasError: false,
-  //           })
-  //         );
-  //       })
-  //       .on("data", function (event) {
-  //         console.log("data event", event);
-  //         dispatch(contractActions.addEvent(contractAddress, event));
-  //         dispatch(contractActions.asyncFetchState(contractAddress, instance));
-  //       })
-  //       .on("changed", function (event) {
-  //         console.log("changed event", event);
-  //         // remove event from local database
-  //       })
-  //       .on("error", function (error, receipt) {
-  //         // If the transaction was rejected by the network with a receipt, the second parameter will be the receipt.
-  //         console.log("error", error);
-  //         console.log("error receipt", receipt);
-  //       });
-  //   } catch (error) {
-  //     dispatch(
-  //       contractActions.setListeningStatus(contractAddress, {
-  //         isLoading: false,
-  //         isListening: false,
-  //         hasError: error.message,
-  //       })
-  //     );
-  //   }
-  // };
 
   useEffect(() => {
     dispatch(setDashboardNav("detail"));
@@ -132,21 +57,11 @@ const Contract = ({
     // if page is loaded directly, then redux store will need to be updated because it is empty on page load
     if (!_isEqual(summaryProps, reduxDetails)) {
       dispatch(
-        contractActions.setSingleContractData(
-          contractAddress,
-          summaryProps,
-          eventsProps
-        )
+        contractDetailActions.setContractState(contractAddress, summaryProps)
       );
+      dispatch(contractLogActions.setPastEvents(contractAddress, eventsProps));
     }
   }, []);
-
-  // useEffect(() => {
-  //   dispatch(setDashboardNav("detail"));
-  //   if (isEthereumConnected && noActiveListinging(listeningStatus)) {
-  //     // setContractEventListeners(contractAddress);
-  //   }
-  // }, [isEthereumConnected]);
 
   useEffect(() => {
     if (error) {
@@ -160,12 +75,12 @@ const Contract = ({
       {currentView.address && (
         <button onClick={backToDashboard}>Back to user</button>
       )}
-      {typeof summaryProps !== "undefined" && (
+      {Object.keys(reduxDetails).length > 0 && (
         <>
-          <ContractDetails details={summaryProps} account={coinbase.address} />
-          <StatusTracker details={summaryProps} />
+          <ContractDetails details={reduxDetails} account={coinbase.address} />
+          <StatusTracker details={reduxDetails} />
           <ContractActions
-            details={summaryProps}
+            details={reduxDetails}
             account={coinbase.address}
             contractAddress={contractAddress}
           />

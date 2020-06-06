@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import Router from "next/router";
+import Router, { useRouter } from "next/router";
 import _difference from "lodash/difference";
 
 // Ethereum
@@ -26,15 +26,7 @@ const ProfilePage = ({ contractsProps, userAddressProps, error, ...rest }) => {
   );
   const { contractDetails } = useSelector((state) => state);
   const [dataLoaded, setDataLoaded] = useState(false);
-  console.log("ROUTER ", Router);
-
-  // If getInitialProps passes error due to invalid address, useEffect will redirect to /dashboard
-  useEffect(() => {
-    if (error) {
-      console.log("redirecting via dispatch replace due to error: ", error);
-      Router.replace("/dashboard");
-    }
-  }, [error]);
+  const { asPath } = useRouter();
 
   const setBatchContractData = async (contractsArray = contractsProps) => {
     await dispatch(contractActions.fetchBatchContractData(contractsArray));
@@ -55,14 +47,21 @@ const ProfilePage = ({ contractsProps, userAddressProps, error, ...rest }) => {
     setBatchContractData(contractsNotInStore);
   };
 
+  // If getInitialProps passes error due to invalid address, useEffect will redirect to /dashboard
+  useEffect(() => {
+    if (error) {
+      console.log("redirecting via dispatch replace due to error: ", error);
+      Router.replace("/dashboard");
+    }
+  }, [error]);
+
   // Set the account and contracts of the currently viewed account to redux store
   useEffect(() => {
-    console.log("Router.router.query.account useEffect Ran");
     dispatch(setDashboardNav("dashboard"));
     dispatch(accountActions.setcurrentView(userAddressProps));
     dispatch(accountActions.setCurrentViewContractList(contractsProps));
     checkReduxStoreStatus();
-  }, [Router.router.query.account]);
+  }, [asPath]);
 
   // Use Effect that will generate Avatar based on user address
   useEffect(() => {

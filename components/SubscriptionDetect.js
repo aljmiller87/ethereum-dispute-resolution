@@ -11,69 +11,86 @@ import * as contractSubscribeActions from "../redux/actions/contractSubscribe";
 */
 
 const SubscriptionDetect = ({ children }) => {
-  // const contractList = useSelector((state) => state.accountReducer.contracts);
-  // const [isListening, setIsListening] = useState(false);
-  // const subscriptionRef = useRef();
-  // const dispatch = useDispatch();
+  const { contractDetails } = useSelector((state) => state);
+  const [contractList, setContractList] = useState(
+    Object.keys(contractDetails)
+  );
+  const [isListening, setIsListening] = useState(false);
+  const subscriptionRef = useRef();
+  const dispatch = useDispatch();
 
-  // const initEventSubscription = () => {
-  //   subscriptionRef.current = web3.eth
-  //     .subscribe("logs", {
-  //       fromBlock: "latest",
-  //       address: [...contractList],
-  //       // topics: ['0x12345...']
-  //     })
-  //     .on("connected", function (subscriptionId) {
-  //       console.log("subscriptionId", subscriptionId);
-  //       dispatch(
-  //         contractSubscribeActions.setBatchListeningStatus(
-  //           contractList,
-  //           subscriptionId
-  //         )
-  //       );
-  //     })
-  //     .on("data", function (log) {
-  //       dispatch(contractLogActions.addEvent(log.address, log));
-  //       dispatch(contractDetailActions.asyncFetchState(log.address));
-  //     })
-  //     .on("changed", function (log) {
-  //       console.log("log changed", log);
-  //     });
-  // };
+  const initEventSubscription = async () => {
+    const activeContractList = contractList.filter((contract) => {
+      const { escrowState, disputeState } = contractDetails[contract];
+      return (
+        escrowState !== "CANCELLED" &&
+        escrowState !== "COMPLETE" &&
+        disputeState !== "COMPLETE"
+      );
+    });
+    console.log("activeContractList", activeContractList);
+    subscriptionRef.current = web3.eth
+      .subscribe("logs", {
+        fromBlock: "latest",
+        address: [...activeContractList],
+        // topics: ['0x12345...']
+      })
+      .on("connected", function (subscriptionId) {
+        console.log("subscriptionId", subscriptionId);
+        dispatch(
+          contractSubscribeActions.setBatchListeningStatus(
+            activeContractList,
+            subscriptionId
+          )
+        );
+      })
+      .on("data", function (log) {
+        dispatch(contractLogActions.addEvent(log.address, log));
+        dispatch(contractDetailActions.asyncFetchState(log.address));
+      })
+      .on("changed", function (log) {
+        console.log("log changed", log);
+      });
+  };
 
-  // const cancelEventSubscription = () => {
-  //   try {
-  //     subscriptionRef.current.unsubscribe(function (error, success) {
-  //       if (success) {
-  //         console.log("Successfully unsubscribed!");
-  //         setIsListening(false);
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.log("cancelEventSubscription error: ", error.message);
-  //   }
-  // };
+  const cancelEventSubscription = () => {
+    try {
+      subscriptionRef.current.unsubscribe(function (error, success) {
+        if (success) {
+          console.log("Successfully unsubscribed!");
+          setIsListening(false);
+        }
+      });
+    } catch (error) {
+      console.log("cancelEventSubscription error: ", error.message);
+    }
+  };
 
-  // useEffect(() => {
-  //   if (contractList.length === 0 && isListening) {
-  //     cancelEventSubscription();
-  //   }
-  //   if (contractList.length > 0 && !isListening) {
-  //     // Contracts are found and no previous listening state subscribed
-  //     setIsListening(true);
-  //     initEventSubscription(contractList);
-  //   }
-  //   if (contractList.length > 0 && isListening) {
-  //     // Cancel current subscription and create new subscription based on updated contract list
-  //     cancelEventSubscription();
-  //     initEventSubscription(contractList);
-  //   }
-  //   return () => {
-  //     if (isListening) {
-  //       cancelEventSubscription();
-  //     }
-  //   };
-  // }, [contractList.length]);
+  useEffect(() => {
+    setContractList(Object.keys(contractDetails));
+  }, [contractDetails]);
+
+  useEffect(() => {
+    console.log("contractList.length useEffect run", contractList.length);
+    if (contractList.length === 0 && isListening) {
+      cancelEventSubscription();
+    }
+    if (contractList.length > 0 && !isListening) {
+      // Contracts are found and no previous listening state subscribed
+      setIsListening(true);
+      initEventSubscription(contractList);
+    }
+    if (contractList.length > 0 && isListening) {
+      // Cancel current subscription and create new subscription based on updated contract list
+      cancelEventSubscription();
+      initEventSubscription(contractList);
+    }
+    return () => {
+      if (isListening) {
+        cancelEventSubscription();
+      }
+    };
+  }, [contractList.length]);
   return <>{children}</>;
 };
 

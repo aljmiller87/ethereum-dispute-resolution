@@ -71,7 +71,6 @@ export const formatContractData = (escrowSummary, disputeSummary) => {
 
 // Filter functions
 export const filterByActive = (allContracts) => {
-  console.log("allContracts", allContracts);
   const activeContracts = allContracts.filter((contract) => {
     const contractEscrowState = contract.escrowState;
     return (

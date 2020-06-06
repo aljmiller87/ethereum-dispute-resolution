@@ -32,7 +32,6 @@ const Navigation = () => {
   const handleTabClick = (tab, route = false) => {
     dispatch(setDashboardNav(tab));
     if (route) {
-      console.log("pushing route", route);
       Router.push("/dashboard/[account]", route);
     }
   };
@@ -45,7 +44,10 @@ const Navigation = () => {
           <List component="nav" aria-label="TBD">
             <StyledListItem
               button
-              isActive={activeTab === "dashboard"}
+              isActive={
+                coinbase.address === currentView.address &&
+                activeTab === "dashboard"
+              }
               onClick={() =>
                 handleTabClick("dashboard", `/dashboard/${coinbase.address}`)
               }
@@ -59,7 +61,10 @@ const Navigation = () => {
               pathname === "/dashboard/contract/[contract]") && (
               <StyledListItem
                 button
-                isActive={activeTab === "detail"}
+                isActive={
+                  coinbase.address === currentView.address &&
+                  activeTab === "detail"
+                }
                 onClick={() => handleTabClick("detail")}
               >
                 <ListItemIcon>
@@ -87,7 +92,10 @@ const Navigation = () => {
           <List component="nav" aria-label="TBD">
             <StyledListItem
               button
-              isActive={activeTab === "dashboard"}
+              isActive={
+                coinbase.address !== currentView.address &&
+                activeTab === "dashboard"
+              }
               onClick={() =>
                 handleTabClick("dashboard", `/dashboard/${currentView.address}`)
               }
@@ -101,7 +109,10 @@ const Navigation = () => {
               pathname === "/dashboard/contract/[contract]") && (
               <StyledListItem
                 button
-                isActive={activeTab === "detail"}
+                isActive={
+                  coinbase.address !== currentView.address &&
+                  activeTab === "detail"
+                }
                 onClick={() => handleTabClick("detail")}
               >
                 <ListItemIcon>
