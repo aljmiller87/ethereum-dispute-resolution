@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Router, { useRouter } from "next/router";
 import _difference from "lodash/difference";
@@ -10,7 +10,7 @@ import factory from "../../ethereum/factory";
 import * as accountActions from "../../redux/actions/accountActions";
 import * as contractActions from "../../redux/actions/contractDetails";
 import * as contractLogs from "../../redux/actions/contractLogs";
-import { setDashboardNav } from "../../redux/actions/dashboardActions";
+import { setDashboardView } from "../../redux/actions/dashboardActions";
 
 // Layout
 import Layout from "../../layouts";
@@ -20,7 +20,6 @@ import ContractGrid from "pages-sections/Dashboard-Sections/contracts/ContractGr
 
 const ProfilePage = ({ contractsProps, userAddressProps, error, ...rest }) => {
   const dispatch = useDispatch();
-  const profileRef = useRef();
   const { contracts, address } = useSelector(
     (state) => state.accountReducer.currentView
   );
@@ -57,24 +56,15 @@ const ProfilePage = ({ contractsProps, userAddressProps, error, ...rest }) => {
 
   // Set the account and contracts of the currently viewed account to redux store
   useEffect(() => {
-    dispatch(setDashboardNav("dashboard"));
+    dispatch(setDashboardView("dashboard"));
     dispatch(accountActions.setcurrentView(userAddressProps));
     dispatch(accountActions.setCurrentViewContractList(contractsProps));
     checkReduxStoreStatus();
   }, [asPath]);
 
-  // Use Effect that will generate Avatar based on user address
-  useEffect(() => {
-    if (profileRef.current) {
-      profileRef.current.innerHTML = svg;
-    }
-  }, [profileRef.current]);
-
   return (
     <Layout layout="dashboard">
-      {dataLoaded && (
-        <ContractGrid contracts={contracts} userAddress={address} />
-      )}
+      {dataLoaded && <ContractGrid userAddress={address} />}
     </Layout>
   );
 };

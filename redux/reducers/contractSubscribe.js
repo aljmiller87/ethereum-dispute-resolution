@@ -9,6 +9,9 @@ const contractReducer = (state = {}, action) => {
         ...state,
         [action.payload.contractAddress]: action.payload.subscriptionID,
       };
+
+    case "CLEAR_SUBSCRIPTIONS":
+      return {};
     case "SET_BATCH_LISTENING_STATUS":
       return {
         ...state,

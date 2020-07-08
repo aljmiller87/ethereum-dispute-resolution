@@ -3,25 +3,9 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 // material components
-import Chip from "@material-ui/core/Chip";
-import Icon from "@material-ui/core/Icon";
-import List from "@material-ui/core/List";
-import ListItem from "@material-ui/core/ListItem";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-
-// material icons
-import { People } from "@material-ui/icons";
-import DoneIcon from "@material-ui/icons/Done";
-
-// core components
-import Button from "components/nextjs-material-kit/CustomButtons/Button.js";
-import Card from "components/nextjs-material-kit/Card/Card";
-import CardBody from "components/nextjs-material-kit/Card/CardBody";
-import CardFooter from "components/nextjs-material-kit/Card/CardFooter";
-import CardHeader from "components/nextjs-material-kit/Card/CardHeader";
 import Grid from "@material-ui/core/Grid";
 
+// core components
 import Title from "components/Title";
 
 // Action Card Components

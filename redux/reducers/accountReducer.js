@@ -19,7 +19,7 @@ const accountReducer = (state = initialState, action) => {
       return {
         ...state,
         coinbase: {
-          ...state.coinbase,
+          contracts: state.coinbase.contracts,
           address: action.payload,
         },
       };
@@ -28,8 +28,8 @@ const accountReducer = (state = initialState, action) => {
       return {
         ...state,
         coinbase: {
-          ...state.coinbase,
-          contracts: action.payload,
+          address: state.coinbase.address,
+          contracts: [...action.payload],
         },
       };
     }
@@ -47,7 +47,7 @@ const accountReducer = (state = initialState, action) => {
         ...state,
         currentView: {
           ...state.currentView,
-          contracts: action.payload,
+          contracts: [...action.payload],
         },
       };
     }

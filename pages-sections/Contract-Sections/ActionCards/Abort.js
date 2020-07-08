@@ -34,7 +34,7 @@ const Abort = ({ action, contractAddress }) => {
           }
         });
     } catch (error) {
-      console.log("err", err);
+      console.log("error", error);
     } finally {
       console.log("finally");
       dispatch(ContractActions.endBlockchainWriteCall(contractAddress));

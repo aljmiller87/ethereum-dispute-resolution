@@ -66,8 +66,6 @@ const ContractNew = (props) => {
   const [isLoading, setLoading] = useState(false);
   const classes = useStyles();
 
-  console.log("coinbase", coinbase);
-
   const setOtherValue = (e) => {
     if (!e.target || !e.target.value || !isRoleChosen) {
       return null;

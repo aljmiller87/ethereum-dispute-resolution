@@ -7,31 +7,27 @@ import Container from "@material-ui/core/Container";
 // Components
 import ContractList from "../ContractList";
 
-const ContractGrid = ({ contracts, userAddress }) => {
+const ContractGrid = ({ userAddress }) => {
   return (
     <Container>
       <Grid container spacing={3}>
         <Grid item lg={6}>
-          <ContractList contracts={contracts} filter="active" />
+          <ContractList filter="active" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList
-            contracts={contracts}
-            filter="actionNeeded"
-            address={userAddress}
-          />
+          <ContractList filter="actionNeeded" address={userAddress} />
         </Grid>
         <Grid item lg={6}>
-          <ContractList contracts={contracts} filter="inDispute" />
+          <ContractList filter="inDispute" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList contracts={contracts} filter="completed" />
+          <ContractList filter="completed" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList contracts={contracts} filter="disputeCompleted" />
+          <ContractList filter="disputeCompleted" />
         </Grid>
         <Grid item lg={6}>
-          <ContractList contracts={contracts} filter="aborted" />
+          <ContractList filter="aborted" />
         </Grid>
       </Grid>
     </Container>

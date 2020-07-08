@@ -36,21 +36,24 @@ const filterFunctions = {
   disputeCompleted: filterByDisputeCompleted,
   aborted: filterByAborted,
 };
-const ContractList = ({ contracts, filter, address = null }) => {
+const ContractList = ({ filter, address = null }) => {
   const { contractDetails } = useSelector((state) => state);
-  const [contractDetailList, setContractDetailList] = useState([]);
+  const { contracts } = useSelector(
+    (state) => state.accountReducer.currentView
+  );
   const [filteredContracts, setFilteredContracts] = useState([]);
 
   useEffect(() => {
     const contractDetailsArray = contracts.map((contract) => {
       return { ...contractDetails[contract], address: contract };
     });
+
     const filterFunction = filterFunctions[filter];
     const activeContracts = filterFunction(contractDetailsArray);
-    if (typeof activeContracts === "object" && activeContracts.length) {
+    if (Array.isArray(activeContracts)) {
       setFilteredContracts(activeContracts);
     }
-  }, [contracts]);
+  }, [contractDetails, contracts, filter]);
 
   return (
     <Card>

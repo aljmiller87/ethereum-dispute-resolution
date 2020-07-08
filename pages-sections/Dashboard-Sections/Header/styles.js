@@ -7,3 +7,9 @@ export const MenuWrapper = styled.div`
     display: none;
   `}
 `;
+
+export const DesktopWrapper = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+`;

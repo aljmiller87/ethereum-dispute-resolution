@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import Router from "next/router";
@@ -13,7 +13,10 @@ import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
 import SearchIcon from "@material-ui/icons/Search";
 
 // Actions
-import { setDashboardNav } from "../../../../redux/actions/dashboardActions";
+import {
+  setDashboardUser,
+  setDashboardView,
+} from "../../../../redux/actions/dashboardActions";
 import { setCoinbaseAsCurrent } from "../../../../redux/actions/accountActions";
 
 // Utilities
@@ -23,15 +26,18 @@ import { abbreviateAddress } from "../../../../utilities/addressHelpers";
 import { Wrapper, StyledListItem, Title } from "./styles";
 
 const Navigation = () => {
-  const { activeTab } = useSelector((state) => state.dashboardReducer);
+  const { activeTab, isCoinbase } = useSelector(
+    (state) => state.dashboardReducer
+  );
   const { coinbase, currentView } = useSelector(
     (state) => state.accountReducer
   );
   const dispatch = useDispatch();
   const { pathname } = useRouter();
 
-  const handleTabClick = (tab, route = false) => {
-    dispatch(setDashboardNav(tab));
+  const handleTabClick = (isCoinbase, tab, route = false) => {
+    dispatch(setDashboardUser(isCoinbase));
+    dispatch(setDashboardView(tab));
     if (tab === "create") {
       dispatch(setCoinbaseAsCurrent());
     }
@@ -39,6 +45,11 @@ const Navigation = () => {
       Router.push("/dashboard/[account]", route);
     }
   };
+
+  useEffect(() => {
+    const isCoinbase = isCoinbase && coinbase.address !== currentView.address;
+    dispatch(setDashboardUser(isCoinbase));
+  }, [coinbase.address, currentView.address, dispatch]);
 
   return (
     <Wrapper>
@@ -53,7 +64,11 @@ const Navigation = () => {
                 activeTab === "dashboard"
               }
               onClick={() =>
-                handleTabClick("dashboard", `/dashboard/${coinbase.address}`)
+                handleTabClick(
+                  true,
+                  "dashboard",
+                  `/dashboard/${coinbase.address}`
+                )
               }
             >
               <ListItemIcon>
@@ -69,7 +84,7 @@ const Navigation = () => {
                   coinbase.address === currentView.address &&
                   activeTab === "detail"
                 }
-                onClick={() => handleTabClick("detail")}
+                onClick={() => handleTabClick(true, "detail")}
               >
                 <ListItemIcon>
                   <ListIcon />
@@ -80,7 +95,7 @@ const Navigation = () => {
             <StyledListItem
               button
               isActive={activeTab === "create"}
-              onClick={() => handleTabClick("create")}
+              onClick={() => handleTabClick(true, "create")}
             >
               <ListItemIcon>
                 <AddCircleOutlineIcon />
@@ -101,7 +116,11 @@ const Navigation = () => {
                 activeTab === "dashboard"
               }
               onClick={() =>
-                handleTabClick("dashboard", `/dashboard/${currentView.address}`)
+                handleTabClick(
+                  false,
+                  "dashboard",
+                  `/dashboard/${currentView.address}`
+                )
               }
             >
               <ListItemIcon>
@@ -117,7 +136,7 @@ const Navigation = () => {
                   coinbase.address !== currentView.address &&
                   activeTab === "detail"
                 }
-                onClick={() => handleTabClick("detail")}
+                onClick={() => handleTabClick(false, "detail")}
               >
                 <ListItemIcon>
                   <ListIcon />
@@ -133,7 +152,7 @@ const Navigation = () => {
         <StyledListItem
           button
           isActive={activeTab === "search"}
-          onClick={() => handleTabClick("search")}
+          onClick={() => handleTabClick(false, "search")}
         >
           <ListItemIcon>
             <SearchIcon />

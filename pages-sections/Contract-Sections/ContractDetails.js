@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 // material components
 import Chip from "@material-ui/core/Chip";
+import Grid from "@material-ui/core/Grid";
 import Icon from "@material-ui/core/Icon";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
@@ -17,9 +18,10 @@ import { People } from "@material-ui/icons";
 import DoneIcon from "@material-ui/icons/Done";
 
 // core components
-import Grid from "@material-ui/core/Grid";
-
 import Title from "components/Title";
+
+// Sections
+import TestimonySection from "./TestinomySection";
 
 const ContractDetails = ({ details, account }) => {
   const {
@@ -214,6 +216,7 @@ const ContractDetails = ({ details, account }) => {
             </List>
           </Grid>
         )}
+        {escrowState === "IN_DISPUTE" && <TestimonySection />}
       </Grid>
     </Wrapper>
   );

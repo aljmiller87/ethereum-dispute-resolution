@@ -1,6 +1,5 @@
 pragma solidity ^0.5.0;
 
-
 contract ContractFactory {
     mapping(address => address[]) deployedContracts;
     mapping(address => bool) verifiedContracts;
@@ -41,7 +40,6 @@ contract ContractFactory {
     }
 }
 
-
 contract ThreeJudge {
     enum State {
         AWAITING_PAYMENT,
@@ -62,17 +60,11 @@ contract ThreeJudge {
     State public currentState;
     DisputeState public currentDisputeState;
 
-    event TestimonyEvent(
-        uint256 indexed timestamp,
-        address indexed witness,
-        string description
-    );
-
     event StatusEvent(
         uint256 indexed timestamp,
-        address triggeredByUser,
+        address indexed triggeredByUser,
         string functionCalled,
-        string newState
+        string description
     );
 
     uint256 public deadline;
@@ -356,7 +348,7 @@ contract ThreeJudge {
         buyerSellerOnly
         inState(State.IN_DISPUTE)
     {
-        emit TestimonyEvent(now, msg.sender, _testimony);
+        emit StatusEvent(now, msg.sender, "provideTestimony", _testimony);
     }
 
     function arbtrateDispute(bool _forBuyer)

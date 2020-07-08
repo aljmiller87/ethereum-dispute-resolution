@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
+import PropTypes from "prop-types";
 import { useSelector, useDispatch } from "react-redux";
 import Router from "next/router";
-import _get from "lodash/get";
 import _isEqual from "lodash/isEqual";
 
 // Ethereum
@@ -26,13 +26,11 @@ import ContractLoader from "../../../pages-sections/Dashboard-Sections/contracts
 // Utilities
 import { formatContractData } from "../../../utilities/contractHelpers";
 
-const Contract = ({
-  contractAddress,
-  summaryProps,
-  eventsProps,
-  error,
-  ...rest
-}) => {
+// Interfaces
+import { contractLogProp } from "../../../types/contractLogs";
+import { contractDetails } from "../../../types/contractDetails";
+
+const Contract = ({ contractAddress, summaryProps, eventsProps, error }) => {
   const dispatch = useDispatch();
 
   // Selectors
@@ -43,8 +41,6 @@ const Contract = ({
   const reduxDetails = useSelector(
     (state) => state.contractDetails[contractAddress] || {}
   );
-
-  console.log("reduxDetails", reduxDetails);
 
   const backToDashboard = () => {
     Router.push("/dashboard/[account]", `/dashboard/${currentView.address}`);
@@ -102,7 +98,9 @@ Contract.getInitialProps = async (props) => {
       return {
         contractAddress: address,
         summaryProps: details,
-        eventsProps: logs,
+        eventsProps: logs.map((log) => {
+          return { ...log, isNew: true };
+        }),
       };
     }
   } catch (error) {
@@ -133,6 +131,14 @@ Contract.getInitialProps = async (props) => {
       return { error: error.message };
     }
   }
+};
+
+Contract.propTypes = {
+  contractAddress: PropTypes.string.isRequired,
+  summaryProps: contractDetails,
+  eventsProps: PropTypes.arrayOf(contractLogProp),
+  error: PropTypes.string,
+  rest: PropTypes.any,
 };
 
 export default Contract;

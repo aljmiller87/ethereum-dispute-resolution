@@ -168,6 +168,10 @@ export const DisputeSteps = {
       provideTestimony: {
         requiredUsers: ["buyer", "seller"],
         nextState: null,
+        slug: "provideTestimony",
+        name: "Provide Testimony",
+        description:
+          "Provide testimony to be submitted to judges for their consideration in arbitrating the dispute.",
       },
     },
   },
