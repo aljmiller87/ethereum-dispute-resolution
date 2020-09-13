@@ -10,7 +10,7 @@ import ThreeJudge from "../../../ethereum/threejudge";
 // Actions
 import * as contractDetailActions from "../../../redux/actions/contractDetails";
 import * as contractLogActions from "../../../redux/actions/contractLogs";
-import { setDashboardNav } from "../../../redux/actions/dashboardActions";
+import { setDashboardView } from "../../../redux/actions/dashboardActions";
 
 // Layout
 import Layout from "../../../layouts";
@@ -44,11 +44,11 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, error }) => {
 
   const backToDashboard = () => {
     Router.push("/dashboard/[account]", `/dashboard/${currentView.address}`);
-    // dispatch(setDashboardNav("dashboard"));
+    // dispatch(setDashboardView("dashboard"));
   };
 
   useEffect(() => {
-    dispatch(setDashboardNav("detail"));
+    dispatch(setDashboardView("detail"));
 
     // if page is loaded directly, then redux store will need to be updated because it is empty on page load
     if (!_isEqual(summaryProps, reduxDetails)) {
