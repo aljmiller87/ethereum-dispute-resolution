@@ -28,7 +28,7 @@
     "keycode": "^2.2.0",
     "mocha": "^6.1.4",
     "moment": "2.24.0",
-    "next": "9.0.5",
+    "next": "9.3.2",
     "next-compose-plugins": "2.2.0",
     "next-images": "1.1.2",
     "next-redux-wrapper": "^6.0.0",
