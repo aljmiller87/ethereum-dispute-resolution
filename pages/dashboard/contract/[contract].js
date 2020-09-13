@@ -73,7 +73,11 @@ const Contract = ({ contractAddress, summaryProps, eventsProps, error }) => {
       )}
       {Object.keys(reduxDetails).length > 0 && (
         <>
-          <ContractDetails details={reduxDetails} account={coinbase.address} />
+          <ContractDetails
+            contractAddress={contractAddress}
+            details={reduxDetails}
+            account={coinbase.address}
+          />
           <StatusTracker details={reduxDetails} />
           <ContractActions
             details={reduxDetails}

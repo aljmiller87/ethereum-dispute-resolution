@@ -21,9 +21,9 @@ import DoneIcon from "@material-ui/icons/Done";
 import Title from "components/Title";
 
 // Sections
-import TestimonySection from "./TestinomySection";
+import TestimonySection from "./TestimonySection";
 
-const ContractDetails = ({ details, account }) => {
+const ContractDetails = ({ details, account, contractAddress }) => {
   const {
     balance,
     buyer,
@@ -216,7 +216,9 @@ const ContractDetails = ({ details, account }) => {
             </List>
           </Grid>
         )}
-        {escrowState === "IN_DISPUTE" && <TestimonySection />}
+        {escrowState === "IN_DISPUTE" && (
+          <TestimonySection contractAddress={contractAddress} />
+        )}
       </Grid>
     </Wrapper>
   );
