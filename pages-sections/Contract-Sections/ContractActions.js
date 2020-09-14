@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
 // material components
+import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 
 // core components
@@ -140,20 +141,22 @@ const ContractActions = ({ details, account, contractAddress, ...rest }) => {
 
   return (
     <Wrapper>
-      <Grid container justify="center">
-        <Grid item xs={12} sm={12} md={8}>
-          <Center>
-            <Title type="h2">Available Contract Actions</Title>
-            <p>
-              <strong>{StepsConfig[CurrentStep].name}:</strong>
-              {StepsConfig[CurrentStep].description}
-            </p>
-          </Center>
+      <Container>
+        <Grid container justify="center">
+          <Grid item xs={12} sm={12} md={8}>
+            <Center>
+              <Title type="h2">Available Contract Actions</Title>
+              <p>
+                <strong>{StepsConfig[CurrentStep].name}:</strong>
+                {StepsConfig[CurrentStep].description}
+              </p>
+            </Center>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container justify="center">
-        {renderAvailableActions()}
-      </Grid>
+        <Grid container justify="center">
+          {renderAvailableActions()}
+        </Grid>
+      </Container>
     </Wrapper>
   );
 };

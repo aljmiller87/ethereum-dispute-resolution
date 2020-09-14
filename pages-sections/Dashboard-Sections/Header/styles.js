@@ -9,6 +9,7 @@ export const MenuWrapper = styled.div`
 `;
 
 export const DesktopWrapper = styled.div`
+  align-items: center;
   display: flex;
   justify-content: space-between;
   width: 100%;

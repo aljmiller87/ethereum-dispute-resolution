@@ -42,7 +42,7 @@ const Header = () => {
 
   return (
     <AppBar position="static">
-      <Toolbar>
+      <Toolbar style={{ height: "75px" }}>
         <MenuWrapper>
           <IconButton
             edge="start"

@@ -5,6 +5,7 @@ export const Wrapper = styled.div`
   background-color: #1d1d1d;
   box-shadow: none;
   display: flex;
+  height: 75px;
   padding: 13px 20px;
   position: relative;
   z-index: 2;

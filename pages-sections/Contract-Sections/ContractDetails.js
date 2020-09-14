@@ -6,6 +6,7 @@ import styled from "styled-components";
 
 // material components
 import Chip from "@material-ui/core/Chip";
+import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
 import Icon from "@material-ui/core/Icon";
 import List from "@material-ui/core/List";
@@ -48,178 +49,180 @@ const ContractDetails = ({ details, account, contractAddress }) => {
 
   return (
     <Wrapper>
-      <Grid container justify="center">
-        <Grid item xs={12} sm={12} md={8}>
-          <Center>
-            <Title type="h2">Contract Summary</Title>
-          </Center>
-        </Grid>
-        <Grid item xs={12} sm={12} md={6}>
-          <List component="nav" aria-labelledby="contract details">
-            <ListItem>
-              <ListItemIcon>
-                <People />
-              </ListItemIcon>
-              <Link href="/dashboard/[account]" as={`/dashboard/${buyer}`}>
-                <a>
-                  <ListItemText primary="Buyer" secondary={buyer} />
-                  {account === buyer && (
-                    <Chip
-                      label="Your role"
-                      color="primary"
-                      icon={<DoneIcon />}
-                      variant="outlined"
-                    />
-                  )}
-                </a>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <People />
-              </ListItemIcon>
-              <Link href="/dashboard/[account]" as={`/dashboard/${seller}`}>
-                <a>
-                  <ListItemText primary="Seller" secondary={seller} />
-                  {account === seller && (
-                    <Chip
-                      label="Your role"
-                      color="primary"
-                      icon={<DoneIcon />}
-                      variant="outlined"
-                    />
-                  )}
-                </a>
-              </Link>
-            </ListItem>
-            <ListItem>
-              <ListItemIcon>
-                <Icon className="fab fa-ethereum" />
-              </ListItemIcon>
-              <ListItemText
-                primary="Contract Balance (Ether)"
-                secondary={ether}
-              />
-            </ListItem>
-          </List>
-        </Grid>
-        {escrowState === "IN_DISPUTE" && (
+      <Container>
+        <Grid container justify="center">
+          <Grid item xs={12} sm={12} md={12}>
+            <Center>
+              <Title type="h2">Contract Summary</Title>
+            </Center>
+          </Grid>
           <Grid item xs={12} sm={12} md={6}>
             <List component="nav" aria-labelledby="contract details">
               <ListItem>
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
-                <ListItemTextWrapper>
-                  <ListItemText
-                    primary="Buyer's Judge"
-                    secondary={
-                      !buyerJudge || buyerJudge.includes("0x00000000")
-                        ? "Awaiting Selection"
-                        : buyerJudge
-                    }
-                  />
-                  <ListItemText
-                    secondary={`Has Nominated or Confirmed Final Judge: ${
-                      buyerJudgeHasNominatedFinalJudge ||
-                      !finalJudge.includes("0x00000000")
-                        ? "True"
-                        : "False"
-                    }`}
-                  />
-                  <ListItemText
-                    secondary={`Has Voted for Resolution: ${
-                      buyerJudgeHasVotedForResolution ? "True" : "False"
-                    }`}
-                  />
-                </ListItemTextWrapper>
-                {account === buyerJudge && (
-                  <Chip
-                    label="Your role"
-                    color="primary"
-                    icon={<DoneIcon />}
-                    variant="outlined"
-                  />
-                )}
+                <Link href="/dashboard/[account]" as={`/dashboard/${buyer}`}>
+                  <a>
+                    <ListItemText primary="Buyer" secondary={buyer} />
+                    {account === buyer && (
+                      <Chip
+                        label="Your role"
+                        color="primary"
+                        icon={<DoneIcon />}
+                        variant="outlined"
+                      />
+                    )}
+                  </a>
+                </Link>
               </ListItem>
               <ListItem>
                 <ListItemIcon>
                   <People />
                 </ListItemIcon>
-                <ListItemTextWrapper>
-                  <ListItemText
-                    primary="Seller's Judge"
-                    secondary={
-                      !sellerJudge || sellerJudge.includes("0x00000000")
-                        ? "Awaiting Selection"
-                        : sellerJudge
-                    }
-                  />
-                  <ListItemText
-                    secondary={`Has Nominated or Confirmed Final Judge: ${
-                      sellerJudgeHasNominatedFinalJudge ||
-                      !finalJudge.includes("0x00000000")
-                        ? "True"
-                        : "False"
-                    }`}
-                  />
-                  <ListItemText
-                    secondary={`Has Voted for Resolution: ${
-                      sellerJudgeHasVotedForResolution ? "True" : "False"
-                    }`}
-                  />
-                </ListItemTextWrapper>
-                {account === sellerJudge && (
-                  <Chip
-                    label="Your role"
-                    color="primary"
-                    icon={<DoneIcon />}
-                    variant="outlined"
-                  />
-                )}
+                <Link href="/dashboard/[account]" as={`/dashboard/${seller}`}>
+                  <a>
+                    <ListItemText primary="Seller" secondary={seller} />
+                    {account === seller && (
+                      <Chip
+                        label="Your role"
+                        color="primary"
+                        icon={<DoneIcon />}
+                        variant="outlined"
+                      />
+                    )}
+                  </a>
+                </Link>
               </ListItem>
               <ListItem>
                 <ListItemIcon>
-                  <People />
+                  <Icon className="fab fa-ethereum" />
                 </ListItemIcon>
-                <ListItemTextWrapper>
-                  {!finalJudge || finalJudge.includes("0x00000000") ? (
-                    <ListItemText
-                      primary="Nominated Final Judge"
-                      secondary={
-                        nominatedJudge.includes("0x00000000")
-                          ? "Awaiting Nomination"
-                          : sellerJudge
-                      }
-                    />
-                  ) : (
-                    <ListItemText
-                      primary="Final Judge"
-                      secondary={finalJudge}
-                    />
-                  )}
-                  <ListItemText
-                    secondary={`Has Voted for Resolution: ${
-                      finalJudgeHasVotedForResolution ? "True" : "False"
-                    }`}
-                  />
-                </ListItemTextWrapper>
-                {account === finalJudge && (
-                  <Chip
-                    label="Your role"
-                    color="primary"
-                    icon={<DoneIcon />}
-                    variant="outlined"
-                  />
-                )}
+                <ListItemText
+                  primary="Contract Balance (Ether)"
+                  secondary={ether}
+                />
               </ListItem>
             </List>
           </Grid>
-        )}
-        {escrowState === "IN_DISPUTE" && (
-          <TestimonySection contractAddress={contractAddress} />
-        )}
-      </Grid>
+          {escrowState === "IN_DISPUTE" && (
+            <Grid item xs={12} sm={12} md={6}>
+              <List component="nav" aria-labelledby="contract details">
+                <ListItem>
+                  <ListItemIcon>
+                    <People />
+                  </ListItemIcon>
+                  <ListItemTextWrapper>
+                    <ListItemText
+                      primary="Buyer's Judge"
+                      secondary={
+                        !buyerJudge || buyerJudge.includes("0x00000000")
+                          ? "Awaiting Selection"
+                          : buyerJudge
+                      }
+                    />
+                    <ListItemText
+                      secondary={`Has Nominated or Confirmed Final Judge: ${
+                        buyerJudgeHasNominatedFinalJudge ||
+                        !finalJudge.includes("0x00000000")
+                          ? "True"
+                          : "False"
+                      }`}
+                    />
+                    <ListItemText
+                      secondary={`Has Voted for Resolution: ${
+                        buyerJudgeHasVotedForResolution ? "True" : "False"
+                      }`}
+                    />
+                  </ListItemTextWrapper>
+                  {account === buyerJudge && (
+                    <Chip
+                      label="Your role"
+                      color="primary"
+                      icon={<DoneIcon />}
+                      variant="outlined"
+                    />
+                  )}
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <People />
+                  </ListItemIcon>
+                  <ListItemTextWrapper>
+                    <ListItemText
+                      primary="Seller's Judge"
+                      secondary={
+                        !sellerJudge || sellerJudge.includes("0x00000000")
+                          ? "Awaiting Selection"
+                          : sellerJudge
+                      }
+                    />
+                    <ListItemText
+                      secondary={`Has Nominated or Confirmed Final Judge: ${
+                        sellerJudgeHasNominatedFinalJudge ||
+                        !finalJudge.includes("0x00000000")
+                          ? "True"
+                          : "False"
+                      }`}
+                    />
+                    <ListItemText
+                      secondary={`Has Voted for Resolution: ${
+                        sellerJudgeHasVotedForResolution ? "True" : "False"
+                      }`}
+                    />
+                  </ListItemTextWrapper>
+                  {account === sellerJudge && (
+                    <Chip
+                      label="Your role"
+                      color="primary"
+                      icon={<DoneIcon />}
+                      variant="outlined"
+                    />
+                  )}
+                </ListItem>
+                <ListItem>
+                  <ListItemIcon>
+                    <People />
+                  </ListItemIcon>
+                  <ListItemTextWrapper>
+                    {!finalJudge || finalJudge.includes("0x00000000") ? (
+                      <ListItemText
+                        primary="Nominated Final Judge"
+                        secondary={
+                          nominatedJudge.includes("0x00000000")
+                            ? "Awaiting Nomination"
+                            : sellerJudge
+                        }
+                      />
+                    ) : (
+                      <ListItemText
+                        primary="Final Judge"
+                        secondary={finalJudge}
+                      />
+                    )}
+                    <ListItemText
+                      secondary={`Has Voted for Resolution: ${
+                        finalJudgeHasVotedForResolution ? "True" : "False"
+                      }`}
+                    />
+                  </ListItemTextWrapper>
+                  {account === finalJudge && (
+                    <Chip
+                      label="Your role"
+                      color="primary"
+                      icon={<DoneIcon />}
+                      variant="outlined"
+                    />
+                  )}
+                </ListItem>
+              </List>
+            </Grid>
+          )}
+          <Grid item xs={12}>
+            <TestimonySection contractAddress={contractAddress} />
+          </Grid>
+        </Grid>
+      </Container>
     </Wrapper>
   );
 };

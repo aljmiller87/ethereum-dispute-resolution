@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import Container from "@material-ui/core/Container";
 import Stepper from "@material-ui/core/Stepper";
 import Step from "@material-ui/core/Step";
 import StepLabel from "@material-ui/core/StepLabel";
@@ -44,7 +45,7 @@ const StatusTracker = ({ details, ActiveStep }) => {
   }, [escrowState, disputeState]);
 
   return (
-    <div>
+    <Container>
       <Stepper activeStep={activeStep} alternativeLabel>
         {steps.map((label, index) => {
           const labelProps = {};
@@ -58,7 +59,7 @@ const StatusTracker = ({ details, ActiveStep }) => {
           );
         })}
       </Stepper>
-    </div>
+    </Container>
   );
 };
 

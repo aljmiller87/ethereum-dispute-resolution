@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import keycode from "keycode";
+// import keycode from "keycode";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
@@ -12,59 +12,21 @@ import TableSortLabel from "@material-ui/core/TableSortLabel";
 import Toolbar from "@material-ui/core/Toolbar";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import Checkbox from "@material-ui/core/Checkbox";
-import IconButton from "@material-ui/core/IconButton";
+// import Checkbox from "@material-ui/core/Checkbox";
+// import IconButton from "@material-ui/core/IconButton";
 import Tooltip from "@material-ui/core/Tooltip";
-import DeleteIcon from "@material-ui/icons/Delete";
-
-// let counter = 0;
-
-// function createData(functionCalled, triggeredByUser, timestamp, description) {
-//   counter += 1;
-//   return {
-//     id: counter,
-//     functionCalled,
-//     triggeredByUser,
-//     timestamp,
-//     description,
-//   };
-// }
-
-// const columnData = [
-//   {
-//     id: "functionCalled",
-//     align: false,
-//     disablePadding: false,
-//     label: "Function Called",
-//   },
-//   { id: "user", align: true, disablePadding: false, label: "user" },
-//   {
-//     id: "timestamp",
-//     align: true,
-//     disablePadding: false,
-//     label: "timestamp",
-//   },
-// ];
+// import DeleteIcon from "@material-ui/icons/Delete";
 
 const DataTableHead = (props) => {
   const createSortHandler = (property) => (event) => {
-    console.log("createSortHandler called");
     props.onRequestSort(event, property);
   };
 
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount } = props;
+  const { order, orderBy } = props;
 
   return (
     <TableHead>
       <TableRow>
-        {/* <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={numSelected === rowCount}
-            onChange={onSelectAllClick}
-          />
-        </TableCell> */}
         {props.columns.map((column) => {
           return (
             <TableCell
@@ -95,67 +57,34 @@ const DataTableHead = (props) => {
 };
 
 DataTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
+  numSelected: PropTypes.number,
   onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
+  onSelectAllClick: PropTypes.func,
   order: PropTypes.string.isRequired,
   orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
+  rowCount: PropTypes.number,
   columns: PropTypes.array.isRequired,
 };
 
-let DataTableToolbar = (props) => {
-  const { numSelected } = props;
-
+let DataTableToolbar = () => {
   return (
     <Toolbar className="table-header">
       <div className="title">
-        {numSelected > 0 ? (
-          <Typography variant="subheading">{numSelected} selected</Typography>
-        ) : (
-          <Typography variant="title">Nutrition</Typography>
-        )}
+        <Typography variant="title">Timeline of Contract Events</Typography>
       </div>
       <div className="spacer" />
-      <div className="actions">
-        {numSelected > 0 && (
-          <Tooltip title="Delete">
-            <IconButton aria-label="Delete">
-              <DeleteIcon />
-            </IconButton>
-          </Tooltip>
-        )}
-      </div>
     </Toolbar>
   );
 };
 
 DataTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
+  numSelected: PropTypes.number,
 };
 
 const DataTable = ({ columns, tableData = [] }) => {
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("user");
-  const [selected, setSelected] = useState([]);
+  const [orderBy, setOrderBy] = useState("timestamp");
   const [data, setData] = useState(tableData);
-  // const [data, setData] = useState(
-  //   [
-  //     createData("Cupcake", 305, 3.7, 67, 4.3),
-  //     createData("Donut", 452, 25.0, 51, 4.9),
-  //     createData("Eclair", 262, 16.0, 24, 6.0),
-  //     createData("Frozen yoghurt", 159, 6.0, 24, 4.0),
-  //     createData("Gingerbread", 356, 16.0, 49, 3.9),
-  //     createData("Honeycomb", 408, 3.2, 87, 6.5),
-  //     createData("Ice cream sandwich", 237, 9.0, 37, 4.3),
-  //     createData("Jelly Bean", 375, 0.0, 94, 0.0),
-  //     createData("KitKat", 518, 26.0, 65, 7.0),
-  //     createData("Lollipop", 392, 0.2, 98, 0.0),
-  //     createData("Marshmallow", 318, 0, 81, 2.0),
-  //     createData("Nougat", 360, 19.0, 9, 37.0),
-  //     createData("Oreo", 437, 18.0, 63, 4.0),
-  //   ].sort((a, b) => (a.user < b.user ? -1 : 1))
-  // );
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
@@ -178,39 +107,6 @@ const DataTable = ({ columns, tableData = [] }) => {
     setOrderBy(newOrderBy);
   };
 
-  const handleSelectAllClick = (event, checked) => {
-    if (checked) {
-      setSelected(data.map((n) => n.id));
-      return;
-    }
-    setSelected([]);
-  };
-
-  const handleKeyDown = (event, id) => {
-    if (keycode(event) === "space") {
-      handleClick(event, id);
-    }
-  };
-
-  const handleClick = (event, id) => {
-    const selectedIndex = selected.indexOf(id);
-    let newSelected = [];
-
-    if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, id);
-    } else if (selectedIndex === 0) {
-      newSelected = newSelected.concat(selected.slice(1));
-    } else if (selectedIndex === selected.length - 1) {
-      newSelected = newSelected.concat(selected.slice(0, -1));
-    } else if (selectedIndex > 0) {
-      newSelected = newSelected.concat(
-        selected.slice(0, selectedIndex),
-        selected.slice(selectedIndex + 1)
-      );
-    }
-    setSelected(newSelected);
-  };
-
   const handleChangePage = (event, page) => {
     setPage(page);
   };
@@ -219,19 +115,19 @@ const DataTable = ({ columns, tableData = [] }) => {
     setRowsPerPage(event.target.value);
   };
 
-  let isSelected = (id) => selected.indexOf(id) !== -1;
+  useEffect(() => {
+    setData(tableData || []);
+  }, [tableData]);
 
   return (
     <Paper>
-      <DataTableToolbar numSelected={selected.length} />
+      <DataTableToolbar />
       <div className="flex-auto">
         <div className="table-responsive-material">
           <Table className="">
             <DataTableHead
-              numSelected={selected.length}
               order={order}
               orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
               rowCount={data.length}
               columns={columns}
@@ -240,24 +136,20 @@ const DataTable = ({ columns, tableData = [] }) => {
               {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((n) => {
-                  const isSelect = isSelected(n.id);
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, n.id)}
-                      onKeyDown={(event) => handleKeyDown(event, n.id)}
                       role="checkbox"
-                      aria-checked={isSelect}
                       tabIndex={-1}
-                      key={n.id}
-                      selected={isSelect}
+                      key={n.id + Math.random()}
                     >
-                      {/* <TableCell padding="checkbox">
-                        <Checkbox color="primary" checked={isSelect} />
-                      </TableCell> */}
-                      <TableCell padding="none">{n.testimony}</TableCell>
-                      <TableCell align="right">{n.user}</TableCell>
-                      <TableCell align="right">{n.timestamp}</TableCell>
+                      {columns.map((column) => (
+                        <TableCell
+                          key={`${n[column.id] + n.id + Math.random()}`}
+                        >
+                          {n[column.id]}
+                        </TableCell>
+                      ))}
                     </TableRow>
                   );
                 })}

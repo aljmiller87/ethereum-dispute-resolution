@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 // ethereum
 import web3 from "../ethereum/web3";
+import ThreeJudge from "../ethereum/threejudge";
 
 // actions
 import * as contractDetailActions from "../redux/actions/contractDetails";
@@ -72,17 +73,30 @@ const SubscriptionDetect = ({ children }) => {
           );
           setisLoading(false);
         })
-        .on("data", function (log) {
-          const returnValues = decodeLog(log);
-          const temp = {
-            ...log,
-            returnValues,
-            isNew: true,
-            event: "Status Event",
-          };
-          // Add events to redux store and refetch contract state to rerender dashboard/contract detail UI
-          dispatch(contractLogActions.addEvent(log.address, temp));
-          dispatch(contractDetailActions.asyncFetchState(log.address));
+        .on("data", async (log) => {
+          const contract = ThreeJudge(log.address);
+          await contract.getPastEvents(
+            "allEvents",
+            {
+              fromBlock: log.blockNumber - 1,
+              topics: log.topics,
+            },
+            function (error, success) {
+              if (error) {
+                console.log("error is: ", error);
+              }
+              if (success) {
+                const [event] = success;
+                const temp = {
+                  ...event,
+                  isNew: true,
+                };
+                // Add events to redux store and refetch contract state to rerender dashboard/contract detail UI
+                dispatch(contractLogActions.addEvent(log.address, temp));
+                dispatch(contractDetailActions.asyncFetchState(log.address));
+              }
+            }
+          );
         })
         .on("changed", function (log) {
           console.log("log changed", log);
