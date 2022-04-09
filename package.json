@@ -27,7 +27,7 @@
     "isomorphic-fetch": "^2.2.1",
     "keycode": "^2.2.0",
     "mocha": "^6.1.4",
-    "moment": "2.24.0",
+    "moment": "2.29.2",
     "next": "9.0.5",
     "next-compose-plugins": "2.2.0",
     "next-images": "1.1.2",
